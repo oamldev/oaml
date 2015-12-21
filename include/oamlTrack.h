@@ -1,6 +1,9 @@
 #ifndef __OAMLTRACK_H__
 #define __OAMLTRACK_H__
 
+#include "ByteBuffer.h"
+#include "oamlAudio.h"
+
 class oamlTrack {
 private:
 	char name[256];

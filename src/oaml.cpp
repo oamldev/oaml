@@ -10,30 +10,27 @@
 #include "oamlTrack.h"
 #include "gettime.h"
 
-int debug=0;
+oamlData::oamlData() {
+	tracksN = 0;
 
-static struct {
-	char *path;
-	oamlTrack *tracks[1024];
-	int tracksN;
+	curTrack = NULL;
 
-	oamlTrack *curTrack;
+	dataBuffer = NULL;
+	dbuffer = NULL;
 
-	ByteBuffer *buffer;
-	ByteBuffer *dbuffer;
+	freq = 0;
+	channels = 0;
+	bytesPerSample = 0;
+}
 
-	int freq;
-	int channels;
-	int bytes;
-} oamlData;
+oamlData::~oamlData() {
+}
 
-int oamlInit(const char *pathToMusic) {
+int oamlData::Init(const char *pathToMusic) {
 	FILE *f;
 	char filename[1024];
 	char str[1024];
 
-	memset(&oamlData, 0, sizeof(oamlData));
-	oamlData.path = strdup(pathToMusic);
 	sprintf(filename, "%soaml.defs", pathToMusic);
 
 	f = fopen(filename, "r");
@@ -70,77 +67,79 @@ int oamlInit(const char *pathToMusic) {
 			track->AddAudio(audio);
 		}
 
-		oamlData.tracks[oamlData.tracksN++] = track;
+		tracks[tracksN++] = track;
 	}
 	fclose(f);
 
-	oamlData.buffer = new ByteBuffer();
+	dataBuffer = new ByteBuffer();
 	if (debug) {
-		oamlData.dbuffer = new ByteBuffer();
+		dbuffer = new ByteBuffer();
 	}
 
 	return 0;
 }
 
-void oamlSetAudioFormat(int freq, int channels, int bytes) {
-	oamlData.freq = freq;
-	oamlData.channels = channels;
-	oamlData.bytes = bytes;
+void oamlData::SetAudioFormat(int audioFreq, int audioChannels, int audioBytesPerSample) {
+	freq = audioFreq;
+	channels = audioChannels;
+	bytesPerSample = audioBytesPerSample;
 }
 
-int oamlPlayTrackId(int id) {
-	if (id >= oamlData.tracksN)
+int oamlData::PlayTrackId(int id) {
+	if (id >= tracksN)
 		return -1;
 
-	oamlData.curTrack = oamlData.tracks[id];
-	oamlData.curTrack->Play();
+	curTrack = tracks[id];
+	curTrack->Play();
 
 	return 0;
 }
 
-int oamlPlayTrack(const char *name) {
+int oamlData::PlayTrack(const char *name) {
 	assert(name != NULL);
 
 	printf("%s %s\n", __FUNCTION__, name);
 
-	for (int i=0; i<oamlData.tracksN; i++) {
-		if (strcmp(oamlData.tracks[i]->GetName(), name) == 0) {
-			return oamlPlayTrackId(i);
+	for (int i=0; i<tracksN; i++) {
+		if (strcmp(tracks[i]->GetName(), name) == 0) {
+			return PlayTrackId(i);
 		}
 	}
 
 	return -1;
 }
 
-void oamlMixToBuffer(void *buffer, int size) {
+void oamlData::MixToBuffer(void *buffer, int size) {
 	uint64_t ms = GetTimeMs64();
 
 	assert(buffer != NULL);
 	assert(size != 0);
 
-	if (oamlData.buffer == NULL)
+	if (dataBuffer == NULL)
 		return;
 
 //	printf("%s %d\n", __FUNCTION__, size);
-	if (oamlData.curTrack) {
-		oamlTrack *track = oamlData.curTrack;
+	if (curTrack) {
+		oamlTrack *track = curTrack;
 
-		track->Read(oamlData.buffer, size);
+		track->Read(dataBuffer, size);
 	}
 
-//	printf("%s: %d\n", __FUNCTION__, oamlData.buffer->bytesRemaining());
-	if (oamlData.buffer->bytesRemaining() < 3)
+//	printf("%s: %d\n", __FUNCTION__, buffer->bytesRemaining());
+	if (dataBuffer->bytesRemaining() < 3)
 		return;
 
-//	oamlData.dbuffer->reserve(oamlData.dbuffer->size() + size*2);
+	if (dbuffer) {
+		dbuffer->reserve(dbuffer->size() + size*2);
+	}
 
 	int *buffer32 = (int*)buffer;
 	for (int i=0; i<size; i++) {
-		int sample = oamlData.buffer->getInt();
+		int sample = dataBuffer->getInt();
 		buffer32[i]+= sample;
 
-		if (oamlData.dbuffer) {
-			oamlData.dbuffer->putShort((short)sample);
+		if (dbuffer) {
+			dbuffer->putShort((short)sample);
 		}
 	}
 
@@ -150,29 +149,24 @@ void oamlMixToBuffer(void *buffer, int size) {
 	}
 }
 
-void oamlSetCondition(int id, int value) {
+void oamlData::SetCondition(int id, int value) {
 //	printf("%s %d %d\n", __FUNCTION__, id, value);
 
-	if (oamlData.curTrack) {
-		oamlTrack *track = oamlData.curTrack;
+	if (curTrack) {
+		oamlTrack *track = curTrack;
 
 		track->SetCondition(id, value);
 	}
 }
 
-void oamlUpdate() {
-/*	if (oamlData.buffer <= 4096) {
-		track->Read(oamlData.buffer);
+void oamlData::Update() {
+/*	if (buffer <= 4096) {
+		track->Read(buffer);
 	}*/
 }
 
-void oamlShutdown() {
-	if (oamlData.dbuffer) {
-		wavWriteToFile("out.wav", oamlData.dbuffer, 2, 44100, 2);
-	}
-
-	if (oamlData.path) {
-		free(oamlData.path);
-		oamlData.path = NULL;
+void oamlData::Shutdown() {
+	if (dbuffer) {
+		wavWriteToFile("out.wav", dbuffer, 2, 44100, 2);
 	}
 }

@@ -1,12 +1,37 @@
 #ifndef __OAML_H__
 #define __OAML_H__
 
-int oamlInit(const char *pathToMusic);
-void oamlSetAudioFormat(int freq, int channels, int bytes);
-int oamlPlayTrack(const char *name);
-int oamlPlayTrackId(int id);
-void oamlSetCondition(int id, int value);
-void oamlMixToBuffer(void *buffer, int size);
-void oamlShutdown();
+class ByteBuffer;
+class oamlTrack;
+
+class oamlData {
+private:
+	int debug;
+	oamlTrack *tracks[1024];
+	int tracksN;
+
+	oamlTrack *curTrack;
+
+	ByteBuffer *dataBuffer;
+	ByteBuffer *dbuffer;
+
+	int freq;
+	int channels;
+	int bytesPerSample;
+
+public:
+	oamlData();
+	~oamlData();
+
+	int Init(const char *pathToMusic);
+	void Shutdown();
+
+	void SetAudioFormat(int audioFreq, int audioChannels, int audioBytesPerSample);
+	int PlayTrack(const char *name);
+	int PlayTrackId(int id);
+	void SetCondition(int id, int value);
+	void MixToBuffer(void *buffer, int size);
+	void Update();
+};
 
 #endif /* __OAML_H__ */

@@ -5,8 +5,10 @@
 #include "oaml.h"
 
 int main() {
-	oamlInit("music/");
-	oamlShutdown();
+	oamlData *oaml = new oamlData();
+
+	oaml->Init("music/");
+	oaml->Shutdown();
 
 	return 0;
 }
