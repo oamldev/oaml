@@ -11,6 +11,7 @@
 #include "gettime.h"
 
 oamlData::oamlData() {
+	debug = 0;
 	tracksN = 0;
 
 	curTrack = NULL;
@@ -46,7 +47,10 @@ int oamlData::Init(const char *pathToMusic) {
 		float bpm;
 		int xfadeIn;
 		int xfadeOut;
-		sscanf(str, "%d %f %d %s %d %d", &mode, &bpm, &audioCount, name, &xfadeIn, &xfadeOut);
+		int ret = sscanf(str, "%d %f %d %s %d %d", &mode, &bpm, &audioCount, name, &xfadeIn, &xfadeOut);
+		if (ret != 6)
+			break;
+
 		oamlTrack *track = new oamlTrack(name, mode, bpm, xfadeIn, xfadeOut);
 		for (int i=0; i<audioCount; i++) {
 			if (fgets(str, 1024, f) == NULL) break;
@@ -111,6 +115,43 @@ int oamlData::PlayTrack(const char *name) {
 	return -1;
 }
 
+bool oamlData::IsTrackPlaying(const char *name) {
+	assert(name != NULL);
+
+	for (int i=0; i<tracksN; i++) {
+		if (strcmp(tracks[i]->GetName(), name) == 0) {
+			return IsTrackPlayingId(i);
+		}
+	}
+
+	return false;
+}
+
+bool oamlData::IsTrackPlayingId(int id) {
+	if (id >= tracksN)
+		return false;
+
+	return tracks[id]->IsPlaying();
+}
+
+bool oamlData::IsPlaying() {
+	for (int i=0; i<tracksN; i++) {
+		if (tracks[i]->IsPlaying())
+			return true;
+	}
+
+	return false;
+}
+
+void oamlData::StopPlaying() {
+	for (int i=0; i<tracksN; i++) {
+		if (tracks[i]->IsPlaying()) {
+			tracks[i]->Stop();
+			break;
+		}
+	}
+}
+
 void oamlData::MixToBuffer(void *buffer, int size) {
 	uint64_t ms = GetTimeMs64();
 
@@ -168,6 +209,7 @@ void oamlData::Update() {
 }
 
 void oamlData::Shutdown() {
+	printf("%s\n", __FUNCTION__);
 	if (dbuffer) {
 		wavWriteToFile("out.wav", dbuffer, 2, 44100, 2);
 	}

@@ -27,8 +27,16 @@ public:
 	void Shutdown();
 
 	void SetAudioFormat(int audioFreq, int audioChannels, int audioBytesPerSample);
+
 	int PlayTrack(const char *name);
 	int PlayTrackId(int id);
+	bool IsTrackPlaying(const char *name);
+	bool IsTrackPlayingId(int id);
+
+	bool IsPlaying();
+
+	void StopPlaying();
+
 	void SetCondition(int id, int value);
 	void MixToBuffer(void *buffer, int size);
 	void Update();

@@ -101,6 +101,16 @@ void oamlAudio::DoFadeOut(int msec) {
 }
 
 bool oamlAudio::HasFinished() {
+	// Check if we're fading out
+	if (fadeOutSamples) {
+		unsigned int fadeOutFinish = fadeOutStart + fadeOutSamples;
+		if (samplesCount >= fadeOutFinish) {
+			// Fade out finished so we're done
+			return true;
+		}
+	}
+
+	// Check if our samples reached our end (based off the number of bars)
 	return samplesCount >= samplesToEnd;
 }
 

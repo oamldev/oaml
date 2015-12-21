@@ -23,6 +23,7 @@ private:
 
 	oamlAudio *curAudio;
 	oamlAudio *tailAudio;
+	oamlAudio *fadeAudio;
 
 	int Random(int min, int max);
 
@@ -36,6 +37,11 @@ public:
 	void Play();
 	void PlayNext();
 	void XFadePlay();
+
+	void Stop();
+
+	bool IsPlaying();
+
 	int Read(ByteBuffer *buffer, int size);
 
 	void SetCondition(int id, int value);
