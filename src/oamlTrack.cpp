@@ -8,10 +8,13 @@
 #include "oamlTrack.h"
 
 
-oamlTrack::oamlTrack(const char *trackName, int trackMode, float trackBpm) {
+oamlTrack::oamlTrack(const char *trackName, int trackMode, float trackBpm, int trackXfadeIn, int trackXfadeOut) {
 	strcpy(name, trackName);
 	mode = trackMode;
 	bpm = trackBpm;
+
+	xfadeIn = trackXfadeIn;
+	xfadeOut = trackXfadeOut;
 
 	loopCount = 0;
 	condCount = 0;
@@ -49,8 +52,7 @@ void oamlTrack::SetCondition(int id, int value) {
 				curAudio = audio;
 				curAudio->Open();
 
-				curAudio->DoFadeIn(1000);
-				tailAudio->DoFadeOut(250);
+				XFadePlay();
 			}
 		} else {
 			// Audio is being played right now
@@ -60,8 +62,7 @@ void oamlTrack::SetCondition(int id, int value) {
 				curAudio = NULL;
 				PlayNext();
 
-				curAudio->DoFadeIn(1000);
-				tailAudio->DoFadeOut(250);
+				XFadePlay();
 			}
 		}
 	}
@@ -101,6 +102,13 @@ void oamlTrack::PlayNext() {
 		curAudio = loopAudios[r];
 	}
 	curAudio->Open();
+}
+
+void oamlTrack::XFadePlay() {
+	if (curAudio)
+		curAudio->DoFadeIn(xfadeIn);
+	if (tailAudio)
+		tailAudio->DoFadeOut(xfadeOut);
 }
 
 int oamlTrack::Read(ByteBuffer *buffer, int size) {

@@ -1,8 +1,9 @@
 #ifndef __OAMLAUDIO_H__
 #define __OAMLAUDIO_H__
 
-#include "ByteBuffer.h"
 #include "wav.h"
+
+class ByteBuffer;
 
 class oamlAudio {
 private:

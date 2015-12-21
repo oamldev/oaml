@@ -44,8 +44,10 @@ int oamlData::Init(const char *pathToMusic) {
 		int mode;
 		int audioCount;
 		float bpm;
-		sscanf(str, "%d %f %d %s", &mode, &bpm, &audioCount, name);
-		oamlTrack *track = new oamlTrack(name, mode, bpm);
+		int xfadeIn;
+		int xfadeOut;
+		sscanf(str, "%d %f %d %s %d %d", &mode, &bpm, &audioCount, name, &xfadeIn, &xfadeOut);
+		oamlTrack *track = new oamlTrack(name, mode, bpm, xfadeIn, xfadeOut);
 		for (int i=0; i<audioCount; i++) {
 			if (fgets(str, 1024, f) == NULL) break;
 
