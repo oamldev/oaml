@@ -45,10 +45,11 @@ int oamlData::Init(const char *pathToMusic) {
 		int mode;
 		int audioCount;
 		float bpm;
+		int beatsPerBar;
 		int xfadeIn;
 		int xfadeOut;
-		int ret = sscanf(str, "%d %f %d %s %d %d", &mode, &bpm, &audioCount, name, &xfadeIn, &xfadeOut);
-		if (ret != 6)
+		int ret = sscanf(str, "%d %f %d %d %s %d %d", &mode, &bpm, &beatsPerBar, &audioCount, name, &xfadeIn, &xfadeOut);
+		if (ret != 7)
 			break;
 
 		oamlTrack *track = new oamlTrack(name, mode, bpm, xfadeIn, xfadeOut);
@@ -65,7 +66,7 @@ int oamlData::Init(const char *pathToMusic) {
 			int condValue = 0;
 			sscanf(str, "%d %d %s %d %d %d %d %d", &type, &bars, filename, &fadeIn, &fadeOut, &condId, &condType, &condValue);
 			sprintf(fname, "%s%s", pathToMusic, filename);
-			oamlAudio *audio = new oamlAudio(fname, type, bars, bpm, fadeIn, fadeOut);
+			oamlAudio *audio = new oamlAudio(fname, type, bars, bpm, beatsPerBar, fadeIn, fadeOut);
 			if (condId != -1) {
 				audio->SetCondition(condId, condType, condValue);
 			}

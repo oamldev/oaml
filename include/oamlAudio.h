@@ -20,6 +20,7 @@ private:
 	unsigned int totalSamples;
 
 	float bpm;
+	int beatsPerBar;
 
 	unsigned int fadeIn;
 	unsigned int fadeInSamples;
@@ -33,7 +34,7 @@ private:
 	int condValue;
 
 public:
-	oamlAudio(const char *audioFilename, int audioType, int audioBars, float audioBpm, int audioFadeIn, int audioFadeOut);
+	oamlAudio(const char *audioFilename, int audioType, int audioBars, float audioBpm, int audioBeatsPerBar, unsigned int audioFadeIn, unsigned int audioFadeOut);
 	~oamlAudio();
 
 	void SetCondition(int id, int type, int value);

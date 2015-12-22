@@ -9,7 +9,7 @@
 #include "oamlAudio.h"
 
 
-oamlAudio::oamlAudio(const char *audioFilename, int audioType, int audioBars, float audioBpm, int audioFadeIn, int audioFadeOut) {
+oamlAudio::oamlAudio(const char *audioFilename, int audioType, int audioBars, float audioBpm, int audioBeatsPerBar, unsigned int audioFadeIn, unsigned int audioFadeOut) {
 	buffer = NULL;
 	handle = NULL;
 
@@ -17,6 +17,7 @@ oamlAudio::oamlAudio(const char *audioFilename, int audioType, int audioBars, fl
 	type = audioType;
 	bars = audioBars;
 	bpm = audioBpm;
+	beatsPerBar = audioBeatsPerBar;
 	fadeIn = audioFadeIn;
 	fadeOut = audioFadeOut;
 
@@ -70,7 +71,7 @@ int oamlAudio::Open() {
 		bytesPerSample = handle->bitsPerSample / 8;
 		totalSamples = handle->chunkSize / bytesPerSample;
 
-		float secs = bars * (60.f / bpm) * 4;
+		float secs = bars * (60.f / bpm) * beatsPerBar;
 		samplesToEnd = secs * samplesPerSec;
 	}
 
