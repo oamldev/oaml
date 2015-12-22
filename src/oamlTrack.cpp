@@ -9,6 +9,8 @@
 
 
 oamlTrack::oamlTrack(const char *trackName, int trackMode, float trackBpm, int trackXfadeIn, int trackXfadeOut) {
+	assert(trackName != NULL);
+
 	strcpy(name, trackName);
 	mode = trackMode;
 	bpm = trackBpm;
@@ -31,6 +33,8 @@ oamlTrack::~oamlTrack() {
 }
 
 void oamlTrack::AddAudio(oamlAudio *audio) {
+	assert(audio != NULL);
+
 	if (audio->GetType() == 1) {
 		introAudio = audio;
 	} else if (audio->GetType() == 3) {
@@ -70,8 +74,12 @@ void oamlTrack::SetCondition(int id, int value) {
 }
 
 void oamlTrack::Play() {
-	curAudio = introAudio;
-	curAudio->Open();
+	if (introAudio) {
+		curAudio = introAudio;
+		curAudio->Open();
+	} else {
+		PlayNext();
+	}
 }
 
 int oamlTrack::Random(int min, int max) {
@@ -88,7 +96,9 @@ void oamlTrack::PlayNext() {
 		}
 	}
 
-	if (loopCount == 2) {
+	if (loopCount == 1) {
+		curAudio = loopAudios[0];
+	} else if (loopCount == 2) {
 		if (curAudio == loopAudios[0]) {
 			curAudio = loopAudios[1];
 		} else {
@@ -102,7 +112,9 @@ void oamlTrack::PlayNext() {
 
 		curAudio = loopAudios[r];
 	}
-	curAudio->Open();
+
+	if (curAudio)
+		curAudio->Open();
 }
 
 void oamlTrack::XFadePlay() {

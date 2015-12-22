@@ -133,6 +133,8 @@ int oamlAudio::Read32() {
 	} else if (bytesPerSample == 2) {
 		ret|= ((unsigned int)buffer->get())<<16;
 		ret|= ((unsigned int)buffer->get())<<24;
+	} else if (bytesPerSample == 1) {
+		ret|= ((unsigned int)buffer->get())<<23;
 	}
 
 	if (fadeInSamples) {

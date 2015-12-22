@@ -64,14 +64,15 @@ int oamlData::Init(const char *pathToMusic) {
 			int condId = -1;
 			int condType = 0;
 			int condValue = 0;
-			sscanf(str, "%d %d %s %d %d %d %d %d", &type, &bars, filename, &fadeIn, &fadeOut, &condId, &condType, &condValue);
-			sprintf(fname, "%s%s", pathToMusic, filename);
-			oamlAudio *audio = new oamlAudio(fname, type, bars, bpm, beatsPerBar, fadeIn, fadeOut);
-			if (condId != -1) {
-				audio->SetCondition(condId, condType, condValue);
-			}
+			if (sscanf(str, "%d %d %s %d %d %d %d %d", &type, &bars, filename, &fadeIn, &fadeOut, &condId, &condType, &condValue) >= 5) {
+				sprintf(fname, "%s%s", pathToMusic, filename);
+				oamlAudio *audio = new oamlAudio(fname, type, bars, bpm, beatsPerBar, fadeIn, fadeOut);
+				if (condId != -1) {
+					audio->SetCondition(condId, condType, condValue);
+				}
 
-			track->AddAudio(audio);
+				track->AddAudio(audio);
+			}
 		}
 
 		tracks[tracksN++] = track;

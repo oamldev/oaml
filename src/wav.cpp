@@ -82,6 +82,7 @@ int wavReadChunk(wavHandle *handle) {
 			if (header.size > sizeof(fmtHeader)) {
 				fseek(handle->fd, header.size - sizeof(fmtHeader), SEEK_CUR);
 			}
+			handle->format = fmt.formatTag;
 			handle->channels = fmt.channels;
 			handle->samplesPerSec = fmt.samplesPerSec;
 			handle->bitsPerSample = fmt.bitsPerSample;
