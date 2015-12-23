@@ -46,18 +46,26 @@ void oamlAudio::SetCondition(int id, int type, int value) {
 }
 
 bool oamlAudio::TestCondition(int id, int value) {
-	if (id == condId) {
-		if (condType == 0) {
-			if (value == condValue) {
+	if (id != condId)
+		return false;
+
+	switch (condType) {
+		case 0:
+			if (value == condValue)
 				return true;
-			}
-		}
+			break;
+
+		case 1:
+			if (value >= condValue)
+				return true;
+			break;
 	}
 
 	return false;
 }
 
 int oamlAudio::Open() {
+	printf("%s %s\n", __FUNCTION__, filename);
 	if (handle != NULL) {
 		buffer->setReadPos(0);
 		samplesCount = 0;

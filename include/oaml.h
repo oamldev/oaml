@@ -19,6 +19,10 @@ private:
 	int channels;
 	int bytesPerSample;
 
+	int tension;
+
+	uint64_t timeMs;
+
 public:
 	oamlData();
 	~oamlData();
@@ -30,15 +34,19 @@ public:
 
 	int PlayTrack(const char *name);
 	int PlayTrackId(int id);
-	bool IsTrackPlaying(const char *name);
-	bool IsTrackPlayingId(int id);
-
-	bool IsPlaying();
 
 	void StopPlaying();
 
+	bool IsTrackPlaying(const char *name);
+	bool IsTrackPlayingId(int id);
+	bool IsPlaying();
+
+	void AddTension(int value);
+
 	void SetCondition(int id, int value);
+
 	void MixToBuffer(void *buffer, int size);
+
 	void Update();
 };
 

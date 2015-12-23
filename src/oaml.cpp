@@ -22,6 +22,9 @@ oamlData::oamlData() {
 	freq = 0;
 	channels = 0;
 	bytesPerSample = 0;
+
+	timeMs = 0;
+	tension = 0;
 }
 
 oamlData::~oamlData() {
@@ -192,6 +195,8 @@ void oamlData::MixToBuffer(void *buffer, int size) {
 	if (delta > 10) {
 //		printf("%s %d %lld\n", __FUNCTION__, size, delta);
 	}
+
+	Update();
 }
 
 void oamlData::SetCondition(int id, int value) {
@@ -204,7 +209,29 @@ void oamlData::SetCondition(int id, int value) {
 	}
 }
 
+void oamlData::AddTension(int value) {
+	tension+= value;
+	if (tension >= 100) {
+		tension = 100;
+	}
+}
+
 void oamlData::Update() {
+	uint64_t ms = GetTimeMs64();
+
+	// Update each second
+	if (ms >= (timeMs + 1000)) {
+		printf("%s %d\n", __FUNCTION__, tension);
+		if (tension >= 1) {
+			tension-= (tension+20)/10;
+			if (tension < 0)
+				tension = 0;
+		}
+
+		timeMs = ms;
+		SetCondition(1, tension);
+	}
+
 /*	if (buffer <= 4096) {
 		track->Read(buffer);
 	}*/
