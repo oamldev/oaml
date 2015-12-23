@@ -1,8 +1,25 @@
 #ifndef __OAML_H__
 #define __OAML_H__
 
+
+//
+// Definitions
+//
+
+#define OAML_VOLUME_MIN	0
+#define OAML_VOLUME_MAX	255
+
+//
+// Internal classes declaration
+//
+
 class ByteBuffer;
 class oamlTrack;
+
+
+//
+// Main class
+//
 
 class oamlData {
 private:
@@ -20,6 +37,8 @@ private:
 	int bytesPerSample;
 
 	int tension;
+	uint64_t tensionMs;
+	int volume;
 
 	uint64_t timeMs;
 
@@ -31,6 +50,7 @@ public:
 	void Shutdown();
 
 	void SetAudioFormat(int audioFreq, int audioChannels, int audioBytesPerSample);
+	void SetVolume(int vol);
 
 	int PlayTrack(const char *name);
 	int PlayTrackId(int id);

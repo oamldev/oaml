@@ -23,8 +23,11 @@ oamlData::oamlData() {
 	channels = 0;
 	bytesPerSample = 0;
 
+	volume = 255;
+
 	timeMs = 0;
 	tension = 0;
+	tensionMs = 0;
 }
 
 oamlData::~oamlData() {
@@ -184,6 +187,7 @@ void oamlData::MixToBuffer(void *buffer, int size) {
 	int *buffer32 = (int*)buffer;
 	for (int i=0; i<size; i++) {
 		int sample = dataBuffer->getInt();
+		sample = (sample * volume) / 255;
 		buffer32[i]+= sample;
 
 		if (dbuffer) {
@@ -201,12 +205,16 @@ void oamlData::MixToBuffer(void *buffer, int size) {
 
 void oamlData::SetCondition(int id, int value) {
 //	printf("%s %d %d\n", __FUNCTION__, id, value);
-
 	if (curTrack) {
-		oamlTrack *track = curTrack;
-
-		track->SetCondition(id, value);
+		curTrack->SetCondition(id, value);
 	}
+}
+
+void oamlData::SetVolume(int vol) {
+	volume = vol;
+
+	if (volume < OAML_VOLUME_MIN) volume = OAML_VOLUME_MIN;
+	if (volume > OAML_VOLUME_MAX) volume = OAML_VOLUME_MAX;
 }
 
 void oamlData::AddTension(int value) {
@@ -221,7 +229,19 @@ void oamlData::Update() {
 
 	// Update each second
 	if (ms >= (timeMs + 1000)) {
-		printf("%s %d\n", __FUNCTION__, tension);
+//		printf("%s %d %lld %d\n", __FUNCTION__, tension, tensionMs - ms, ms >= (tensionMs + 5000));
+		// Don't allow sudden changes of tension after it changed back to 0
+		if (tension > 0) {
+			SetCondition(1, tension);
+			tensionMs = ms;
+		} else {
+			if (ms >= (tensionMs + 5000)) {
+				SetCondition(1, tension);
+				tensionMs = ms;
+			}
+		}
+
+		// Lower tension
 		if (tension >= 1) {
 			tension-= (tension+20)/10;
 			if (tension < 0)
@@ -229,7 +249,6 @@ void oamlData::Update() {
 		}
 
 		timeMs = ms;
-		SetCondition(1, tension);
 	}
 
 /*	if (buffer <= 4096) {
