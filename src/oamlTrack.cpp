@@ -48,6 +48,9 @@ void oamlTrack::AddAudio(oamlAudio *audio) {
 void oamlTrack::SetCondition(int id, int value) {
 	for (int i=0; i<condCount; i++) {
 		oamlAudio *audio = condAudios[i];
+		if (audio->GetCondId() != id)
+			continue;
+
 		if (curAudio != audio) {
 			// Audio isn't being played right now
 			if (audio->TestCondition(id, value) == true) {

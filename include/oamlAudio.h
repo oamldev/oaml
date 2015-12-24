@@ -49,6 +49,7 @@ public:
 	void DoFadeIn(int msec);
 	void DoFadeOut(int msec);
 
+	int GetCondId() { return condId; }
 	int GetType() { return type; }
 };
 
