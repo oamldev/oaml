@@ -1,15 +1,12 @@
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "ByteBuffer.h"
-#include "oamlAudio.h"
-#include "oamlTrack.h"
+#include "oamlCommon.h"
 
 
 oamlTrack::oamlTrack(const char *trackName, int trackMode, float trackBpm, int trackXfadeIn, int trackXfadeOut) {
-	assert(trackName != NULL);
+	ASSERT(trackName != NULL);
 
 	strcpy(name, trackName);
 	mode = trackMode;
@@ -33,7 +30,7 @@ oamlTrack::~oamlTrack() {
 }
 
 void oamlTrack::AddAudio(oamlAudio *audio) {
-	assert(audio != NULL);
+	ASSERT(audio != NULL);
 
 	if (audio->GetType() == 1) {
 		introAudio = audio;

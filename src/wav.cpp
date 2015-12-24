@@ -1,11 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
-#include "ByteBuffer.h"
-#include "wav.h"
-#include "gettime.h"
+#include "oamlCommon.h"
 
 enum {
 	WAVE_ID = 0x45564157,
@@ -38,7 +35,7 @@ typedef struct {
 } fmtHeader;
 
 wavHandle *wavOpen(const char *filename) {
-	assert(filename != NULL);
+	ASSERT(filename != NULL);
 
 	FILE *fd = fopen(filename, "rb");
 	if (fd == NULL) {
@@ -111,7 +108,7 @@ int wavRead(wavHandle *handle, ByteBuffer *buffer, int size) {
 	unsigned char buf[4096];
 	unsigned long ms = GetTimeMs64();
 
-	assert(handle != NULL);
+	ASSERT(handle != NULL);
 
 	int bytesRead = 0;
 	while (size > 0) {
@@ -127,7 +124,6 @@ int wavRead(wavHandle *handle, ByteBuffer *buffer, int size) {
 				break;
 			} else {
 				handle->chunkSize-= ret;
-				buffer->reserve(buffer->size() + ret);
 				buffer->putBytes(buf, ret);
 				bytesRead+= ret;
 				size-= ret;
@@ -188,7 +184,7 @@ void wavWriteToFile(const char *filename, ByteBuffer *buffer, int channels, int 
 }
 
 void wavClose(wavHandle *handle) {
-	assert(handle != NULL);
+	ASSERT(handle != NULL);
 
 	fclose(handle->fd);
 	delete handle;

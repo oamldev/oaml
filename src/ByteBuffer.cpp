@@ -313,7 +313,3 @@ void ByteBuffer::putShort(uint16_t value) {
 void ByteBuffer::putShort(uint16_t value, uint32_t index) {
 	insert<uint16_t>(value, index);
 }
-
-void ByteBuffer::reserve(uint32_t size) {
-	buf.reserve(size);
-}

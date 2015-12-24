@@ -80,8 +80,6 @@ public:
 	void resize(uint32_t newSize);
 	uint32_t size(); // Size of internal vector
 
-	void reserve(uint32_t size);
-
     // Basic Searching (Linear)
     template <typename T> int32_t find(T key, uint32_t start=0) {
         int32_t ret = -1;

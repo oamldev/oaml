@@ -1,12 +1,9 @@
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
-#include "ByteBuffer.h"
-#include "wav.h"
-#include "oamlAudio.h"
+#include "oamlCommon.h"
 
 
 oamlAudio::oamlAudio(const char *audioFilename, int audioType, int audioBars, float audioBpm, int audioBeatsPerBar, unsigned int audioFadeIn, unsigned int audioFadeOut) {

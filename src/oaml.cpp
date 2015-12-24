@@ -1,14 +1,8 @@
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "ByteBuffer.h"
-#include "wav.h"
-#include "oaml.h"
-#include "oamlAudio.h"
-#include "oamlTrack.h"
-#include "gettime.h"
+#include "oamlCommon.h"
 
 oamlData::oamlData() {
 	debug = 0;
@@ -70,7 +64,7 @@ int oamlData::Init(const char *pathToMusic) {
 			int condId = -1;
 			int condType = 0;
 			int condValue = 0;
-			if (sscanf(str, "%d %d %s %d %d %d %d %d", &type, &bars, filename, &fadeIn, &fadeOut, &condId, &condType, &condValue) >= 5) {
+			if (sscanf(str, "%d %d %s %d %d %d %d %d", &type, &bars, filename, &fadeIn, &fadeOut, &condId, &condType, &condValue) >= 3) {
 				sprintf(fname, "%s%s", pathToMusic, filename);
 				oamlAudio *audio = new oamlAudio(fname, type, bars, bpm, beatsPerBar, fadeIn, fadeOut);
 				if (condId != -1) {
@@ -110,7 +104,7 @@ int oamlData::PlayTrackId(int id) {
 }
 
 int oamlData::PlayTrack(const char *name) {
-	assert(name != NULL);
+	ASSERT(name != NULL);
 
 	printf("%s %s\n", __FUNCTION__, name);
 
@@ -124,7 +118,7 @@ int oamlData::PlayTrack(const char *name) {
 }
 
 bool oamlData::IsTrackPlaying(const char *name) {
-	assert(name != NULL);
+	ASSERT(name != NULL);
 
 	for (int i=0; i<tracksN; i++) {
 		if (strcmp(tracks[i]->GetName(), name) == 0) {
@@ -163,26 +157,20 @@ void oamlData::StopPlaying() {
 void oamlData::MixToBuffer(void *buffer, int size) {
 	uint64_t ms = GetTimeMs64();
 
-	assert(buffer != NULL);
-	assert(size != 0);
+	ASSERT(buffer != NULL);
+	ASSERT(size != 0);
 
 	if (dataBuffer == NULL)
 		return;
 
 //	printf("%s %d\n", __FUNCTION__, size);
 	if (curTrack) {
-		oamlTrack *track = curTrack;
-
-		track->Read(dataBuffer, size);
+		curTrack->Read(dataBuffer, size);
 	}
 
-//	printf("%s: %d\n", __FUNCTION__, buffer->bytesRemaining());
+//	printf("%s: %d\n", __FUNCTION__, dataBuffer->bytesRemaining());
 	if (dataBuffer->bytesRemaining() < 3)
 		return;
-
-	if (dbuffer) {
-		dbuffer->reserve(dbuffer->size() + size*2);
-	}
 
 	int *buffer32 = (int*)buffer;
 	for (int i=0; i<size; i++) {
