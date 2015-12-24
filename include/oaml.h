@@ -29,7 +29,6 @@ private:
 
 	oamlTrack *curTrack;
 
-	ByteBuffer *dataBuffer;
 	ByteBuffer *dbuffer;
 
 	int freq;

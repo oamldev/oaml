@@ -121,11 +121,11 @@ void oamlTrack::XFadePlay() {
 		tailAudio->DoFadeOut(xfadeOut);
 }
 
-int oamlTrack::Read(ByteBuffer *buffer, int size) {
+void oamlTrack::MixToBuffer(void *buffer, int size, int volume) {
 	if (curAudio == NULL && tailAudio == NULL && fadeAudio == NULL)
-		return 0;
+		return;
 
-	buffer->clear();
+	int *buffer32 = (int*)buffer;
 	for (int i=0; i<size; i++) {
 		int sample = 0;
 
@@ -141,10 +141,12 @@ int oamlTrack::Read(ByteBuffer *buffer, int size) {
 			sample+= fadeAudio->Read32();
 		}
 		sample>>= 16;
+		sample = (sample * volume) / 255;
+
 		if (sample > 32767) sample = 32767;
 		if (sample < -32768) sample = -32768;
 
-		buffer->putInt(sample);
+		buffer32[i]+= sample;
 
 		if (curAudio && curAudio->HasFinished()) {
 			tailAudio = curAudio;
@@ -156,8 +158,6 @@ int oamlTrack::Read(ByteBuffer *buffer, int size) {
 			fadeAudio = NULL;
 		}
 	}
-
-	return size;
 }
 
 bool oamlTrack::IsPlaying() {

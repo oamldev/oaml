@@ -42,7 +42,7 @@ public:
 
 	bool IsPlaying();
 
-	int Read(ByteBuffer *buffer, int size);
+	void MixToBuffer(void *buffer, int size, int volume);
 
 	void SetCondition(int id, int value);
 };

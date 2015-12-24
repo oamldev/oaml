@@ -10,7 +10,6 @@ oamlData::oamlData() {
 
 	curTrack = NULL;
 
-	dataBuffer = NULL;
 	dbuffer = NULL;
 
 	freq = 0;
@@ -29,10 +28,20 @@ oamlData::~oamlData() {
 
 int oamlData::Init(const char *pathToMusic) {
 	FILE *f;
+	char path[1024];
 	char filename[1024];
 	char str[1024];
 
-	sprintf(filename, "%soaml.defs", pathToMusic);
+	ASSERT(pathToMusic != NULL);
+
+	int len = strlen(pathToMusic);
+	if (len > 0 && (pathToMusic[len-1] == '/')) {
+		sprintf(path, "%s", pathToMusic);
+	} else {
+		sprintf(path, "%s/", pathToMusic);
+	}
+
+	sprintf(filename, "%soaml.defs", path);
 
 	f = fopen(filename, "r");
 	printf("%s: %s\n", __FUNCTION__, filename);
@@ -65,7 +74,7 @@ int oamlData::Init(const char *pathToMusic) {
 			int condType = 0;
 			int condValue = 0;
 			if (sscanf(str, "%d %d %s %d %d %d %d %d", &type, &bars, filename, &fadeIn, &fadeOut, &condId, &condType, &condValue) >= 3) {
-				sprintf(fname, "%s%s", pathToMusic, filename);
+				sprintf(fname, "%s%s", path, filename);
 				oamlAudio *audio = new oamlAudio(fname, type, bars, bpm, beatsPerBar, fadeIn, fadeOut);
 				if (condId != -1) {
 					audio->SetCondition(condId, condType, condValue);
@@ -79,7 +88,6 @@ int oamlData::Init(const char *pathToMusic) {
 	}
 	fclose(f);
 
-	dataBuffer = new ByteBuffer();
 	if (debug) {
 		dbuffer = new ByteBuffer();
 	}
@@ -97,6 +105,10 @@ int oamlData::PlayTrackId(int id) {
 	if (id >= tracksN)
 		return -1;
 
+	if (curTrack) {
+		curTrack->Stop();
+	}
+
 	curTrack = tracks[id];
 	curTrack->Play();
 
@@ -106,7 +118,7 @@ int oamlData::PlayTrackId(int id) {
 int oamlData::PlayTrack(const char *name) {
 	ASSERT(name != NULL);
 
-	printf("%s %s\n", __FUNCTION__, name);
+//	printf("%s %s\n", __FUNCTION__, name);
 
 	for (int i=0; i<tracksN; i++) {
 		if (strcmp(tracks[i]->GetName(), name) == 0) {
@@ -155,37 +167,11 @@ void oamlData::StopPlaying() {
 }
 
 void oamlData::MixToBuffer(void *buffer, int size) {
-	uint64_t ms = GetTimeMs64();
-
 	ASSERT(buffer != NULL);
 	ASSERT(size != 0);
 
-	if (dataBuffer == NULL)
-		return;
-
-//	printf("%s %d\n", __FUNCTION__, size);
-	if (curTrack) {
-		curTrack->Read(dataBuffer, size);
-	}
-
-//	printf("%s: %d\n", __FUNCTION__, dataBuffer->bytesRemaining());
-	if (dataBuffer->bytesRemaining() < 3)
-		return;
-
-	int *buffer32 = (int*)buffer;
-	for (int i=0; i<size; i++) {
-		int sample = dataBuffer->getInt();
-		sample = (sample * volume) / 255;
-		buffer32[i]+= sample;
-
-		if (dbuffer) {
-			dbuffer->putShort((short)sample);
-		}
-	}
-
-	uint64_t delta = GetTimeMs64() - ms;
-	if (delta > 10) {
-//		printf("%s %d %lld\n", __FUNCTION__, size, delta);
+	for (int i=0; i<tracksN; i++) {
+		tracks[i]->MixToBuffer(buffer, size, volume);
 	}
 
 	Update();
@@ -245,7 +231,7 @@ void oamlData::Update() {
 }
 
 void oamlData::Shutdown() {
-	printf("%s\n", __FUNCTION__);
+//	printf("%s\n", __FUNCTION__);
 	if (dbuffer) {
 		wavWriteToFile("out.wav", dbuffer, 2, 44100, 2);
 	}
