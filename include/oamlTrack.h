@@ -13,6 +13,8 @@ private:
 	int loopCount;
 	int condCount;
 
+	int fadeIn;
+	int fadeOut;
 	int xfadeIn;
 	int xfadeOut;
 
@@ -28,7 +30,7 @@ private:
 	int Random(int min, int max);
 
 public:
-	oamlTrack(const char *trackName, int trackMode, float trackBpm, int trackXfadeIn, int trackXfadeOut);
+	oamlTrack(const char *trackName, int trackMode, float trackBpm, int trackFadeIn, int trackFadeOut, int trackXfadeIn, int trackXfadeOut);
 	~oamlTrack();
 
 	char *GetName() { return name; }
@@ -42,7 +44,7 @@ public:
 
 	bool IsPlaying();
 
-	void MixToBuffer(void *buffer, int size, int volume);
+	int Read32();
 
 	void SetCondition(int id, int value);
 };

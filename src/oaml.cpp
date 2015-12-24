@@ -55,24 +55,26 @@ int oamlData::Init(const char *pathToMusic) {
 		int audioCount;
 		float bpm;
 		int beatsPerBar;
-		int xfadeIn;
-		int xfadeOut;
-		int ret = sscanf(str, "%d %f %d %d %s %d %d", &mode, &bpm, &beatsPerBar, &audioCount, name, &xfadeIn, &xfadeOut);
-		if (ret != 7)
+		int fadeIn = 0;
+		int fadeOut = 0;
+		int xfadeIn = 0;
+		int xfadeOut = 0;
+		int ret = sscanf(str, "%d %f %d %d %s %d %d %d %d", &mode, &bpm, &beatsPerBar, &audioCount, name, &fadeIn, &fadeOut, &xfadeIn, &xfadeOut);
+		if (ret != 9)
 			break;
 
-		oamlTrack *track = new oamlTrack(name, mode, bpm, xfadeIn, xfadeOut);
+		oamlTrack *track = new oamlTrack(name, mode, bpm, fadeIn, fadeOut, xfadeIn, xfadeOut);
 		for (int i=0; i<audioCount; i++) {
 			if (fgets(str, 1024, f) == NULL) break;
 
 			char fname[1024];
 			int bars;
 			int type;
-			int fadeIn = 0;
-			int fadeOut = 0;
 			int condId = -1;
 			int condType = 0;
 			int condValue = 0;
+			fadeIn = 0;
+			fadeOut = 0;
 			if (sscanf(str, "%d %d %s %d %d %d %d %d", &type, &bars, filename, &fadeIn, &fadeOut, &condId, &condType, &condValue) >= 3) {
 				sprintf(fname, "%s%s", path, filename);
 				oamlAudio *audio = new oamlAudio(fname, type, bars, bpm, beatsPerBar, fadeIn, fadeOut);
@@ -170,8 +172,23 @@ void oamlData::MixToBuffer(void *buffer, int size) {
 	ASSERT(buffer != NULL);
 	ASSERT(size != 0);
 
-	for (int i=0; i<tracksN; i++) {
-		tracks[i]->MixToBuffer(buffer, size, volume);
+	for (int i=0; i<size; i++) {
+		int sample = 0;
+
+		for (int j=0; j<tracksN; j++) {
+			sample+= tracks[j]->Read32();
+		}
+
+		sample>>= 16;
+		sample = (sample * volume) / 255;
+
+		if (sample > 32767) sample = 32767;
+		if (sample < -32768) sample = -32768;
+
+		if (bytesPerSample == 2) {
+			short *sbuf = (short*)buffer;
+			sbuf[i]+= (short)sample;
+		}
 	}
 
 	Update();

@@ -5,13 +5,15 @@
 #include "oamlCommon.h"
 
 
-oamlTrack::oamlTrack(const char *trackName, int trackMode, float trackBpm, int trackXfadeIn, int trackXfadeOut) {
+oamlTrack::oamlTrack(const char *trackName, int trackMode, float trackBpm, int trackFadeIn, int trackFadeOut, int trackXfadeIn, int trackXfadeOut) {
 	ASSERT(trackName != NULL);
 
 	strcpy(name, trackName);
 	mode = trackMode;
 	bpm = trackBpm;
 
+	fadeIn = trackFadeIn;
+	fadeOut = trackFadeOut;
 	xfadeIn = trackXfadeIn;
 	xfadeOut = trackXfadeOut;
 
@@ -71,11 +73,21 @@ void oamlTrack::SetCondition(int id, int value) {
 }
 
 void oamlTrack::Play() {
+	int doFade = 0;
+
+	if (curAudio == NULL && fadeIn) {
+		doFade = 1;
+	}
+
 	if (introAudio) {
 		curAudio = introAudio;
 		curAudio->Open();
 	} else {
 		PlayNext();
+	}
+
+	if (doFade && curAudio) {
+		curAudio->DoFadeIn(fadeIn);
 	}
 }
 
@@ -95,13 +107,7 @@ void oamlTrack::PlayNext() {
 
 	if (loopCount == 1) {
 		curAudio = loopAudios[0];
-	} else if (loopCount == 2) {
-		if (curAudio == loopAudios[0]) {
-			curAudio = loopAudios[1];
-		} else {
-			curAudio = loopAudios[0];
-		}
-	} else if (loopCount >= 3) {
+	} else if (loopCount >= 2) {
 		int r = Random(0, loopCount-1);
 		while (curAudio == loopAudios[r]) {
 			r = Random(0, loopCount-1);
@@ -121,43 +127,35 @@ void oamlTrack::XFadePlay() {
 		tailAudio->DoFadeOut(xfadeOut);
 }
 
-void oamlTrack::MixToBuffer(void *buffer, int size, int volume) {
+int oamlTrack::Read32() {
 	if (curAudio == NULL && tailAudio == NULL && fadeAudio == NULL)
-		return;
+		return 0;
 
-	int *buffer32 = (int*)buffer;
-	for (int i=0; i<size; i++) {
-		int sample = 0;
+	int sample = 0;
 
-		if (curAudio) {
-			sample+= curAudio->Read32();
-		}
-
-		if (tailAudio) {
-			sample+= tailAudio->Read32();
-		}
-
-		if (fadeAudio) {
-			sample+= fadeAudio->Read32();
-		}
-		sample>>= 16;
-		sample = (sample * volume) / 255;
-
-		if (sample > 32767) sample = 32767;
-		if (sample < -32768) sample = -32768;
-
-		buffer32[i]+= sample;
-
-		if (curAudio && curAudio->HasFinished()) {
-			tailAudio = curAudio;
-
-			PlayNext();
-		}
-
-		if (fadeAudio && fadeAudio->HasFinished()) {
-			fadeAudio = NULL;
-		}
+	if (curAudio) {
+		sample+= curAudio->Read32();
 	}
+
+	if (tailAudio) {
+		sample+= tailAudio->Read32();
+	}
+
+	if (fadeAudio) {
+		sample+= fadeAudio->Read32();
+	}
+
+	if (curAudio && curAudio->HasFinished()) {
+		tailAudio = curAudio;
+
+		PlayNext();
+	}
+
+	if (fadeAudio && fadeAudio->HasFinished()) {
+		fadeAudio = NULL;
+	}
+
+	return sample;
 }
 
 bool oamlTrack::IsPlaying() {
@@ -166,8 +164,10 @@ bool oamlTrack::IsPlaying() {
 
 void oamlTrack::Stop() {
 	if (curAudio) {
-		fadeAudio = curAudio;
-		fadeAudio->DoFadeOut(1000);
+		if (fadeOut) {
+			fadeAudio = curAudio;
+			fadeAudio->DoFadeOut(fadeOut);
+		}
 		curAudio = NULL;
 	}
 
