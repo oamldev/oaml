@@ -54,11 +54,18 @@ wavHandle *wavOpen(const char *filename) {
 }
 
 int wavReadChunk(wavHandle *handle) {
-	unsigned long ms = GetTimeMs64();
+	ASSERT(handle != NULL);
+
+	if (handle->fd == NULL)
+		return -1;
+
 	// Read the common header for all wave chunks
 	wavHeader header;
-	if (fread(&header, 1, sizeof(wavHeader), handle->fd) != sizeof(wavHeader))
+	if (fread(&header, 1, sizeof(wavHeader), handle->fd) != sizeof(wavHeader)) {
+		fclose(handle->fd);
+		handle->fd = NULL;
 		return -1;
+	}
 
 	switch (header.id) {
 		case RIFF_ID:
@@ -96,19 +103,16 @@ int wavReadChunk(wavHandle *handle) {
 			break;
 	}
 
-	unsigned long delta = GetTimeMs64() - ms;
-	if (delta > 10) {
-//		printf("%s %lld\n", __FUNCTION__, delta);
-	}
-
 	return 0;
 }
 
 int wavRead(wavHandle *handle, ByteBuffer *buffer, int size) {
 	unsigned char buf[4096];
-	unsigned long ms = GetTimeMs64();
 
 	ASSERT(handle != NULL);
+
+	if (handle->fd == NULL)
+		return -1;
 
 	int bytesRead = 0;
 	while (size > 0) {
@@ -134,14 +138,13 @@ int wavRead(wavHandle *handle, ByteBuffer *buffer, int size) {
 		}
 	}
 
-	unsigned long delta = GetTimeMs64() - ms;
-	if (delta > 10) {
-//		printf("%s %lld\n", __FUNCTION__, delta);
-	}
 	return bytesRead;
 }
 
 void wavWriteToFile(const char *filename, ByteBuffer *buffer, int channels, int sampleRate, int bytesPerSample) {
+	ASSERT(filename != NULL);
+	ASSERT(buffer != NULL);
+
 	FILE *f = fopen(filename, "wb");
 	if (f == NULL)
 		return;
@@ -186,6 +189,9 @@ void wavWriteToFile(const char *filename, ByteBuffer *buffer, int channels, int 
 void wavClose(wavHandle *handle) {
 	ASSERT(handle != NULL);
 
-	fclose(handle->fd);
+	if (handle->fd != NULL) {
+		fclose(handle->fd);
+		handle->fd = NULL;
+	}
 	delete handle;
 }
