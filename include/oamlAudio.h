@@ -32,12 +32,26 @@ private:
 	int condId;
 	int condType;
 	int condValue;
+	int condValue2;
 
 public:
-	oamlAudio(const char *audioFilename, int audioType, int audioBars, float audioBpm, int audioBeatsPerBar, unsigned int audioFadeIn, unsigned int audioFadeOut);
+	oamlAudio();
 	~oamlAudio();
 
-	void SetCondition(int id, int type, int value);
+	void SetFilename(const char *audioFilename) { ASSERT(audioFilename != NULL); strcpy(filename, audioFilename); }
+	void SetType(int audioType) { type = audioType; }
+	void SetBPM(float audioBpm) { bpm = audioBpm; }
+	void SetBeatsPerBar(float audioBeatsPerBar) { beatsPerBar = audioBeatsPerBar; }
+	void SetBars(float audioBars) { bars = audioBars; }
+	void SetFadeIn(int audioFadeIn) { fadeIn = audioFadeIn; }
+	void SetFadeOut(int audioFadeOut) { fadeOut = audioFadeOut; }
+
+	void SetCondId(int audioCondId) { condId = audioCondId; }
+	void SetCondType(int audioCondType) { condType = audioCondType; }
+	void SetCondValue(int audioCondValue) { condValue = audioCondValue; }
+	void SetCondValue2(int audioCondValue2) { condValue2 = audioCondValue2; }
+
+	void SetCondition(int id, int type, int value, int value2 = 0);
 	bool TestCondition(int id, int value);
 
 	bool HasFinished();

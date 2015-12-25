@@ -8,7 +8,6 @@ class oamlTrack {
 private:
 	char name[256];
 	int mode;
-	float bpm;
 
 	int loopCount;
 	int condCount;
@@ -30,8 +29,15 @@ private:
 	int Random(int min, int max);
 
 public:
-	oamlTrack(const char *trackName, int trackMode, float trackBpm, int trackFadeIn, int trackFadeOut, int trackXfadeIn, int trackXfadeOut);
+	oamlTrack();
 	~oamlTrack();
+
+	void SetName(const char *trackName) { ASSERT(trackName != NULL); strcpy(name, trackName); }
+	void SetMode(int trackMode) { mode = trackMode; }
+	void SetFadeIn(int trackFadeIn) { fadeIn = trackFadeIn; }
+	void SetFadeOut(int trackFadeOut) { fadeOut = trackFadeOut; }
+	void SetXFadeIn(int trackXFadeIn) { xfadeIn = trackXFadeIn; }
+	void SetXFadeOut(int trackXFadeOut) { xfadeOut = trackXFadeOut; }
 
 	char *GetName() { return name; }
 

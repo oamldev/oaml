@@ -9,6 +9,13 @@
 #define OAML_VOLUME_MIN	0
 #define OAML_VOLUME_MAX	100
 
+enum {
+	COND_TYPE_EQUAL		= 0,
+	COND_TYPE_GREATER	= 1,
+	COND_TYPE_LESS		= 2,
+	COND_TYPE_RANGE		= 3,
+} CondType;
+
 //
 // Internal classes declaration
 //
@@ -40,6 +47,8 @@ private:
 	int volume;
 
 	uint64_t timeMs;
+
+	int ReadDefs(const char *filaname, const char *path);
 
 public:
 	oamlData();

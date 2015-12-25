@@ -6,17 +6,16 @@
 #include "oamlCommon.h"
 
 
-oamlAudio::oamlAudio(const char *audioFilename, int audioType, int audioBars, float audioBpm, int audioBeatsPerBar, unsigned int audioFadeIn, unsigned int audioFadeOut) {
-	buffer = NULL;
+oamlAudio::oamlAudio() {
 	handle = NULL;
 
-	strcpy(filename, audioFilename);
-	type = audioType;
-	bars = audioBars;
-	bpm = audioBpm;
-	beatsPerBar = audioBeatsPerBar;
-	fadeIn = audioFadeIn;
-	fadeOut = audioFadeOut;
+	memset(filename, 0, sizeof(filename));
+	type = 0;
+	bars = 0;
+	bpm = 0;
+	beatsPerBar = 0;
+	fadeIn = 0;
+	fadeOut = 0;
 
 	buffer = new ByteBuffer();
 
@@ -30,16 +29,18 @@ oamlAudio::oamlAudio(const char *audioFilename, int audioType, int audioBars, fl
 	condId = 0;
 	condType = 0;
 	condValue = 0;
+	condValue2 = 0;
 }
 
 oamlAudio::~oamlAudio() {
 	delete buffer;
 }
 
-void oamlAudio::SetCondition(int id, int type, int value) {
+void oamlAudio::SetCondition(int id, int type, int value, int value2) {
 	condId = id;
 	condType = type;
 	condValue = value;
+	condValue2 = value2;
 }
 
 bool oamlAudio::TestCondition(int id, int value) {
@@ -47,13 +48,23 @@ bool oamlAudio::TestCondition(int id, int value) {
 		return false;
 
 	switch (condType) {
-		case 0:
+		case COND_TYPE_EQUAL:
 			if (value == condValue)
 				return true;
 			break;
 
-		case 1:
-			if (value >= condValue)
+		case COND_TYPE_GREATER:
+			if (value > condValue)
+				return true;
+			break;
+
+		case COND_TYPE_LESS:
+			if (value < condValue)
+				return true;
+			break;
+
+		case COND_TYPE_RANGE:
+			if (value >= condValue && value <= condValue2)
 				return true;
 			break;
 	}
@@ -63,6 +74,7 @@ bool oamlAudio::TestCondition(int id, int value) {
 
 int oamlAudio::Open() {
 	printf("%s %s\n", __FUNCTION__, filename);
+
 	if (handle != NULL) {
 		buffer->setReadPos(0);
 		samplesCount = 0;
@@ -121,6 +133,8 @@ bool oamlAudio::HasFinished() {
 }
 
 int oamlAudio::Read() {
+	if (handle == NULL)
+		return -1;
 	return wavRead(handle, buffer, 4096*bytesPerSample);
 }
 
@@ -128,7 +142,8 @@ int oamlAudio::Read32() {
 	int ret = 0;
 
 	if (buffer->bytesRemaining() < (unsigned int)bytesPerSample) {
-		Read();
+		if (Read() == -1)
+			return 0;
 	}
 
 	if (bytesPerSample == 3) {

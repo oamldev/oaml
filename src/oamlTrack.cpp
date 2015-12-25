@@ -5,17 +5,14 @@
 #include "oamlCommon.h"
 
 
-oamlTrack::oamlTrack(const char *trackName, int trackMode, float trackBpm, int trackFadeIn, int trackFadeOut, int trackXfadeIn, int trackXfadeOut) {
-	ASSERT(trackName != NULL);
+oamlTrack::oamlTrack() {
+	memset(name, 0, sizeof(name));
+	mode = 0;
 
-	strcpy(name, trackName);
-	mode = trackMode;
-	bpm = trackBpm;
-
-	fadeIn = trackFadeIn;
-	fadeOut = trackFadeOut;
-	xfadeIn = trackXfadeIn;
-	xfadeOut = trackXfadeOut;
+	fadeIn = 0;
+	fadeOut = 0;
+	xfadeIn = 0;
+	xfadeOut = 0;
 
 	loopCount = 0;
 	condCount = 0;

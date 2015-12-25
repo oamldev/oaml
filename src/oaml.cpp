@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "tinyxml2.h"
 #include "oamlCommon.h"
 
 oamlData::oamlData() {
@@ -26,11 +27,64 @@ oamlData::oamlData() {
 oamlData::~oamlData() {
 }
 
+int oamlData::ReadDefs(const char *filename, const char *path) {
+	tinyxml2::XMLDocument doc;
+
+	if (doc.LoadFile(filename) != tinyxml2::XML_NO_ERROR)
+		return -1;
+
+	tinyxml2::XMLElement *el = doc.FirstChildElement("track");
+	while (el != NULL) {
+		oamlTrack *track = new oamlTrack();
+
+		tinyxml2::XMLElement *el2 = el->FirstChildElement();
+		while (el2 != NULL) {
+			if (strcmp(el2->Name(), "name") == 0) track->SetName(el2->GetText());
+			else if (strcmp(el2->Name(), "fadeIn") == 0) track->SetFadeIn(strtol(el2->GetText(), NULL, 0));
+			else if (strcmp(el2->Name(), "fadeOut") == 0) track->SetFadeOut(strtol(el2->GetText(), NULL, 0));
+			else if (strcmp(el2->Name(), "xfadeIn") == 0) track->SetXFadeIn(strtol(el2->GetText(), NULL, 0));
+			else if (strcmp(el2->Name(), "xfadeOut") == 0) track->SetXFadeOut(strtol(el2->GetText(), NULL, 0));
+			else if (strcmp(el2->Name(), "audio") == 0) {
+				oamlAudio *audio = new oamlAudio();
+
+				tinyxml2::XMLElement *el3 = el2->FirstChildElement();
+				while (el3 != NULL) {
+					if (strcmp(el3->Name(), "filename") == 0) {
+						char fname[1024];
+						sprintf(fname, "%s%s", path, el3->GetText());
+						audio->SetFilename(fname);
+					}
+					else if (strcmp(el3->Name(), "type") == 0) audio->SetType(strtol(el3->GetText(), NULL, 0));
+					else if (strcmp(el3->Name(), "bars") == 0) audio->SetBars(strtol(el3->GetText(), NULL, 0));
+					else if (strcmp(el3->Name(), "bpm") == 0) audio->SetBPM(strtof(el3->GetText(), NULL));
+					else if (strcmp(el3->Name(), "beatsPerBar") == 0) audio->SetBeatsPerBar(strtol(el3->GetText(), NULL, 0));
+					else if (strcmp(el3->Name(), "fadeIn") == 0) audio->SetFadeIn(strtol(el3->GetText(), NULL, 0));
+					else if (strcmp(el3->Name(), "fadeOut") == 0) audio->SetFadeOut(strtol(el3->GetText(), NULL, 0));
+					else if (strcmp(el3->Name(), "condId") == 0) audio->SetCondId(strtol(el3->GetText(), NULL, 0));
+					else if (strcmp(el3->Name(), "condType") == 0) audio->SetCondType(strtol(el3->GetText(), NULL, 0));
+					else if (strcmp(el3->Name(), "condValue") == 0) audio->SetCondValue(strtol(el3->GetText(), NULL, 0));
+					else if (strcmp(el3->Name(), "condValue2") == 0) audio->SetCondValue2(strtol(el3->GetText(), NULL, 0));
+
+					el3 = el3->NextSiblingElement();
+				}
+
+				track->AddAudio(audio);
+			}
+
+			el2 = el2->NextSiblingElement();
+		}
+
+		tracks[tracksN++] = track;
+
+		el = el->NextSiblingElement();
+	}
+
+	return 0;
+}
+
 int oamlData::Init(const char *pathToMusic) {
-	FILE *f;
 	char path[1024];
 	char filename[1024];
-	char str[1024];
 
 	ASSERT(pathToMusic != NULL);
 
@@ -42,53 +96,8 @@ int oamlData::Init(const char *pathToMusic) {
 	}
 
 	sprintf(filename, "%soaml.defs", path);
-
-	f = fopen(filename, "r");
-	printf("%s: %s\n", __FUNCTION__, filename);
-	if (f == NULL) return -1;
-
-	while (1) {
-		if (fgets(str, 1024, f) == NULL) break;
-
-		char name[1024];
-		int mode;
-		int audioCount;
-		float bpm;
-		int beatsPerBar;
-		int fadeIn = 0;
-		int fadeOut = 0;
-		int xfadeIn = 0;
-		int xfadeOut = 0;
-		int ret = sscanf(str, "%d %f %d %d %s %d %d %d %d", &mode, &bpm, &beatsPerBar, &audioCount, name, &fadeIn, &fadeOut, &xfadeIn, &xfadeOut);
-		if (ret != 9)
-			break;
-
-		oamlTrack *track = new oamlTrack(name, mode, bpm, fadeIn, fadeOut, xfadeIn, xfadeOut);
-		for (int i=0; i<audioCount; i++) {
-			if (fgets(str, 1024, f) == NULL) break;
-
-			char fname[1024];
-			int bars;
-			int type;
-			int condId = -1;
-			int condType = 0;
-			int condValue = 0;
-			fadeIn = 0;
-			fadeOut = 0;
-			if (sscanf(str, "%d %d %s %d %d %d %d %d", &type, &bars, filename, &fadeIn, &fadeOut, &condId, &condType, &condValue) >= 3) {
-				sprintf(fname, "%s%s", path, filename);
-				oamlAudio *audio = new oamlAudio(fname, type, bars, bpm, beatsPerBar, fadeIn, fadeOut);
-				if (condId != -1) {
-					audio->SetCondition(condId, condType, condValue);
-				}
-
-				track->AddAudio(audio);
-			}
-		}
-
-		tracks[tracksN++] = track;
-	}
-	fclose(f);
+	if (ReadDefs(filename, path) == -1)
+		return -1;
 
 	if (debug) {
 		dbuffer = new ByteBuffer();
@@ -190,8 +199,6 @@ void oamlData::MixToBuffer(void *buffer, int size) {
 			sbuf[i]+= (short)sample;
 		}
 	}
-
-	Update();
 }
 
 void oamlData::SetCondition(int id, int value) {
