@@ -17,7 +17,7 @@ typedef struct {
 wavHandle *wavOpen(const char *filename);
 int wavRead(wavHandle *handle, ByteBuffer *buffer, int size);
 int wavReadChunk(wavHandle *handle);
-void wavWriteToFile(const char *filename, ByteBuffer *buffer, int channels, int sampleRate, int bytesPerSample);
+void wavWriteToFile(const char *filename, ByteBuffer *buffer, int channels, unsigned int sampleRate, int bytesPerSample);
 void wavClose(wavHandle *handle);
 
 #endif /* __WAV_H__ */

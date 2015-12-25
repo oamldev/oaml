@@ -21,7 +21,7 @@ typedef struct {
 
 typedef struct {
 	int id;
-	int size;
+	unsigned int size;
 	int wave;
 } riffHeader;
 
@@ -141,7 +141,7 @@ int wavRead(wavHandle *handle, ByteBuffer *buffer, int size) {
 	return bytesRead;
 }
 
-void wavWriteToFile(const char *filename, ByteBuffer *buffer, int channels, int sampleRate, int bytesPerSample) {
+void wavWriteToFile(const char *filename, ByteBuffer *buffer, int channels, unsigned int sampleRate, int bytesPerSample) {
 	ASSERT(filename != NULL);
 	ASSERT(buffer != NULL);
 
@@ -162,11 +162,11 @@ void wavWriteToFile(const char *filename, ByteBuffer *buffer, int channels, int 
 
 	fmtHeader fmt = {
 		1,
-		channels,
+		(unsigned short)(channels),
 		sampleRate,
 		sampleRate * channels * bytesPerSample,
-		channels * bytesPerSample,
-		8 * bytesPerSample,
+		(unsigned short)(channels * bytesPerSample),
+		(unsigned short)(8 * bytesPerSample),
 	};
 
 	wavHeader data = {
