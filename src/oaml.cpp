@@ -239,7 +239,7 @@ void oamlData::Update() {
 
 	// Update each second
 	if (ms >= (timeMs + 1000)) {
-//		ShowPlayingTracks();
+		ShowPlayingTracks();
 
 //		printf("%s %d %lld %d\n", __FUNCTION__, tension, tensionMs - ms, ms >= (tensionMs + 5000));
 		// Don't allow sudden changes of tension after it changed back to 0
@@ -255,9 +255,13 @@ void oamlData::Update() {
 
 		// Lower tension
 		if (tension >= 1) {
-			tension-= (tension+20)/10;
-			if (tension < 0)
-				tension = 0;
+			if (tension >= 2) {
+				tension-= (tension+20)/10;
+				if (tension < 0)
+					tension = 0;
+			} else {
+				tension--;
+			}
 		}
 
 		timeMs = ms;

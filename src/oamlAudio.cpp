@@ -72,6 +72,11 @@ bool oamlAudio::TestCondition(int id, int value) {
 	return false;
 }
 
+unsigned int oamlAudio::GetBarsSamples(int bars) {
+	float secs = bars * (60.f / bpm) * beatsPerBar;
+	return secs * samplesPerSec;
+}
+
 int oamlAudio::Open() {
 	printf("%s %s\n", __FUNCTION__, filename);
 
@@ -88,8 +93,7 @@ int oamlAudio::Open() {
 		bytesPerSample = handle->bitsPerSample / 8;
 		totalSamples = handle->chunkSize / bytesPerSample;
 
-		float secs = bars * (60.f / bpm) * beatsPerBar;
-		samplesToEnd = secs * samplesPerSec;
+		samplesToEnd = GetBarsSamples(bars);
 	}
 
 	if (fadeIn) {

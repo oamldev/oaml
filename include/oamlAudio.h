@@ -56,6 +56,8 @@ public:
 	void SetCondition(int id, int type, int value, int value2 = 0);
 	bool TestCondition(int id, int value);
 
+	unsigned int GetBarsSamples(int bars);
+
 	bool HasFinished();
 
 	int Open();
@@ -66,8 +68,11 @@ public:
 	void DoFadeOut(int msec);
 
 	const char *GetFilename() const { return filename; }
+	int GetMinMovementBars() const { return minMovementBars; }
 	int GetCondId() const { return condId; }
 	int GetType() const { return type; }
+
+	unsigned int GetSamplesCount() const { return samplesCount; }
 };
 
 #endif

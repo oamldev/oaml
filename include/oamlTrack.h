@@ -17,10 +17,13 @@ private:
 	int xfadeIn;
 	int xfadeOut;
 
+	int playCondSamples;
+
 	oamlAudio *loopAudios[256];
 	oamlAudio *condAudios[256];
 	oamlAudio *introAudio;
 	oamlAudio *endAudio;
+	oamlAudio *playCondAudio;
 
 	oamlAudio *curAudio;
 	oamlAudio *tailAudio;
@@ -44,6 +47,8 @@ public:
 	void AddAudio(oamlAudio *audio);
 	void Play();
 	void PlayNext();
+	void PlayCond(oamlAudio *audio);
+	void PlayCondWithMovement(oamlAudio *audio);
 	void XFadePlay();
 
 	void Stop();

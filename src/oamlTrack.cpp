@@ -9,6 +9,9 @@ oamlTrack::oamlTrack() {
 	memset(name, 0, sizeof(name));
 	mode = 0;
 
+	playCondSamples = 0;
+	playCondAudio = NULL;
+
 	fadeIn = 0;
 	fadeOut = 0;
 	xfadeIn = 0;
@@ -46,6 +49,9 @@ void oamlTrack::SetCondition(int id, int value) {
 	bool stopCond = false;
 	bool playCond = false;
 
+	if (playCondSamples > 0)
+		return;
+
 	for (int i=0; i<condCount; i++) {
 		oamlAudio *audio = condAudios[i];
 		if (audio->GetCondId() != id)
@@ -55,11 +61,12 @@ void oamlTrack::SetCondition(int id, int value) {
 			// Audio isn't being played right now
 			if (audio->TestCondition(id, value) == true) {
 				// Condition is true, so let's play the audio
-				fadeAudio = curAudio;
-				curAudio = audio;
-				curAudio->Open();
+				if (curAudio == NULL || curAudio->GetMinMovementBars() == 0) {
+					PlayCond(audio);
+				} else {
+					PlayCondWithMovement(audio);
+				}
 
-				XFadePlay();
 				playCond = true;
 			}
 		} else {
@@ -72,12 +79,34 @@ void oamlTrack::SetCondition(int id, int value) {
 
 	if (stopCond == true && playCond == false) {
 		// No condition is being played now, let's go back to the main loop
-		fadeAudio = curAudio;
-		curAudio = NULL;
-		PlayNext();
-
-		XFadePlay();
+		if (curAudio == NULL || curAudio->GetMinMovementBars() == 0) {
+			PlayCond(NULL);
+		} else {
+			PlayCondWithMovement(NULL);
+		}
 	}
+}
+
+void oamlTrack::PlayCondWithMovement(oamlAudio *audio) {
+	playCondAudio = audio;
+	playCondSamples = curAudio->GetBarsSamples(curAudio->GetMinMovementBars());
+	if (playCondSamples == 0)
+		return;
+
+	playCondSamples = (playCondSamples + curAudio->GetBarsSamples(curAudio->GetSamplesCount() / playCondSamples) * curAudio->GetMinMovementBars()) - curAudio->GetSamplesCount();
+//	printf("%s %d\n", __FUNCTION__, playCondSamples);
+}
+
+void oamlTrack::PlayCond(oamlAudio *audio) {
+	fadeAudio = curAudio;
+	curAudio = audio;
+	if (curAudio == NULL) {
+		PlayNext();
+	} else {
+		curAudio->Open();
+	}
+
+	XFadePlay();
 }
 
 void oamlTrack::Play() {
@@ -165,6 +194,13 @@ int oamlTrack::Read32() {
 
 	if (fadeAudio && fadeAudio->HasFinished()) {
 		fadeAudio = NULL;
+	}
+
+	if (playCondSamples > 0) {
+		playCondSamples--;
+		if (playCondSamples == 0) {
+			PlayCond(playCondAudio);
+		}
 	}
 
 	return sample;
