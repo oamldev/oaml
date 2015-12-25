@@ -7,7 +7,7 @@
 //
 
 #define OAML_VOLUME_MIN	0
-#define OAML_VOLUME_MAX	255
+#define OAML_VOLUME_MAX	100
 
 //
 // Internal classes declaration

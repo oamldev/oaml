@@ -180,7 +180,7 @@ void oamlData::MixToBuffer(void *buffer, int size) {
 		}
 
 		sample>>= 16;
-		sample = (sample * volume) / 255;
+		sample = (sample * volume) / OAML_VOLUME_MAX;
 
 		if (sample > 32767) sample = 32767;
 		if (sample < -32768) sample = -32768;
