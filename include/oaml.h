@@ -48,6 +48,7 @@ private:
 
 	uint64_t timeMs;
 
+	void ShowPlayingTracks();
 	int ReadDefs(const char *filaname, const char *path);
 
 public:

@@ -43,6 +43,9 @@ void oamlTrack::AddAudio(oamlAudio *audio) {
 }
 
 void oamlTrack::SetCondition(int id, int value) {
+	bool stopCond = false;
+	bool playCond = false;
+
 	for (int i=0; i<condCount; i++) {
 		oamlAudio *audio = condAudios[i];
 		if (audio->GetCondId() != id)
@@ -52,23 +55,28 @@ void oamlTrack::SetCondition(int id, int value) {
 			// Audio isn't being played right now
 			if (audio->TestCondition(id, value) == true) {
 				// Condition is true, so let's play the audio
-				tailAudio = curAudio;
+				fadeAudio = curAudio;
 				curAudio = audio;
 				curAudio->Open();
 
 				XFadePlay();
+				playCond = true;
 			}
 		} else {
 			// Audio is being played right now
 			if (audio->TestCondition(id, value) == false) {
-				// Condition is false, so let's stop the audio
-				tailAudio = curAudio;
-				curAudio = NULL;
-				PlayNext();
-
-				XFadePlay();
+				stopCond = true;
 			}
 		}
+	}
+
+	if (stopCond == true && playCond == false) {
+		// No condition is being played now, let's go back to the main loop
+		fadeAudio = curAudio;
+		curAudio = NULL;
+		PlayNext();
+
+		XFadePlay();
 	}
 }
 
@@ -123,8 +131,12 @@ void oamlTrack::PlayNext() {
 void oamlTrack::XFadePlay() {
 	if (curAudio)
 		curAudio->DoFadeIn(xfadeIn);
-	if (tailAudio)
-		tailAudio->DoFadeOut(xfadeOut);
+	if (fadeAudio) {
+		if (xfadeOut)
+			fadeAudio->DoFadeOut(xfadeOut);
+		else
+			fadeAudio = NULL;
+	}
 }
 
 int oamlTrack::Read32() {
@@ -160,6 +172,26 @@ int oamlTrack::Read32() {
 
 bool oamlTrack::IsPlaying() {
 	return (curAudio != NULL || tailAudio != NULL);
+}
+
+void oamlTrack::ShowPlaying() {
+	char str[1024] = "";
+
+	if (curAudio) {
+		sprintf(str, "%s curAudio = %s", str, curAudio->GetFilename());
+	}
+
+	if (tailAudio) {
+		sprintf(str, "%s tailAudio = %s", str, tailAudio->GetFilename());
+	}
+
+	if (fadeAudio) {
+		sprintf(str, "%s fadeAudio = %s", str, fadeAudio->GetFilename());
+	}
+
+	if (strlen(str) > 0) {
+		printf("%s: %s\n", GetName(), str);
+	}
 }
 
 void oamlTrack::Stop() {

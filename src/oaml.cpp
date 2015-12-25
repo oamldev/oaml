@@ -37,41 +37,47 @@ int oamlData::ReadDefs(const char *filename, const char *path) {
 	while (el != NULL) {
 		oamlTrack *track = new oamlTrack();
 
-		tinyxml2::XMLElement *el2 = el->FirstChildElement();
-		while (el2 != NULL) {
-			if (strcmp(el2->Name(), "name") == 0) track->SetName(el2->GetText());
-			else if (strcmp(el2->Name(), "fadeIn") == 0) track->SetFadeIn(strtol(el2->GetText(), NULL, 0));
-			else if (strcmp(el2->Name(), "fadeOut") == 0) track->SetFadeOut(strtol(el2->GetText(), NULL, 0));
-			else if (strcmp(el2->Name(), "xfadeIn") == 0) track->SetXFadeIn(strtol(el2->GetText(), NULL, 0));
-			else if (strcmp(el2->Name(), "xfadeOut") == 0) track->SetXFadeOut(strtol(el2->GetText(), NULL, 0));
-			else if (strcmp(el2->Name(), "audio") == 0) {
+		tinyxml2::XMLElement *trackEl = el->FirstChildElement();
+		while (trackEl != NULL) {
+			if (strcmp(trackEl->Name(), "name") == 0) track->SetName(trackEl->GetText());
+			else if (strcmp(trackEl->Name(), "fadeIn") == 0) track->SetFadeIn(strtol(trackEl->GetText(), NULL, 0));
+			else if (strcmp(trackEl->Name(), "fadeOut") == 0) track->SetFadeOut(strtol(trackEl->GetText(), NULL, 0));
+			else if (strcmp(trackEl->Name(), "xfadeIn") == 0) track->SetXFadeIn(strtol(trackEl->GetText(), NULL, 0));
+			else if (strcmp(trackEl->Name(), "xfadeOut") == 0) track->SetXFadeOut(strtol(trackEl->GetText(), NULL, 0));
+			else if (strcmp(trackEl->Name(), "audio") == 0) {
 				oamlAudio *audio = new oamlAudio();
 
-				tinyxml2::XMLElement *el3 = el2->FirstChildElement();
-				while (el3 != NULL) {
-					if (strcmp(el3->Name(), "filename") == 0) {
+				tinyxml2::XMLElement *audioEl = trackEl->FirstChildElement();
+				while (audioEl != NULL) {
+					if (strcmp(audioEl->Name(), "filename") == 0) {
 						char fname[1024];
-						sprintf(fname, "%s%s", path, el3->GetText());
+						sprintf(fname, "%s%s", path, audioEl->GetText());
 						audio->SetFilename(fname);
 					}
-					else if (strcmp(el3->Name(), "type") == 0) audio->SetType(strtol(el3->GetText(), NULL, 0));
-					else if (strcmp(el3->Name(), "bars") == 0) audio->SetBars(strtol(el3->GetText(), NULL, 0));
-					else if (strcmp(el3->Name(), "bpm") == 0) audio->SetBPM(strtof(el3->GetText(), NULL));
-					else if (strcmp(el3->Name(), "beatsPerBar") == 0) audio->SetBeatsPerBar(strtol(el3->GetText(), NULL, 0));
-					else if (strcmp(el3->Name(), "fadeIn") == 0) audio->SetFadeIn(strtol(el3->GetText(), NULL, 0));
-					else if (strcmp(el3->Name(), "fadeOut") == 0) audio->SetFadeOut(strtol(el3->GetText(), NULL, 0));
-					else if (strcmp(el3->Name(), "condId") == 0) audio->SetCondId(strtol(el3->GetText(), NULL, 0));
-					else if (strcmp(el3->Name(), "condType") == 0) audio->SetCondType(strtol(el3->GetText(), NULL, 0));
-					else if (strcmp(el3->Name(), "condValue") == 0) audio->SetCondValue(strtol(el3->GetText(), NULL, 0));
-					else if (strcmp(el3->Name(), "condValue2") == 0) audio->SetCondValue2(strtol(el3->GetText(), NULL, 0));
+					else if (strcmp(audioEl->Name(), "type") == 0) audio->SetType(strtol(audioEl->GetText(), NULL, 0));
+					else if (strcmp(audioEl->Name(), "bars") == 0) audio->SetBars(strtol(audioEl->GetText(), NULL, 0));
+					else if (strcmp(audioEl->Name(), "bpm") == 0) audio->SetBPM(strtof(audioEl->GetText(), NULL));
+					else if (strcmp(audioEl->Name(), "beatsPerBar") == 0) audio->SetBeatsPerBar(strtol(audioEl->GetText(), NULL, 0));
+					else if (strcmp(audioEl->Name(), "minMovementBars") == 0) audio->SetMinMovementBars(strtol(audioEl->GetText(), NULL, 0));
+					else if (strcmp(audioEl->Name(), "fadeIn") == 0) audio->SetFadeIn(strtol(audioEl->GetText(), NULL, 0));
+					else if (strcmp(audioEl->Name(), "fadeOut") == 0) audio->SetFadeOut(strtol(audioEl->GetText(), NULL, 0));
+					else if (strcmp(audioEl->Name(), "condId") == 0) audio->SetCondId(strtol(audioEl->GetText(), NULL, 0));
+					else if (strcmp(audioEl->Name(), "condType") == 0) audio->SetCondType(strtol(audioEl->GetText(), NULL, 0));
+					else if (strcmp(audioEl->Name(), "condValue") == 0) audio->SetCondValue(strtol(audioEl->GetText(), NULL, 0));
+					else if (strcmp(audioEl->Name(), "condValue2") == 0) audio->SetCondValue2(strtol(audioEl->GetText(), NULL, 0));
+					else {
+						printf("%s: Unknown audio tag: %s\n", __FUNCTION__, audioEl->Name());
+					}
 
-					el3 = el3->NextSiblingElement();
+					audioEl = audioEl->NextSiblingElement();
 				}
 
 				track->AddAudio(audio);
+			} else {
+				printf("%s: Unknown track tag: %s\n", __FUNCTION__, trackEl->Name());
 			}
 
-			el2 = el2->NextSiblingElement();
+			trackEl = trackEl->NextSiblingElement();
 		}
 
 		tracks[tracksN++] = track;
@@ -177,6 +183,12 @@ void oamlData::StopPlaying() {
 	}
 }
 
+void oamlData::ShowPlayingTracks() {
+	for (int i=0; i<tracksN; i++) {
+		tracks[i]->ShowPlaying();
+	}
+}
+
 void oamlData::MixToBuffer(void *buffer, int size) {
 	ASSERT(buffer != NULL);
 	ASSERT(size != 0);
@@ -227,6 +239,8 @@ void oamlData::Update() {
 
 	// Update each second
 	if (ms >= (timeMs + 1000)) {
+//		ShowPlayingTracks();
+
 //		printf("%s %d %lld %d\n", __FUNCTION__, tension, tensionMs - ms, ms >= (tensionMs + 5000));
 		// Don't allow sudden changes of tension after it changed back to 0
 		if (tension > 0) {

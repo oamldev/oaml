@@ -21,6 +21,7 @@ private:
 
 	float bpm;
 	int beatsPerBar;
+	int minMovementBars;
 
 	unsigned int fadeIn;
 	unsigned int fadeInSamples;
@@ -42,6 +43,7 @@ public:
 	void SetType(int audioType) { type = audioType; }
 	void SetBPM(float audioBpm) { bpm = audioBpm; }
 	void SetBeatsPerBar(float audioBeatsPerBar) { beatsPerBar = audioBeatsPerBar; }
+	void SetMinMovementBars(int audioMinMovementBars) { minMovementBars = audioMinMovementBars; }
 	void SetBars(float audioBars) { bars = audioBars; }
 	void SetFadeIn(int audioFadeIn) { fadeIn = audioFadeIn; }
 	void SetFadeOut(int audioFadeOut) { fadeOut = audioFadeOut; }
@@ -63,8 +65,9 @@ public:
 	void DoFadeIn(int msec);
 	void DoFadeOut(int msec);
 
-	int GetCondId() { return condId; }
-	int GetType() { return type; }
+	const char *GetFilename() const { return filename; }
+	int GetCondId() const { return condId; }
+	int GetType() const { return type; }
 };
 
 #endif

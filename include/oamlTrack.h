@@ -49,6 +49,7 @@ public:
 	void Stop();
 
 	bool IsPlaying();
+	void ShowPlaying();
 
 	int Read32();
 
