@@ -19,6 +19,7 @@ oamlTrack::oamlTrack() {
 
 	loopCount = 0;
 	condCount = 0;
+	randCount = 0;
 
 	introAudio = NULL;
 	endAudio = NULL;
@@ -40,6 +41,8 @@ void oamlTrack::AddAudio(oamlAudio *audio) {
 		endAudio = audio;
 	} else if (audio->GetType() == 4) {
 		condAudios[condCount++] = audio;
+	} else if (audio->GetRandomChance() > 0) {
+		randAudios[randCount++] = audio;
 	} else {
 		loopAudios[loopCount++] = audio;
 	}
@@ -112,6 +115,8 @@ void oamlTrack::PlayCond(oamlAudio *audio) {
 void oamlTrack::Play() {
 	int doFade = 0;
 
+//	printf("%s %s\n", __FUNCTION__, name);
+
 	if (curAudio == NULL && fadeIn) {
 		doFade = 1;
 	}
@@ -139,6 +144,19 @@ void oamlTrack::PlayNext() {
 			curAudio->Open();
 			tailAudio = NULL;
 			return;
+		}
+	}
+
+	if (randCount > 0) {
+		for (int i=0; i<randCount; i++) {
+			int chance = randAudios[i]->GetRandomChance();
+			if (Random(0, 100) > chance) {
+				continue;
+			} else {
+				curAudio = randAudios[i];
+				curAudio->Open();
+				return;
+			}
 		}
 	}
 

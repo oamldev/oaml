@@ -11,6 +11,7 @@ private:
 
 	int loopCount;
 	int condCount;
+	int randCount;
 
 	int fadeIn;
 	int fadeOut;
@@ -20,6 +21,7 @@ private:
 	int playCondSamples;
 
 	oamlAudio *loopAudios[256];
+	oamlAudio *randAudios[256];
 	oamlAudio *condAudios[256];
 	oamlAudio *introAudio;
 	oamlAudio *endAudio;
