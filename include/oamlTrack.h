@@ -57,6 +57,7 @@ public:
 
 	bool IsPlaying();
 	void ShowPlaying();
+	void ShowInfo();
 
 	int Read32();
 

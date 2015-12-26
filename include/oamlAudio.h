@@ -61,6 +61,7 @@ public:
 	unsigned int GetBarsSamples(int bars);
 
 	bool HasFinished();
+	bool HasFinishedTail();
 
 	int Open();
 	int Read();

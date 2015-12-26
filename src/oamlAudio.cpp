@@ -13,6 +13,7 @@ oamlAudio::oamlAudio() {
 	type = 0;
 	bars = 0;
 	bpm = 0;
+	randomChance = 0;
 	beatsPerBar = 0;
 	fadeIn = 0;
 	fadeOut = 0;
@@ -134,6 +135,10 @@ bool oamlAudio::HasFinished() {
 
 	// Check if our samples reached our end (based off the number of bars)
 	return samplesCount >= samplesToEnd;
+}
+
+bool oamlAudio::HasFinishedTail() {
+	return samplesCount >= totalSamples;
 }
 
 int oamlAudio::Read() {

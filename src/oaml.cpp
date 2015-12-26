@@ -82,6 +82,7 @@ int oamlData::ReadDefs(const char *filename, const char *path) {
 		}
 
 		tracks[tracksN++] = track;
+//		track->ShowInfo();
 
 		el = el->NextSiblingElement();
 	}

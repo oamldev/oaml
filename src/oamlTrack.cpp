@@ -138,7 +138,13 @@ int oamlTrack::Random(int min, int max) {
 	return rand() % range + min;
 }
 
+void oamlTrack::ShowInfo() {
+	printf("%s %d %d %d\n", name, loopCount, randCount, condCount);
+}
+
 void oamlTrack::PlayNext() {
+	printf("%s %d %d %d\n", __FUNCTION__, loopCount, randCount, condCount);
+
 	if (curAudio) {
 		if (curAudio->GetType() == 4) {
 			curAudio->Open();
@@ -147,7 +153,7 @@ void oamlTrack::PlayNext() {
 		}
 	}
 
-	if (randCount > 0) {
+	if (randCount > 0 && (curAudio == NULL || curAudio->GetRandomChance() == 0)) {
 		for (int i=0; i<randCount; i++) {
 			int chance = randAudios[i]->GetRandomChance();
 			if (Random(0, 100) > chance) {
@@ -155,6 +161,9 @@ void oamlTrack::PlayNext() {
 			} else {
 				curAudio = randAudios[i];
 				curAudio->Open();
+
+				if (curAudio == tailAudio)
+					tailAudio = NULL;
 				return;
 			}
 		}
@@ -162,6 +171,7 @@ void oamlTrack::PlayNext() {
 
 	if (loopCount == 1) {
 		curAudio = loopAudios[0];
+		tailAudio = NULL;
 	} else if (loopCount >= 2) {
 		int r = Random(0, loopCount-1);
 		while (curAudio == loopAudios[r]) {
@@ -173,6 +183,8 @@ void oamlTrack::PlayNext() {
 
 	if (curAudio)
 		curAudio->Open();
+	if (curAudio == tailAudio)
+		tailAudio = NULL;
 }
 
 void oamlTrack::XFadePlay() {
@@ -198,6 +210,8 @@ int oamlTrack::Read32() {
 
 	if (tailAudio) {
 		sample+= tailAudio->Read32();
+		if (tailAudio->HasFinishedTail())
+			tailAudio = NULL;
 	}
 
 	if (fadeAudio) {
