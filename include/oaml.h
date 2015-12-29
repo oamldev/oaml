@@ -17,49 +17,29 @@ enum {
 } CondType;
 
 //
-// Internal classes declaration
+// Internal declarations
 //
 
-class ByteBuffer;
-class oamlTrack;
-
+class oamlBase;
 
 //
 // Main class
 //
 
-class oamlData {
+class oamlApi {
 private:
-	int debug;
-	oamlTrack *tracks[1024];
-	int tracksN;
-
-	oamlTrack *curTrack;
-
-	ByteBuffer *dbuffer;
-
-	int freq;
-	int channels;
-	int bytesPerSample;
-
-	int tension;
-	uint64_t tensionMs;
-	int volume;
-
-	uint64_t timeMs;
-
-	void ShowPlayingTracks();
-	int ReadDefs(const char *filaname, const char *path);
+	oamlBase *oaml;
 
 public:
-	oamlData();
-	~oamlData();
+	oamlApi();
+	~oamlApi();
 
 	int Init(const char *pathToMusic);
 	void Shutdown();
 
-	void SetAudioFormat(int audioFreq, int audioChannels, int audioBytesPerSample);
+	void SetAudioFormat(int freq, int channels, int bytesPerSample);
 	void SetVolume(int vol);
+	int GetVolume();
 
 	int PlayTrack(const char *name);
 	int PlayTrackId(int id);

@@ -24,6 +24,7 @@
 #include "oaml.h"
 #include "oamlAudio.h"
 #include "oamlTrack.h"
+#include "oamlBase.h"
 
 
 #endif /* __OAMLCOMMON_H__ */

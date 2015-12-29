@@ -6,7 +6,7 @@
 #include "oaml.h"
 
 int main() {
-	oamlData *oaml = new oamlData();
+	oamlApi *oaml = new oamlApi();
 
 	oaml->Init("music/");
 	oaml->Shutdown();
