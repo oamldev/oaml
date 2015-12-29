@@ -143,8 +143,6 @@ void oamlTrack::ShowInfo() {
 }
 
 void oamlTrack::PlayNext() {
-	printf("%s %d %d %d\n", __FUNCTION__, loopCount, randCount, condCount);
-
 	if (curAudio) {
 		if (curAudio->GetType() == 4) {
 			curAudio->Open();
@@ -171,7 +169,6 @@ void oamlTrack::PlayNext() {
 
 	if (loopCount == 1) {
 		curAudio = loopAudios[0];
-		tailAudio = NULL;
 	} else if (loopCount >= 2) {
 		int r = Random(0, loopCount-1);
 		while (curAudio == loopAudios[r]) {
@@ -183,6 +180,7 @@ void oamlTrack::PlayNext() {
 
 	if (curAudio)
 		curAudio->Open();
+
 	if (curAudio == tailAudio)
 		tailAudio = NULL;
 }
