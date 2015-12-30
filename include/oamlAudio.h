@@ -75,6 +75,8 @@ public:
 	int GetRandomChance() const { return randomChance; }
 	int GetCondId() const { return condId; }
 	int GetType() const { return type; }
+	int GetFadeIn() const { return fadeIn; }
+	int GetFadeOut() const { return fadeOut; }
 
 	unsigned int GetSamplesCount() const { return samplesCount; }
 };

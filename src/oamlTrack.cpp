@@ -117,7 +117,7 @@ void oamlTrack::Play() {
 
 //	printf("%s %s\n", __FUNCTION__, name);
 
-	if (curAudio == NULL && fadeIn) {
+	if (curAudio == NULL) {
 		doFade = 1;
 	}
 
@@ -129,7 +129,12 @@ void oamlTrack::Play() {
 	}
 
 	if (doFade && curAudio) {
-		curAudio->DoFadeIn(fadeIn);
+		// First check the fade in property for the audio and then the track fade in property
+		if (curAudio->GetFadeIn()) {
+			curAudio->DoFadeIn(curAudio->GetFadeIn());
+		} else if (fadeIn) {
+			curAudio->DoFadeIn(fadeIn);
+		}
 	}
 }
 
@@ -186,8 +191,15 @@ void oamlTrack::PlayNext() {
 }
 
 void oamlTrack::XFadePlay() {
-	if (curAudio)
-		curAudio->DoFadeIn(xfadeIn);
+	if (curAudio) {
+		// First check the fade in property for the audio and then the track fade in property
+		if (curAudio->GetFadeIn()) {
+			curAudio->DoFadeIn(curAudio->GetFadeIn());
+		} else if (xfadeIn) {
+			curAudio->DoFadeIn(xfadeIn);
+		}
+	}
+
 	if (fadeAudio) {
 		if (xfadeOut)
 			fadeAudio->DoFadeOut(xfadeOut);

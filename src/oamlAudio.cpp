@@ -97,11 +97,7 @@ int oamlAudio::Open() {
 		samplesToEnd = GetBarsSamples(bars);
 	}
 
-	if (fadeIn) {
-		fadeInSamples = (fadeIn / 1000.f) * samplesPerSec;
-	} else {
-		fadeInSamples = 0;
-	}
+	fadeInSamples = 0;
 
 	if (fadeOut) {
 		fadeOutSamples = (fadeOut / 1000.f) * samplesPerSec;
