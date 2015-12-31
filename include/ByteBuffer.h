@@ -22,13 +22,8 @@
 // Default number of uint8_ts to allocate in the backing buffer if no size is provided
 #define DEFAULT_SIZE 4096
 
-// The byte type from previous versions of ByteBuffer is now obsolete
-// This macro is to ensure compatibility, however, it will be removed in future versions
-#define byte uint8_t
-
-#include <cstdlib>
-#include <cstdint>
-#include <cstring>
+#include <string.h>
+#include <stdint.h>
 #include <vector>
 
 class ByteBuffer {
@@ -54,7 +49,6 @@ private:
 		if (size() < (wpos + s))
 			buf.resize(wpos + s);
 		memcpy(&buf[wpos], (uint8_t*)&data, s);
-		//printf("writing %c to %i\n", (uint8_t)data, wpos);
 
 		wpos += s;
 	}
@@ -75,33 +69,10 @@ public:
 	uint32_t bytesRemaining(); // Number of uint8_ts from the current read position till the end of the buffer
 	void clear(); // Clear our the vector and reset read and write positions
 	ByteBuffer* clone(); // Return a new instance of a ByteBuffer with the exact same contents and the same state (rpos, wpos)
-	//ByteBuffer compact(); // TODO?
 	bool equals(ByteBuffer* other); // Compare if the contents are equivalent
 	void resize(uint32_t newSize);
 	uint32_t size(); // Size of internal vector
 
-    // Basic Searching (Linear)
-    template <typename T> int32_t find(T key, uint32_t start=0) {
-        int32_t ret = -1;
-        uint32_t len = buf.size();
-        for(uint32_t i = start; i < len; i++) {
-            T data = read<T>(i);
-            // Wasn't actually found, bounds of buffer were exceeded
-            if((key != 0) && (data == 0))
-                break;
-            
-            // Key was found in array
-            if(data == key) {
-                ret = (int32_t)i;
-                break;
-            }
-        }
-        return ret;
-    }
-    
-    // Replacement
-    void replace(uint8_t key, uint8_t rep, uint32_t start = 0, bool firstOccuranceOnly=false);
-	
 	// Read
 
 	uint8_t peek(); // Relative peek. Reads and returns the next uint8_t in the buffer from the current position but does not increment the read position
@@ -143,21 +114,11 @@ public:
 
 	// Buffer Position Accessors & Mutators
 
-	void setReadPos(uint32_t r) {
-		rpos = r;
-	}
+	void setReadPos(uint32_t r) { rpos = r; }
+	uint32_t getReadPos() const { return rpos; }
 
-	uint32_t getReadPos() {
-		return rpos;
-	}
-
-	void setWritePos(uint32_t w) {
-		wpos = w;
-	}
-
-	uint32_t getWritePos() {
-		return wpos;
-	}
+	void setWritePos(uint32_t w) { wpos = w; }
+	uint32_t getWritePos() const{ return wpos; }
 };
 
 #endif

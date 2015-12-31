@@ -140,34 +140,6 @@ uint32_t ByteBuffer::size() {
 	return buf.size();
 }
 
-// Replacement
-
-/**
- * Replace
- * Replace occurance of a particular uint8_t, key, with the uint8_t rep
- *
- * @param key uint8_t to find for replacement
- * @param rep uint8_t to replace the found key with
- * @param start Index to start from. By default, start is 0
- * @param firstOccuranceOnly If true, only replace the first occurance of the key. If false, replace all occurances. False by default
- */
-void ByteBuffer::replace(uint8_t key, uint8_t rep, uint32_t start, bool firstOccuranceOnly) {
-    uint32_t len = buf.size();
-    for(uint32_t i = start; i < len; i++) {
-        uint8_t data = read<uint8_t>(i);
-        // Wasn't actually found, bounds of buffer were exceeded
-        if((key != 0) && (data == 0))
-            break;
-
-        // Key was found in array, perform replacement
-        if(data == key) {
-            buf[i] = rep;
-            if(firstOccuranceOnly)
-                return;
-        }
-    }
-}
-
 // Read Functions
 
 uint8_t ByteBuffer::peek() {

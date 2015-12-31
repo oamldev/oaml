@@ -13,8 +13,8 @@ enum {
 	COND_TYPE_EQUAL		= 0,
 	COND_TYPE_GREATER	= 1,
 	COND_TYPE_LESS		= 2,
-	COND_TYPE_RANGE		= 3,
-} CondType;
+	COND_TYPE_RANGE		= 3
+};
 
 //
 // Internal declarations
