@@ -116,6 +116,7 @@ void oamlTrack::Play() {
 	int doFade = 0;
 
 //	printf("%s %s\n", __FUNCTION__, name);
+	fadeAudio = NULL;
 
 	if (curAudio == NULL) {
 		doFade = 1;
