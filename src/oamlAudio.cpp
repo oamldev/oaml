@@ -7,25 +7,29 @@
 
 
 oamlAudio::oamlAudio() {
+	buffer = new ByteBuffer();
 	handle = NULL;
-
 	memset(filename, 0, sizeof(filename));
 	type = 0;
 	bars = 0;
-	bpm = 0;
-	randomChance = 0;
-	beatsPerBar = 0;
-	fadeIn = 0;
-	fadeOut = 0;
 
-	buffer = new ByteBuffer();
-
+	bytesPerSample = 0;
 	samplesCount = 0;
 	samplesPerSec = 0;
 	samplesToEnd = 0;
 	totalSamples = 0;
+
+	bpm = 0;
+	beatsPerBar = 0;
+	minMovementBars = 0;
+	randomChance = 0;
+
+	fadeIn = 0;
 	fadeInSamples = 0;
+
+	fadeOut = 0;
 	fadeOutSamples = 0;
+	fadeOutStart = 0;
 
 	condId = 0;
 	condType = 0;
