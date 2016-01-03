@@ -43,7 +43,7 @@ public:
 	void SetFilename(const char *audioFilename) { ASSERT(audioFilename != NULL); strcpy(filename, audioFilename); }
 	void SetType(int audioType) { type = audioType; }
 	void SetBPM(float audioBpm) { bpm = audioBpm; }
-	void SetBeatsPerBar(float audioBeatsPerBar) { beatsPerBar = audioBeatsPerBar; }
+	void SetBeatsPerBar(int audioBeatsPerBar) { beatsPerBar = audioBeatsPerBar; }
 	void SetMinMovementBars(int audioMinMovementBars) { minMovementBars = audioMinMovementBars; }
 	void SetRandomChance(int audioRandomChance) { randomChance = audioRandomChance; }
 	void SetBars(float audioBars) { bars = audioBars; }

@@ -7,10 +7,23 @@
 // Definitions
 //
 
+
+// Visual Studio specific stuff
+#ifdef _MSC_VER
+
+#define snprintf	sprintf_s
+
+#endif
+
+
 #ifdef DEBUG
 
+#ifdef _MSC_VER
+#define ASSERT(e)
+#else
 #define ASSERT(e)  \
     ((void) ((e) ? ((void)0) : __assert (#e, __FILE__, __LINE__)))
+#endif
 
 #else
 

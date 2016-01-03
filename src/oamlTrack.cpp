@@ -257,15 +257,15 @@ void oamlTrack::ShowPlaying() {
 	char str[1024] = "";
 
 	if (curAudio) {
-		sprintf(str, "%s curAudio = %s", str, curAudio->GetFilename());
+		snprintf(str, 1024, "%s curAudio = %s", str, curAudio->GetFilename());
 	}
 
 	if (tailAudio) {
-		sprintf(str, "%s tailAudio = %s", str, tailAudio->GetFilename());
+		snprintf(str, 1024, "%s tailAudio = %s", str, tailAudio->GetFilename());
 	}
 
 	if (fadeAudio) {
-		sprintf(str, "%s fadeAudio = %s", str, fadeAudio->GetFilename());
+		snprintf(str, 1024, "%s fadeAudio = %s", str, fadeAudio->GetFilename());
 	}
 
 	if (strlen(str) > 0) {

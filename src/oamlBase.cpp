@@ -51,12 +51,12 @@ int oamlBase::ReadDefs(const char *filename, const char *path) {
 				while (audioEl != NULL) {
 					if (strcmp(audioEl->Name(), "filename") == 0) {
 						char fname[1024];
-						sprintf(fname, "%s%s", path, audioEl->GetText());
+						snprintf(fname, 1024, "%s%s", path, audioEl->GetText());
 						audio->SetFilename(fname);
 					}
 					else if (strcmp(audioEl->Name(), "type") == 0) audio->SetType(strtol(audioEl->GetText(), NULL, 0));
 					else if (strcmp(audioEl->Name(), "bars") == 0) audio->SetBars(strtol(audioEl->GetText(), NULL, 0));
-					else if (strcmp(audioEl->Name(), "bpm") == 0) audio->SetBPM(strtof(audioEl->GetText(), NULL));
+					else if (strcmp(audioEl->Name(), "bpm") == 0) audio->SetBPM(atof(audioEl->GetText()));
 					else if (strcmp(audioEl->Name(), "beatsPerBar") == 0) audio->SetBeatsPerBar(strtol(audioEl->GetText(), NULL, 0));
 					else if (strcmp(audioEl->Name(), "minMovementBars") == 0) audio->SetMinMovementBars(strtol(audioEl->GetText(), NULL, 0));
 					else if (strcmp(audioEl->Name(), "randomChance") == 0) audio->SetRandomChance(strtol(audioEl->GetText(), NULL, 0));
@@ -98,12 +98,12 @@ int oamlBase::Init(const char *pathToMusic) {
 
 	int len = strlen(pathToMusic);
 	if (len > 0 && (pathToMusic[len-1] == '/')) {
-		sprintf(path, "%s", pathToMusic);
+		snprintf(path, 1024, "%s", pathToMusic);
 	} else {
-		sprintf(path, "%s/", pathToMusic);
+		snprintf(path, 1024, "%s/", pathToMusic);
 	}
 
-	sprintf(filename, "%soaml.defs", path);
+	snprintf(filename, 1024, "%soaml.defs", path);
 	if (ReadDefs(filename, path) == -1)
 		return -1;
 
