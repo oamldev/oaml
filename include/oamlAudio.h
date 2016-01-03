@@ -40,13 +40,13 @@ public:
 	oamlAudio();
 	~oamlAudio();
 
-	void SetFilename(const char *audioFilename) { ASSERT(audioFilename != NULL); strcpy(filename, audioFilename); }
+	void SetFilename(const char *audioFilename) { ASSERT(audioFilename != NULL); snprintf(filename, 1024, "%s", audioFilename); }
 	void SetType(int audioType) { type = audioType; }
 	void SetBPM(float audioBpm) { bpm = audioBpm; }
 	void SetBeatsPerBar(int audioBeatsPerBar) { beatsPerBar = audioBeatsPerBar; }
 	void SetMinMovementBars(int audioMinMovementBars) { minMovementBars = audioMinMovementBars; }
 	void SetRandomChance(int audioRandomChance) { randomChance = audioRandomChance; }
-	void SetBars(float audioBars) { bars = audioBars; }
+	void SetBars(int audioBars) { bars = audioBars; }
 	void SetFadeIn(int audioFadeIn) { fadeIn = audioFadeIn; }
 	void SetFadeOut(int audioFadeOut) { fadeOut = audioFadeOut; }
 

@@ -79,7 +79,7 @@ bool oamlAudio::TestCondition(int id, int value) {
 
 unsigned int oamlAudio::GetBarsSamples(int bars) {
 	float secs = bars * (60.f / bpm) * beatsPerBar;
-	return secs * samplesPerSec;
+	return (unsigned int)(secs * samplesPerSec);
 }
 
 int oamlAudio::Open() {
@@ -104,7 +104,7 @@ int oamlAudio::Open() {
 	fadeInSamples = 0;
 
 	if (fadeOut) {
-		fadeOutSamples = (fadeOut / 1000.f) * samplesPerSec;
+		fadeOutSamples = (unsigned int)((fadeOut / 1000.f) * samplesPerSec);
 		fadeOutStart = samplesToEnd - fadeOutSamples;
 	} else {
 		fadeOutSamples = 0;
@@ -115,12 +115,12 @@ int oamlAudio::Open() {
 }
 
 void oamlAudio::DoFadeIn(int msec) {
-	fadeInSamples = (msec / 1000.f) * samplesPerSec;
+	fadeInSamples = (unsigned int)((msec / 1000.f) * samplesPerSec);
 }
 
 void oamlAudio::DoFadeOut(int msec) {
 	fadeOutStart = samplesCount;
-	fadeOutSamples = (msec / 1000.f) * samplesPerSec;
+	fadeOutSamples = (unsigned int)((msec / 1000.f) * samplesPerSec);
 }
 
 bool oamlAudio::HasFinished() {

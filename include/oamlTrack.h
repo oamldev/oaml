@@ -37,7 +37,7 @@ public:
 	oamlTrack();
 	~oamlTrack();
 
-	void SetName(const char *trackName) { ASSERT(trackName != NULL); strcpy(name, trackName); }
+	void SetName(const char *trackName) { ASSERT(trackName != NULL); snprintf(name, 256, trackName); }
 	void SetMode(int trackMode) { mode = trackMode; }
 	void SetFadeIn(int trackFadeIn) { fadeIn = trackFadeIn; }
 	void SetFadeOut(int trackFadeOut) { fadeOut = trackFadeOut; }
