@@ -37,6 +37,8 @@ public:
 	int Init(const char *pathToMusic);
 	void Shutdown();
 
+	void SetMeasureDecibels(bool option);
+
 	void SetAudioFormat(int freq, int channels, int bytesPerSample);
 	void SetVolume(int vol);
 	int GetVolume();

@@ -1,12 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include "tinyxml2.h"
 #include "oamlCommon.h"
 
+
 oamlBase::oamlBase() {
 	debug = 0;
+	measureDecibels = false;
+	avgDecibels = 0;
 	tracksN = 0;
 
 	curTrack = NULL;
@@ -145,6 +149,8 @@ int oamlBase::PlayTrack(const char *name) {
 		}
 	}
 
+	fprintf(stderr, "liboaml: Unable to find track name '%s'\n", name);
+
 	return -1;
 }
 
@@ -192,6 +198,10 @@ void oamlBase::ShowPlayingTracks() {
 }
 
 void oamlBase::MixToBuffer(void *buffer, int size) {
+	double sd[2] = { 0, 0 };
+	double sum[2] = { 0, 0 };
+	int chcount = 0;
+
 	ASSERT(buffer != NULL);
 	ASSERT(size != 0);
 
@@ -211,6 +221,24 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 		if (bytesPerSample == 2) {
 			short *sbuf = (short*)buffer;
 			sbuf[i]+= (short)sample;
+		}
+
+		if (measureDecibels) {
+			sd[chcount] = sample / 32768.0;
+			sum[chcount]+= fabs(sd[chcount]);
+
+			if (++chcount >= channels) {
+				chcount = 0;
+			}
+		}
+	}
+
+	if (measureDecibels) {
+		for (int i=0; i<channels; i++) {
+			double rms = sqrt(sum[i] / (size / channels));
+			double decibels = 20 * log10(rms);
+
+			avgDecibels = (avgDecibels + decibels) / 2;
 		}
 	}
 }
@@ -264,6 +292,11 @@ void oamlBase::Update() {
 			} else {
 				tension--;
 			}
+		}
+
+		if (measureDecibels) {
+			printf("Measured decibels: %.2g db\n", avgDecibels);
+			avgDecibels = 0;
 		}
 
 		timeMs = ms;

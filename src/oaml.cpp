@@ -16,6 +16,10 @@ int oamlApi::Init(const char *pathToMusic) {
 	return oaml->Init(pathToMusic);
 }
 
+void oamlApi::SetMeasureDecibels(bool option) {
+	oaml->SetMeasureDecibels(option);
+}
+
 void oamlApi::SetAudioFormat(int freq, int channels, int bytesPerSample) {
 	oaml->SetAudioFormat(freq, channels, bytesPerSample);
 }

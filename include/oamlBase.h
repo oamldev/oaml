@@ -4,6 +4,9 @@
 class oamlBase {
 private:
 	int debug;
+	bool measureDecibels;
+	double avgDecibels;
+
 	oamlTrack *tracks[1024];
 	int tracksN;
 
@@ -30,6 +33,8 @@ public:
 
 	int Init(const char *pathToMusic);
 	void Shutdown();
+
+	void SetMeasureDecibels(bool option) { measureDecibels = option; }
 
 	void SetAudioFormat(int audioFreq, int audioChannels, int audioBytesPerSample);
 	void SetVolume(int vol);
