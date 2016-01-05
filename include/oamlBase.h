@@ -26,6 +26,7 @@ private:
 
 	void ShowPlayingTracks();
 	int ReadDefs(const char *filaname, const char *path);
+	int SafeAdd(int sample1, int sample2);
 
 public:
 	oamlBase();

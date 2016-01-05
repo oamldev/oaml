@@ -197,9 +197,22 @@ void oamlBase::ShowPlayingTracks() {
 	}
 }
 
+int oamlBase::SafeAdd(int sample1, int sample2) {
+	// Detect integer overflow and underflow, both will cause clipping in our audio
+	if (sample1 > 0 && sample2 > INT_MAX - sample1) {
+		return INT_MAX;
+	} else if (sample1 < 0 && sample2 < INT_MIN - sample1) {
+		return INT_MIN;
+	}
+
+	return sample1 + sample2;
+}
+
 void oamlBase::MixToBuffer(void *buffer, int size) {
 	double sd[2] = { 0, 0 };
 	double sum[2] = { 0, 0 };
+	int16_t *sbuf = (int16_t *)buffer;
+	uint8_t *cbuf = (uint8_t *)buffer;
 	int chcount = 0;
 
 	ASSERT(buffer != NULL);
@@ -208,23 +221,43 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 	for (int i=0; i<size; i++) {
 		int sample = 0;
 
+		// Mix all the tracks into a 32bit temp value
 		for (int j=0; j<tracksN; j++) {
-			sample+= tracks[j]->Read32();
+			sample = SafeAdd(sample, tracks[j]->Read32());
 		}
 
-		sample>>= 16;
-		sample = (sample * volume) / OAML_VOLUME_MAX;
+		// Apply the volume
+		sample = (((sample>>8) * volume) / OAML_VOLUME_MAX) << 8;
 
-		if (sample > 32767) sample = 32767;
-		if (sample < -32768) sample = -32768;
+		// Mix our sample into the buffer
+		int tmp;
+		switch (bytesPerSample) {
+			case 1: // 8bit (unsigned)
+				// TODO: Test me!
+				tmp = SafeAdd(sample, (int)cbuf[i]<<23);
+				cbuf[i] = (uint8_t)(tmp>>23);
+				break;
 
-		if (bytesPerSample == 2) {
-			short *sbuf = (short*)buffer;
-			sbuf[i]+= (short)sample;
+			case 2: // 16bit (signed)
+				tmp = SafeAdd(sample, (int)sbuf[i]<<16);
+				sbuf[i] = (int16_t)(tmp>>16);
+				break;
+
+			case 3: // 24bit
+				// TODO: Test me!
+				tmp = (int)cbuf[i*3+0]<<8;
+				tmp|= (int)cbuf[i*3+1]<<16;
+				tmp|= (int)cbuf[i*3+2]<<24;
+
+				tmp = SafeAdd(sample, tmp);
+				cbuf[i*3+0] = (uint8_t)(tmp>>8);
+				cbuf[i*3+1] = (uint8_t)(tmp>>16);
+				cbuf[i*3+2] = (uint8_t)(tmp>>24);
+				break;
 		}
 
 		if (measureDecibels) {
-			sd[chcount] = sample / 32768.0;
+			sd[chcount] = (sample >> 16) / 32768.0;
 			sum[chcount]+= fabs(sd[chcount]);
 
 			if (++chcount >= channels) {
