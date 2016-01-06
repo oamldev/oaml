@@ -8,14 +8,14 @@
 
 
 oamlBase::oamlBase() {
-	debug = 0;
+	writeAudioAtShutdown = false;
 	measureDecibels = false;
 	avgDecibels = 0;
 	tracksN = 0;
 
 	curTrack = NULL;
 
-	dbuffer = NULL;
+	fullBuffer = NULL;
 
 	freq = 0;
 	channels = 0;
@@ -29,6 +29,10 @@ oamlBase::oamlBase() {
 }
 
 oamlBase::~oamlBase() {
+	if (fullBuffer) {
+		delete fullBuffer;
+		fullBuffer = NULL;
+	}
 }
 
 int oamlBase::ReadDefs(const char *filename, const char *path) {
@@ -110,10 +114,6 @@ int oamlBase::Init(const char *pathToMusic) {
 	snprintf(filename, 1024, "%soaml.defs", path);
 	if (ReadDefs(filename, path) == -1)
 		return -1;
-
-	if (debug) {
-		dbuffer = new ByteBuffer();
-	}
 
 	return 0;
 }
@@ -255,6 +255,7 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 				cbuf[i*3+2] = (uint8_t)(tmp>>24);
 				break;
 		}
+		sample = tmp;
 
 		if (measureDecibels) {
 			sd[chcount] = (sample >> 16) / 32768.0;
@@ -263,6 +264,14 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 			if (++chcount >= channels) {
 				chcount = 0;
 			}
+		}
+
+		if (writeAudioAtShutdown) {
+			if (fullBuffer == NULL) {
+				fullBuffer = new ByteBuffer();
+			}
+
+			fullBuffer->putShort(sample >> 16);
 		}
 	}
 
@@ -342,7 +351,9 @@ void oamlBase::Update() {
 
 void oamlBase::Shutdown() {
 //	printf("%s\n", __FUNCTION__);
-	if (dbuffer) {
-		wavWriteToFile("out.wav", dbuffer, 2, 44100, 2);
+	if (writeAudioAtShutdown && fullBuffer) {
+		char filename[1024];
+		snprintf(filename, 1024, "oaml-%d.wav", (int)time(NULL));
+		wavWriteToFile(filename, fullBuffer, channels, freq, 2);
 	}
 }

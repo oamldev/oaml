@@ -3,7 +3,7 @@
 
 class oamlBase {
 private:
-	int debug;
+	bool writeAudioAtShutdown;
 	bool measureDecibels;
 	double avgDecibels;
 
@@ -12,7 +12,7 @@ private:
 
 	oamlTrack *curTrack;
 
-	ByteBuffer *dbuffer;
+	ByteBuffer *fullBuffer;
 
 	int freq;
 	int channels;
@@ -36,6 +36,7 @@ public:
 	void Shutdown();
 
 	void SetMeasureDecibels(bool option) { measureDecibels = option; }
+	void SetWriteAudioAtShutdown(bool option) { writeAudioAtShutdown = option; }
 
 	void SetAudioFormat(int audioFreq, int audioChannels, int audioBytesPerSample);
 	void SetVolume(int vol);

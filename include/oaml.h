@@ -38,6 +38,7 @@ public:
 	void Shutdown();
 
 	void SetMeasureDecibels(bool option);
+	void SetWriteAudioAtShutdown(bool option);
 
 	void SetAudioFormat(int freq, int channels, int bytesPerSample);
 	void SetVolume(int vol);
