@@ -354,6 +354,8 @@ void oamlBase::Shutdown() {
 	if (writeAudioAtShutdown && fullBuffer) {
 		char filename[1024];
 		snprintf(filename, 1024, "oaml-%d.wav", (int)time(NULL));
-		wavWriteToFile(filename, fullBuffer, channels, freq, 2);
+		wavFile *wav = new wavFile();
+		wav->WriteToFile(filename, fullBuffer, channels, freq, 2);
+		delete wav;
 	}
 }

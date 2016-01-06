@@ -8,7 +8,7 @@ class ByteBuffer;
 class oamlAudio {
 private:
 	ByteBuffer *buffer;
-	wavHandle *handle;
+	wavFile *handle;
 	char filename[1024];
 	int type;
 	int bars;

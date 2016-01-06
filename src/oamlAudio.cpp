@@ -8,7 +8,7 @@
 
 oamlAudio::oamlAudio() {
 	buffer = new ByteBuffer();
-	handle = NULL;
+	handle = new wavFile();
 	memset(filename, 0, sizeof(filename));
 	type = 0;
 	bars = 0;
@@ -85,18 +85,17 @@ unsigned int oamlAudio::GetBarsSamples(int bars) {
 int oamlAudio::Open() {
 	printf("%s %s\n", __FUNCTION__, filename);
 
-	if (handle != NULL) {
+	if (buffer->size() > 0) {
 		buffer->setReadPos(0);
 		samplesCount = 0;
 	} else {
-		handle = wavOpen(filename);
-		if (handle == NULL) {
+		if (handle->Open(filename) == -1) {
 			return -1;
 		}
 
-		samplesPerSec = handle->samplesPerSec * handle->channels;
-		bytesPerSample = handle->bitsPerSample / 8;
-		totalSamples = handle->chunkSize / bytesPerSample;
+		samplesPerSec = handle->GetSamplesPerSec() * handle->GetChannels();
+		bytesPerSample = handle->GetBytesPerSample();
+		totalSamples = handle->GetChunkSize() / bytesPerSample;
 
 		samplesToEnd = GetBarsSamples(bars);
 	}
@@ -144,7 +143,13 @@ bool oamlAudio::HasFinishedTail() {
 int oamlAudio::Read() {
 	if (handle == NULL)
 		return -1;
-	return wavRead(handle, buffer, 4096*bytesPerSample);
+	int readSize = 4096*bytesPerSample;
+	int ret = handle->Read(buffer, readSize);
+	if (ret < readSize) {
+		handle->Close();
+	}
+
+	return ret;
 }
 
 int oamlAudio::Read32() {

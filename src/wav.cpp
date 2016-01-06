@@ -34,43 +34,62 @@ typedef struct {
 	unsigned short bitsPerSample;
 } fmtHeader;
 
-wavHandle *wavOpen(const char *filename) {
-	ASSERT(filename != NULL);
 
-	FILE *fd = fopen(filename, "rb");
-	if (fd == NULL) {
-		return NULL;
-	}
+wavFile::wavFile() {
+	fd = NULL;
 
-	wavHandle *handle = new wavHandle;
-	memset(handle, 0, sizeof(wavHandle));
-	handle->fd = fd;
+	format = 0;
+	channels = 0;
+	samplesPerSec = 0;
+	bitsPerSample = 0;
 
-	while (handle->status < 2) {
-		wavReadChunk(handle);
-	}
-
-	return handle;
+	chunkSize = 0;
+	status = 0;
 }
 
-int wavReadChunk(wavHandle *handle) {
-	ASSERT(handle != NULL);
+wavFile::~wavFile() {
+	if (fd != NULL) {
+		Close();
+	}
+}
 
-	if (handle->fd == NULL)
+int wavFile::Open(const char *filename) {
+	ASSERT(filename != NULL);
+
+	if (fd != NULL) {
+		Close();
+	}
+
+	fd = fopen(filename, "rb");
+	if (fd == NULL) {
+		return -1;
+	}
+
+	while (status < 2) {
+		if (ReadChunk() == -1) {
+			return -1;
+		}
+	}
+
+	return 0;
+}
+
+int wavFile::ReadChunk() {
+	if (fd == NULL)
 		return -1;
 
 	// Read the common header for all wave chunks
 	wavHeader header;
-	if (fread(&header, 1, sizeof(wavHeader), handle->fd) != sizeof(wavHeader)) {
-		fclose(handle->fd);
-		handle->fd = NULL;
+	if (fread(&header, 1, sizeof(wavHeader), fd) != sizeof(wavHeader)) {
+		fclose(fd);
+		fd = NULL;
 		return -1;
 	}
 
 	switch (header.id) {
 		case RIFF_ID:
 			int waveId;
-			if (fread(&waveId, 1, sizeof(int), handle->fd) != sizeof(int))
+			if (fread(&waveId, 1, sizeof(int), fd) != sizeof(int))
 				return -1;
 
 			// Check waveId signature for valid file
@@ -80,60 +99,58 @@ int wavReadChunk(wavHandle *handle) {
 
 		case FMT_ID:
 			fmtHeader fmt;
-			if (fread(&fmt, 1, sizeof(fmtHeader), handle->fd) != sizeof(fmtHeader))
+			if (fread(&fmt, 1, sizeof(fmtHeader), fd) != sizeof(fmtHeader))
 				return -1;
 
 			if (header.size > sizeof(fmtHeader)) {
-				fseek(handle->fd, header.size - sizeof(fmtHeader), SEEK_CUR);
+				fseek(fd, header.size - sizeof(fmtHeader), SEEK_CUR);
 			}
-			handle->format = fmt.formatTag;
-			handle->channels = fmt.channels;
-			handle->samplesPerSec = fmt.samplesPerSec;
-			handle->bitsPerSample = fmt.bitsPerSample;
-			handle->status = 1;
+			format = fmt.formatTag;
+			channels = fmt.channels;
+			samplesPerSec = fmt.samplesPerSec;
+			bitsPerSample = fmt.bitsPerSample;
+			status = 1;
 			break;
 
 		case DATA_ID:
-			handle->chunkSize = header.size;
-			handle->status = 2;
+			chunkSize = header.size;
+			status = 2;
 			break;
 
 		default:
-			fseek(handle->fd, header.size, SEEK_CUR);
+			fseek(fd, header.size, SEEK_CUR);
 			break;
 	}
 
 	return 0;
 }
 
-int wavRead(wavHandle *handle, ByteBuffer *buffer, int size) {
+int wavFile::Read(ByteBuffer *buffer, int size) {
 	unsigned char buf[4096];
 
-	ASSERT(handle != NULL);
-
-	if (handle->fd == NULL)
+	if (fd == NULL)
 		return -1;
 
 	int bytesRead = 0;
 	while (size > 0) {
 		// Are we inside a data chunk?
-		if (handle->status == 2) {
+		if (status == 2) {
 			// Let's keep reading data!
 			int bytes = size < 4096 ? size : 4096;
-			if (handle->chunkSize < bytes)
-				bytes = handle->chunkSize;
-			int ret = fread(buf, 1, bytes, handle->fd);
+			if (chunkSize < bytes)
+				bytes = chunkSize;
+			int ret = fread(buf, 1, bytes, fd);
 			if (ret == 0) {
-				handle->status = 3;
+				status = 3;
 				break;
 			} else {
-				handle->chunkSize-= ret;
+				chunkSize-= ret;
 				buffer->putBytes(buf, ret);
 				bytesRead+= ret;
 				size-= ret;
 			}
 		} else {
-			if (wavReadChunk(handle) == -1)
+			if (ReadChunk() == -1)
 				return -1;
 		}
 	}
@@ -141,7 +158,7 @@ int wavRead(wavHandle *handle, ByteBuffer *buffer, int size) {
 	return bytesRead;
 }
 
-void wavWriteToFile(const char *filename, ByteBuffer *buffer, int channels, unsigned int sampleRate, int bytesPerSample) {
+void wavFile::WriteToFile(const char *filename, ByteBuffer *buffer, int channels, unsigned int sampleRate, int bytesPerSample) {
 	ASSERT(filename != NULL);
 	ASSERT(buffer != NULL);
 
@@ -186,12 +203,9 @@ void wavWriteToFile(const char *filename, ByteBuffer *buffer, int channels, unsi
 	fclose(f);
 }
 
-void wavClose(wavHandle *handle) {
-	ASSERT(handle != NULL);
-
-	if (handle->fd != NULL) {
-		fclose(handle->fd);
-		handle->fd = NULL;
+void wavFile::Close() {
+	if (fd != NULL) {
+		fclose(fd);
+		fd = NULL;
 	}
-	delete handle;
 }

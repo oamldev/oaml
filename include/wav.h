@@ -1,23 +1,36 @@
 #ifndef __WAV_H__
 #define __WAV_H__
 
-typedef struct {
+class wavFile {
+private:
 	FILE *fd;
 
 	int format;
 	int channels;
 	int samplesPerSec;
 	int bitsPerSample;
-	int totalSamples;
 
 	int chunkSize;
 	int status;
-} wavHandle;
 
-wavHandle *wavOpen(const char *filename);
-int wavRead(wavHandle *handle, ByteBuffer *buffer, int size);
-int wavReadChunk(wavHandle *handle);
-void wavWriteToFile(const char *filename, ByteBuffer *buffer, int channels, unsigned int sampleRate, int bytesPerSample);
-void wavClose(wavHandle *handle);
+	int ReadChunk();
+public:
+	wavFile();
+	~wavFile();
+
+	int GetFormat() const { return format; }
+	int GetChannels() const { return channels; }
+	int GetSamplesPerSec() const { return samplesPerSec; }
+	int GetBitsPerSample() const { return bitsPerSample; }
+	int GetBytesPerSample() const { return bitsPerSample / 8; }
+	int GetChunkSize() const { return chunkSize; }
+
+	int Open(const char *filename);
+	int Read(ByteBuffer *buffer, int size);
+
+	void WriteToFile(const char *filename, ByteBuffer *buffer, int channels, unsigned int sampleRate, int bytesPerSample);
+
+	void Close();
+};
 
 #endif /* __WAV_H__ */
