@@ -42,6 +42,7 @@ wavFile::wavFile() {
 	channels = 0;
 	samplesPerSec = 0;
 	bitsPerSample = 0;
+	totalSamples = 0;
 
 	chunkSize = 0;
 	status = 0;
@@ -114,6 +115,7 @@ int wavFile::ReadChunk() {
 
 		case DATA_ID:
 			chunkSize = header.size;
+			totalSamples = chunkSize / (bitsPerSample/8);
 			status = 2;
 			break;
 

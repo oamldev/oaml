@@ -1,9 +1,9 @@
-#ifndef __WAV_H__
-#define __WAV_H__
+#ifndef __OGG_H__
+#define __OGG_H__
 
-class wavFile {
+class oggFile {
 private:
-	FILE *fd;
+	void *fd;
 
 	int format;
 	int channels;
@@ -11,13 +11,10 @@ private:
 	int bitsPerSample;
 	int totalSamples;
 
-	int chunkSize;
-	int status;
-
-	int ReadChunk();
+	int currentSection;
 public:
-	wavFile();
-	~wavFile();
+	oggFile();
+	~oggFile();
 
 	int GetFormat() const { return format; }
 	int GetChannels() const { return channels; }
@@ -29,9 +26,7 @@ public:
 	int Open(const char *filename);
 	int Read(ByteBuffer *buffer, int size);
 
-	void WriteToFile(const char *filename, ByteBuffer *buffer, int channels, unsigned int sampleRate, int bytesPerSample);
-
 	void Close();
 };
 
-#endif /* __WAV_H__ */
+#endif /* __OGG_H__ */

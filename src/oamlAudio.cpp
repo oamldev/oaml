@@ -8,7 +8,8 @@
 
 oamlAudio::oamlAudio() {
 	buffer = new ByteBuffer();
-	handle = new wavFile();
+	handle = NULL;
+	handleO = NULL;
 	memset(filename, 0, sizeof(filename));
 	type = 0;
 	bars = 0;
@@ -89,13 +90,25 @@ int oamlAudio::Open() {
 		buffer->setReadPos(0);
 		samplesCount = 0;
 	} else {
-		if (handle->Open(filename) == -1) {
-			return -1;
-		}
+		if (filename[strlen(filename)-1] == 'g') {
+			handleO = new oggFile();
+			if (handleO->Open(filename) == -1) {
+				return -1;
+			}
 
-		samplesPerSec = handle->GetSamplesPerSec() * handle->GetChannels();
-		bytesPerSample = handle->GetBytesPerSample();
-		totalSamples = handle->GetChunkSize() / bytesPerSample;
+			samplesPerSec = handleO->GetSamplesPerSec() * handleO->GetChannels();
+			bytesPerSample = handleO->GetBytesPerSample();
+			totalSamples = handleO->GetTotalSamples();
+		} else {
+			handle = new wavFile();
+			if (handle->Open(filename) == -1) {
+				return -1;
+			}
+
+			samplesPerSec = handle->GetSamplesPerSec() * handle->GetChannels();
+			bytesPerSample = handle->GetBytesPerSample();
+			totalSamples = handle->GetTotalSamples();
+		}
 
 		samplesToEnd = GetBarsSamples(bars);
 	}
@@ -141,15 +154,25 @@ bool oamlAudio::HasFinishedTail() {
 }
 
 int oamlAudio::Read() {
-	if (handle == NULL)
+	if (handle == NULL && handleO == NULL)
 		return -1;
-	int readSize = 4096*bytesPerSample;
-	int ret = handle->Read(buffer, readSize);
-	if (ret < readSize) {
-		handle->Close();
-	}
 
-	return ret;
+	int readSize = 4096*bytesPerSample;
+	if (handleO) {
+		int ret = handleO->Read(buffer, readSize);
+		if (ret < readSize) {
+			handleO->Close();
+		}
+
+		return ret;
+	} else {
+		int ret = handle->Read(buffer, readSize);
+		if (ret < readSize) {
+			handle->Close();
+		}
+
+		return ret;
+	}
 }
 
 int oamlAudio::Read32() {
