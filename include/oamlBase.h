@@ -27,6 +27,7 @@ private:
 
 	void ShowPlayingTracks();
 	int ReadDefs(const char *filaname, const char *path);
+	void ReadInternalDefs(const char *filaname);
 	int SafeAdd(int sample1, int sample2);
 
 public:

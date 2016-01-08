@@ -9,7 +9,7 @@
 
 oamlBase::oamlBase() {
 	debugClipping = false;
-	writeAudioAtShutdown = true;
+	writeAudioAtShutdown = false;
 	measureDecibels = false;
 	avgDecibels = 0;
 	tracksN = 0;
@@ -99,6 +99,27 @@ int oamlBase::ReadDefs(const char *filename, const char *path) {
 	return 0;
 }
 
+void oamlBase::ReadInternalDefs(const char *filename) {
+	tinyxml2::XMLDocument doc;
+
+	if (doc.LoadFile(filename) != tinyxml2::XML_NO_ERROR)
+		return;
+
+	tinyxml2::XMLElement *el = doc.FirstChildElement("base");
+	while (el != NULL) {
+		tinyxml2::XMLElement *cel = el->FirstChildElement();
+		while (cel != NULL) {
+			if (strcmp(cel->Name(), "writeAudioAtShutdown") == 0) SetWriteAudioAtShutdown(strtol(cel->GetText(), NULL, 0));
+			else if (strcmp(cel->Name(), "debugClipping") == 0) SetDebugClipping(strtol(cel->GetText(), NULL, 0));
+			else if (strcmp(cel->Name(), "measureDecibels") == 0) SetMeasureDecibels(strtol(cel->GetText(), NULL, 0));
+
+			cel = cel->NextSiblingElement();
+		}
+
+		el = el->NextSiblingElement();
+	}
+}
+
 int oamlBase::Init(const char *pathToMusic) {
 	char path[1024];
 	char filename[1024];
@@ -115,6 +136,8 @@ int oamlBase::Init(const char *pathToMusic) {
 	snprintf(filename, 1024, "%soaml.defs", path);
 	if (ReadDefs(filename, path) == -1)
 		return -1;
+
+	ReadInternalDefs("oamlInternal.defs");
 
 	return 0;
 }
@@ -300,6 +323,8 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 			avgDecibels = (avgDecibels + decibels) / 2;
 		}
 	}
+
+//	ShowPlayingTracks();
 }
 
 void oamlBase::SetCondition(int id, int value) {
