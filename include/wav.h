@@ -1,7 +1,7 @@
 #ifndef __WAV_H__
 #define __WAV_H__
 
-class wavFile {
+class wavFile : public audioFile {
 private:
 	FILE *fd;
 

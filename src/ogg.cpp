@@ -75,6 +75,9 @@ int oggFile::Read(ByteBuffer *buffer, int size) {
 	return bytesRead;
 }
 
+void oggFile::WriteToFile(const char *filename, ByteBuffer *buffer, int channels, unsigned int sampleRate, int bytesPerSample) {
+}
+
 void oggFile::Close() {
 	if (fd != NULL) {
 		OggVorbis_File *vf = (OggVorbis_File *)fd;

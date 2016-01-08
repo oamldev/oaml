@@ -1,7 +1,9 @@
 #ifndef __OGG_H__
 #define __OGG_H__
 
-class oggFile {
+#include "audioFile.h"
+
+class oggFile : public audioFile {
 private:
 	void *fd;
 
@@ -22,6 +24,8 @@ public:
 	int GetBitsPerSample() const { return bitsPerSample; }
 	int GetBytesPerSample() const { return bitsPerSample / 8; }
 	int GetTotalSamples() const { return totalSamples; }
+
+	void WriteToFile(const char *filename, ByteBuffer *buffer, int channels, unsigned int sampleRate, int bytesPerSample);
 
 	int Open(const char *filename);
 	int Read(ByteBuffer *buffer, int size);

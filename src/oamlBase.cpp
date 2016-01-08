@@ -8,7 +8,8 @@
 
 
 oamlBase::oamlBase() {
-	writeAudioAtShutdown = false;
+	debugClipping = false;
+	writeAudioAtShutdown = true;
 	measureDecibels = false;
 	avgDecibels = 0;
 	tracksN = 0;
@@ -198,14 +199,30 @@ void oamlBase::ShowPlayingTracks() {
 }
 
 int oamlBase::SafeAdd(int sample1, int sample2) {
+	bool clipping;
+	int ret;
+
 	// Detect integer overflow and underflow, both will cause clipping in our audio
 	if (sample1 > 0 && sample2 > INT_MAX - sample1) {
-		return INT_MAX;
+		int64_t s64a = sample1;
+		int64_t s64b = sample2;
+		ret = (int)INT_MAX - ((s64a + s64b) - INT_MAX);
+		clipping = true;
 	} else if (sample1 < 0 && sample2 < INT_MIN - sample1) {
-		return INT_MIN;
+		int64_t s64a = sample1;
+		int64_t s64b = sample2;
+		ret = (int)INT_MIN - ((s64a + s64b) - INT_MIN);
+		clipping = true;
+	} else {
+		ret = sample1 + sample2;
+		clipping = false;
 	}
 
-	return sample1 + sample2;
+	if (clipping && debugClipping) {
+		fprintf(stderr, "oaml: Detected clipping!\n");
+	}
+
+	return ret;
 }
 
 void oamlBase::MixToBuffer(void *buffer, int size) {

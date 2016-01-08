@@ -3,6 +3,7 @@
 
 class oamlBase {
 private:
+	bool debugClipping;
 	bool writeAudioAtShutdown;
 	bool measureDecibels;
 	double avgDecibels;
@@ -35,6 +36,7 @@ public:
 	int Init(const char *pathToMusic);
 	void Shutdown();
 
+	void SetDebugClipping(bool option) { debugClipping = option; }
 	void SetMeasureDecibels(bool option) { measureDecibels = option; }
 	void SetWriteAudioAtShutdown(bool option) { writeAudioAtShutdown = option; }
 

@@ -37,6 +37,7 @@ public:
 	int Init(const char *pathToMusic);
 	void Shutdown();
 
+	void SetDebugClipping(bool option);
 	void SetMeasureDecibels(bool option);
 	void SetWriteAudioAtShutdown(bool option);
 
