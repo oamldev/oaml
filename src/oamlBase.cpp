@@ -22,7 +22,7 @@ oamlBase::oamlBase() {
 	channels = 0;
 	bytesPerSample = 0;
 
-	volume = 255;
+	volume = OAML_VOLUME_DEFAULT;
 
 	timeMs = 0;
 	tension = 0;

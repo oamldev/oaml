@@ -6,8 +6,10 @@
 // Definitions
 //
 
-#define OAML_VOLUME_MIN	0
-#define OAML_VOLUME_MAX	100
+#define OAML_VOLUME_MIN		0
+#define OAML_VOLUME_MAX		100
+
+#define OAML_VOLUME_DEFAULT	50
 
 enum {
 	COND_TYPE_EQUAL		= 0,
