@@ -107,9 +107,8 @@ void oamlTrack::PlayCond(oamlAudio *audio) {
 		PlayNext();
 	} else {
 		curAudio->Open();
+		XFadePlay();
 	}
-
-	XFadePlay();
 }
 
 void oamlTrack::Play() {
@@ -148,6 +147,32 @@ void oamlTrack::ShowInfo() {
 	printf("%s %d %d %d\n", name, loopCount, randCount, condCount);
 }
 
+oamlAudio* oamlTrack::PickNextAudio() {
+	if (randCount > 0 && (curAudio == NULL || curAudio->GetRandomChance() == 0)) {
+		for (int i=0; i<randCount; i++) {
+			int chance = randAudios[i]->GetRandomChance();
+			if (Random(0, 100) > chance) {
+				continue;
+			} else {
+				return randAudios[i];
+			}
+		}
+	}
+
+	if (loopCount == 1) {
+		return loopAudios[0];
+	} else if (loopCount >= 2) {
+		int r = Random(0, loopCount-1);
+		while (curAudio == loopAudios[r]) {
+			r = Random(0, loopCount-1);
+		}
+
+		return loopAudios[r];
+	}
+
+	return NULL;
+}
+
 void oamlTrack::PlayNext() {
 	if (curAudio) {
 		if (curAudio->GetType() == 4) {
@@ -157,55 +182,45 @@ void oamlTrack::PlayNext() {
 		}
 	}
 
-	if (randCount > 0 && (curAudio == NULL || curAudio->GetRandomChance() == 0)) {
-		for (int i=0; i<randCount; i++) {
-			int chance = randAudios[i]->GetRandomChance();
-			if (Random(0, 100) > chance) {
-				continue;
-			} else {
-				curAudio = randAudios[i];
-				curAudio->Open();
+	if (fadeAudio == NULL)
+		fadeAudio = curAudio;
 
-				if (curAudio == tailAudio)
-					tailAudio = NULL;
-				return;
-			}
-		}
-	}
-
-	if (loopCount == 1) {
-		curAudio = loopAudios[0];
-	} else if (loopCount >= 2) {
-		int r = Random(0, loopCount-1);
-		while (curAudio == loopAudios[r]) {
-			r = Random(0, loopCount-1);
-		}
-
-		curAudio = loopAudios[r];
-	}
-
+	curAudio = PickNextAudio();
 	if (curAudio)
 		curAudio->Open();
 
 	if (curAudio == tailAudio)
 		tailAudio = NULL;
+
+	if (fadeAudio != curAudio) {
+		XFadePlay();
+	}else {
+		fadeAudio = NULL;
+	}
 }
 
 void oamlTrack::XFadePlay() {
 	if (curAudio) {
 		// First check the fade in property for the audio and then the track fade in property
-		if (curAudio->GetFadeIn()) {
-			curAudio->DoFadeIn(curAudio->GetFadeIn());
+		if (curAudio->GetXFadeIn()) {
+			curAudio->DoFadeIn(curAudio->GetXFadeIn());
+		} else if (fadeAudio && fadeAudio->GetXFadeIn()) {
+			curAudio->DoFadeIn(fadeAudio->GetXFadeIn());
 		} else if (xfadeIn) {
 			curAudio->DoFadeIn(xfadeIn);
 		}
 	}
 
 	if (fadeAudio) {
-		if (xfadeOut)
+		if (curAudio && curAudio->GetXFadeOut()) {
+			fadeAudio->DoFadeOut(curAudio->GetXFadeOut());
+		} else if (fadeAudio && fadeAudio->GetXFadeOut()) {
+			fadeAudio->DoFadeOut(fadeAudio->GetXFadeOut());
+		} else if (xfadeOut) {
 			fadeAudio->DoFadeOut(xfadeOut);
-		else
+		} else {
 			fadeAudio = NULL;
+		}
 	}
 }
 

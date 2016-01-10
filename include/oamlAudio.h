@@ -31,6 +31,9 @@ private:
 	unsigned int fadeOutSamples;
 	unsigned int fadeOutStart;
 
+	unsigned int xfadeIn;
+	unsigned int xfadeOut;
+
 	int condId;
 	int condType;
 	int condValue;
@@ -47,8 +50,10 @@ public:
 	void SetMinMovementBars(int audioMinMovementBars) { minMovementBars = audioMinMovementBars; }
 	void SetRandomChance(int audioRandomChance) { randomChance = audioRandomChance; }
 	void SetBars(int audioBars) { bars = audioBars; }
-	void SetFadeIn(int audioFadeIn) { fadeIn = audioFadeIn; }
-	void SetFadeOut(int audioFadeOut) { fadeOut = audioFadeOut; }
+	void SetFadeIn(unsigned int audioFadeIn) { fadeIn = audioFadeIn; }
+	void SetFadeOut(unsigned int audioFadeOut) { fadeOut = audioFadeOut; }
+	void SetXFadeIn(unsigned int audioXFadeIn) { xfadeIn = audioXFadeIn; }
+	void SetXFadeOut(unsigned int audioXFadeOut) { xfadeOut = audioXFadeOut; }
 
 	void SetCondId(int audioCondId) { condId = audioCondId; }
 	void SetCondType(int audioCondType) { condType = audioCondType; }
@@ -75,8 +80,10 @@ public:
 	int GetRandomChance() const { return randomChance; }
 	int GetCondId() const { return condId; }
 	int GetType() const { return type; }
-	int GetFadeIn() const { return fadeIn; }
-	int GetFadeOut() const { return fadeOut; }
+	unsigned int GetFadeIn() const { return fadeIn; }
+	unsigned int GetFadeOut() const { return fadeOut; }
+	unsigned int GetXFadeIn() const { return xfadeIn; }
+	unsigned int GetXFadeOut() const { return xfadeOut; }
 
 	unsigned int GetSamplesCount() const { return samplesCount; }
 };

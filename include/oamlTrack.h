@@ -32,6 +32,12 @@ private:
 	oamlAudio *fadeAudio;
 
 	int Random(int min, int max);
+	oamlAudio* PickNextAudio();
+
+	void PlayNext();
+	void PlayCond(oamlAudio *audio);
+	void PlayCondWithMovement(oamlAudio *audio);
+	void XFadePlay();
 
 public:
 	oamlTrack();
@@ -48,11 +54,6 @@ public:
 
 	void AddAudio(oamlAudio *audio);
 	void Play();
-	void PlayNext();
-	void PlayCond(oamlAudio *audio);
-	void PlayCondWithMovement(oamlAudio *audio);
-	void XFadePlay();
-
 	void Stop();
 
 	bool IsPlaying();

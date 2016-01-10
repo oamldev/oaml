@@ -31,6 +31,9 @@ oamlAudio::oamlAudio() {
 	fadeOutSamples = 0;
 	fadeOutStart = 0;
 
+	xfadeIn = 0;
+	xfadeOut = 0;
+
 	condId = 0;
 	condType = 0;
 	condValue = 0;
