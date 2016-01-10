@@ -245,6 +245,7 @@ int oamlBase::SafeAdd(int sample1, int sample2) {
 
 	if (clipping && debugClipping) {
 		fprintf(stderr, "oaml: Detected clipping!\n");
+		ShowPlayingTracks();
 	}
 
 	return ret;
@@ -265,7 +266,7 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 
 		// Mix all the tracks into a 32bit temp value
 		for (int j=0; j<tracksN; j++) {
-			sample = SafeAdd(sample, tracks[j]->Read32());
+			sample = tracks[j]->Mix32(sample, this);
 		}
 
 		// Apply the volume
@@ -355,7 +356,7 @@ void oamlBase::Update() {
 
 	// Update each second
 	if (ms >= (timeMs + 1000)) {
-		ShowPlayingTracks();
+//		ShowPlayingTracks();
 
 //		printf("%s %d %lld %d\n", __FUNCTION__, tension, tensionMs - ms, ms >= (tensionMs + 5000));
 		// Don't allow sudden changes of tension after it changed back to 0

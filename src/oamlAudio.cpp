@@ -145,8 +145,8 @@ bool oamlAudio::HasFinished() {
 	return samplesCount >= samplesToEnd;
 }
 
-bool oamlAudio::HasFinishedTail() {
-	return samplesCount >= totalSamples;
+bool oamlAudio::HasFinishedTail(unsigned int pos) {
+	return pos >= totalSamples;
 }
 
 int oamlAudio::Read() {
@@ -203,6 +203,32 @@ int oamlAudio::Read32() {
 	}
 
 	samplesCount++;
+
+	return ret;
+}
+
+int oamlAudio::Read32(unsigned int pos) {
+	int ret = 0;
+
+	if (pos > totalSamples)
+		return 0;
+
+	pos*= bytesPerSample;
+	while ((pos+bytesPerSample) > buffer->size()) {
+		if (Read() == -1)
+			return 0;
+	}
+
+	if (bytesPerSample == 3) {
+		ret|= ((unsigned int)buffer->get(pos))<<8;
+		ret|= ((unsigned int)buffer->get(pos+1))<<16;
+		ret|= ((unsigned int)buffer->get(pos+2))<<24;
+	} else if (bytesPerSample == 2) {
+		ret|= ((unsigned int)buffer->get(pos))<<16;
+		ret|= ((unsigned int)buffer->get(pos+1))<<24;
+	} else if (bytesPerSample == 1) {
+		ret|= ((unsigned int)buffer->get(pos))<<23;
+	}
 
 	return ret;
 }

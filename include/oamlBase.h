@@ -28,7 +28,6 @@ private:
 	void ShowPlayingTracks();
 	int ReadDefs(const char *filaname, const char *path);
 	void ReadInternalDefs(const char *filaname);
-	int SafeAdd(int sample1, int sample2);
 
 public:
 	oamlBase();
@@ -61,6 +60,8 @@ public:
 	void MixToBuffer(void *buffer, int size);
 
 	void Update();
+
+	int SafeAdd(int sample1, int sample2);
 };
 
 #endif /* __OAMLBASE_H__ */

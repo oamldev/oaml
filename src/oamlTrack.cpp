@@ -21,6 +21,8 @@ oamlTrack::oamlTrack() {
 	condCount = 0;
 	randCount = 0;
 
+	tailPos = 0;
+
 	introAudio = NULL;
 	endAudio = NULL;
 
@@ -176,8 +178,10 @@ oamlAudio* oamlTrack::PickNextAudio() {
 void oamlTrack::PlayNext() {
 	if (curAudio) {
 		if (curAudio->GetType() == 4) {
+			tailAudio = curAudio;
+			tailPos = curAudio->GetSamplesCount();
+
 			curAudio->Open();
-			tailAudio = NULL;
 			return;
 		}
 	}
@@ -188,9 +192,6 @@ void oamlTrack::PlayNext() {
 	curAudio = PickNextAudio();
 	if (curAudio)
 		curAudio->Open();
-
-	if (curAudio == tailAudio)
-		tailAudio = NULL;
 
 	if (fadeAudio != curAudio) {
 		XFadePlay();
@@ -224,28 +225,27 @@ void oamlTrack::XFadePlay() {
 	}
 }
 
-int oamlTrack::Read32() {
+int oamlTrack::Mix32(int sample, oamlBase *oaml) {
 	if (curAudio == NULL && tailAudio == NULL && fadeAudio == NULL)
-		return 0;
-
-	int sample = 0;
+		return sample;
 
 	if (curAudio) {
-		sample+= curAudio->Read32();
+		sample = oaml->SafeAdd(sample, curAudio->Read32());
 	}
 
 	if (tailAudio) {
-		sample+= tailAudio->Read32();
-		if (tailAudio->HasFinishedTail())
+		sample = oaml->SafeAdd(sample, tailAudio->Read32(tailPos++));
+		if (tailAudio->HasFinishedTail(tailPos))
 			tailAudio = NULL;
 	}
 
 	if (fadeAudio) {
-		sample+= fadeAudio->Read32();
+		sample = oaml->SafeAdd(sample, fadeAudio->Read32());
 	}
 
 	if (curAudio && curAudio->HasFinished()) {
 		tailAudio = curAudio;
+		tailPos = curAudio->GetSamplesCount();
 
 		PlayNext();
 	}
@@ -299,3 +299,4 @@ void oamlTrack::Stop() {
 
 	tailAudio = NULL;
 }
+

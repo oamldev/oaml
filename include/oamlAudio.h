@@ -66,11 +66,12 @@ public:
 	unsigned int GetBarsSamples(int bars);
 
 	bool HasFinished();
-	bool HasFinishedTail();
+	bool HasFinishedTail(unsigned int pos);
 
 	int Open();
 	int Read();
 	int Read32();
+	int Read32(unsigned int pos);
 
 	void DoFadeIn(int msec);
 	void DoFadeOut(int msec);

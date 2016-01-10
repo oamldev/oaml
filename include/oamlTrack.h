@@ -20,6 +20,8 @@ private:
 
 	int playCondSamples;
 
+	unsigned int tailPos;
+
 	oamlAudio *loopAudios[256];
 	oamlAudio *randAudios[256];
 	oamlAudio *condAudios[256];
@@ -60,7 +62,7 @@ public:
 	void ShowPlaying();
 	void ShowInfo();
 
-	int Read32();
+	int Mix32(int sample, oamlBase *oaml);
 
 	void SetCondition(int id, int value);
 };
