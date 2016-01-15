@@ -57,6 +57,14 @@ void oamlTrack::SetCondition(int id, int value) {
 	if (playCondSamples > 0)
 		return;
 
+	if (id == CONDITION_MAIN_LOOP) {
+		for (int i=0; i<loopCount; i++) {
+			oamlAudio *audio = loopAudios[i];
+			audio->SetPickable(audio->TestCondition(0, value));
+		}
+		return;
+	}
+
 	for (int i=0; i<condCount; i++) {
 		oamlAudio *audio = condAudios[i];
 		if (audio->GetCondId() != id)
@@ -164,12 +172,25 @@ oamlAudio* oamlTrack::PickNextAudio() {
 	if (loopCount == 1) {
 		return loopAudios[0];
 	} else if (loopCount >= 2) {
-		int r = Random(0, loopCount-1);
-		while (curAudio == loopAudios[r]) {
-			r = Random(0, loopCount-1);
+		oamlAudio *list[256];
+		int count = 0;
+
+		for (int i=0; i<loopCount; i++) {
+			oamlAudio *audio = loopAudios[i];
+			if (audio->IsPickable())
+				list[count++] = audio;
 		}
 
-		return loopAudios[r];
+		if (count == 1) {
+			return list[0];
+		} else {
+			int r = Random(0, count-1);
+			while (curAudio == list[r]) {
+				r = Random(0, count-1);
+			}
+
+			return list[r];
+		}
 	}
 
 	return NULL;

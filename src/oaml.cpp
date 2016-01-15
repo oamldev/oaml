@@ -68,6 +68,10 @@ void oamlApi::AddTension(int value) {
 	oaml->AddTension(value);
 }
 
+void oamlApi::SetMainLoopCondition(int value) {
+	oaml->SetMainLoopCondition(value);
+}
+
 void oamlApi::Update() {
 	oaml->Update();
 }

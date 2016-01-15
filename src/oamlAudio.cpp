@@ -38,6 +38,8 @@ oamlAudio::oamlAudio() {
 	condType = 0;
 	condValue = 0;
 	condValue2 = 0;
+
+	pickable = true;
 }
 
 oamlAudio::~oamlAudio() {

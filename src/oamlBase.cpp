@@ -351,6 +351,10 @@ void oamlBase::AddTension(int value) {
 	}
 }
 
+void oamlBase::SetMainLoopCondition(int value) {
+	SetCondition(CONDITION_MAIN_LOOP, value);
+}
+
 void oamlBase::Update() {
 	uint64_t ms = GetTimeMs64();
 
@@ -361,11 +365,11 @@ void oamlBase::Update() {
 //		printf("%s %d %lld %d\n", __FUNCTION__, tension, tensionMs - ms, ms >= (tensionMs + 5000));
 		// Don't allow sudden changes of tension after it changed back to 0
 		if (tension > 0) {
-			SetCondition(1, tension);
+			SetCondition(CONDITION_TENSION, tension);
 			tensionMs = ms;
 		} else {
 			if (ms >= (tensionMs + 5000)) {
-				SetCondition(1, tension);
+				SetCondition(CONDITION_TENSION, tension);
 				tensionMs = ms;
 			}
 		}

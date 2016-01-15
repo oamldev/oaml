@@ -1,6 +1,16 @@
 #ifndef __OAMLBASE_H__
 #define __OAMLBASE_H__
 
+//
+// Reserved condition id's
+//
+enum {
+	CONDITION_TENSION		= 1,
+	CONDITION_MAIN_LOOP		= 2,
+	CONDITION_USER			= 10
+};
+
+
 class oamlBase {
 private:
 	bool debugClipping;
@@ -54,6 +64,8 @@ public:
 	bool IsPlaying();
 
 	void AddTension(int value);
+
+	void SetMainLoopCondition(int value);
 
 	void SetCondition(int id, int value);
 

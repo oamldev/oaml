@@ -39,6 +39,8 @@ private:
 	int condValue;
 	int condValue2;
 
+	bool pickable;
+
 public:
 	oamlAudio();
 	~oamlAudio();
@@ -87,6 +89,9 @@ public:
 	unsigned int GetXFadeOut() const { return xfadeOut; }
 
 	unsigned int GetSamplesCount() const { return samplesCount; }
+
+	void SetPickable(bool value) { pickable = value; }
+	bool IsPickable() const { return pickable; }
 };
 
 #endif
