@@ -33,6 +33,8 @@
 
 #include "gettime.h"
 #include "ByteBuffer.h"
+#include "audioFile.h"
+#include "aif.h"
 #include "ogg.h"
 #include "wav.h"
 #include "oaml.h"

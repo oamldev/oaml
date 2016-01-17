@@ -96,6 +96,9 @@ int oamlAudio::Open() {
 	} else {
 		if (filename[strlen(filename)-1] == 'g') {
 			handle = (audioFile*)new oggFile();
+		} else
+		if (filename[strlen(filename)-1] == 'f') {
+			handle = (audioFile*)new aifFile();
 		} else {
 			handle = new wavFile();
 		}
