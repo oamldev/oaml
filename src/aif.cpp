@@ -244,10 +244,16 @@ int aifFile::Read(ByteBuffer *buffer, int size) {
 			} else {
 				chunkSize-= ret;
 
+				if (bitsPerSample == 8) {
+					char *cbuf = (char*)buf;
+					for (int i=0; i<ret; i++) {
+						cbuf[i] = cbuf[i]+128;
+					}
+				} else
 				if (bitsPerSample == 16) {
 					unsigned short *sbuf = (unsigned short *)buf;
 					for (int i=0; i<ret; i+= 2) {
-						sbuf[i] = SWAP16(sbuf[i]);
+						sbuf[i>>1] = SWAP16(sbuf[i>>1]);
 					}
 				} else
 				if (bitsPerSample == 24) {
