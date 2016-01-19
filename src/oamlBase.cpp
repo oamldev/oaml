@@ -39,8 +39,10 @@ oamlBase::~oamlBase() {
 int oamlBase::ReadDefs(const char *filename, const char *path) {
 	tinyxml2::XMLDocument doc;
 
-	if (doc.LoadFile(filename) != tinyxml2::XML_NO_ERROR)
+	if (doc.LoadFile(filename) != tinyxml2::XML_NO_ERROR) {
+		fprintf(stderr, "liboaml: Error loading definitions '%s'\n", filename);
 		return -1;
+	}
 
 	tinyxml2::XMLElement *el = doc.FirstChildElement("track");
 	while (el != NULL) {
