@@ -18,30 +18,33 @@ enum {
 
 #ifdef _MSC_VER
 #pragma pack(push,1)
+#define __PACKED
+#else
+#define __PACKED __attribute__((packed))
 #endif
 
 typedef struct {
 	int id;
 	unsigned int size;
-} __attribute__((packed)) aifHeader;
+} __PACKED aifHeader;
 
 typedef struct {
 	int id;
 	unsigned int size;
 	int aiff;
-} __attribute__((packed)) formHeader;
+} __PACKED formHeader;
 
 typedef struct {
 	unsigned int offset;
 	unsigned int blockSize;
-} __attribute__((packed)) ssndHeader;
+} __PACKED ssndHeader;
 
 typedef struct {
 	unsigned short channels;
 	unsigned int sampleFrames;
 	unsigned short sampleSize;
 	unsigned char sampleRate80[10];
-} __attribute__((packed)) commHeader;
+} __PACKED commHeader;
 
 #ifdef _MSC_VER
 #pragma pack(pop)

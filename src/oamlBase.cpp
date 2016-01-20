@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 #include "tinyxml2.h"
 #include "oamlCommon.h"
@@ -275,7 +276,7 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 		sample = (((sample>>8) * volume) / OAML_VOLUME_MAX) << 8;
 
 		// Mix our sample into the buffer
-		int tmp;
+		int tmp = 0;
 		switch (bytesPerSample) {
 			case 1: // 8bit (unsigned)
 				// TODO: Test me!
