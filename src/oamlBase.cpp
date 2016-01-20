@@ -70,7 +70,7 @@ oamlBase::~oamlBase() {
 
 int oamlBase::ReadDefs(const char *filename, const char *path) {
 	tinyxml2::XMLDocument doc;
-	char buf[1*1024*1024];
+	char buf[64*1024];
 	void *fd;
 
 	fd = fcbs->open(filename);
@@ -79,7 +79,7 @@ int oamlBase::ReadDefs(const char *filename, const char *path) {
 		return -1;
 	}
 
-	size_t size = 1*1024*1024;
+	size_t size = 64*1024;
 	size_t bytes = fcbs->read(buf, 1, size, fd);
 	if (bytes <= 0) {
 		fprintf(stderr, "liboaml: Error reading xml '%s'\n", filename);
