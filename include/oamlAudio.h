@@ -66,6 +66,7 @@ public:
 
 	void SetCondition(int id, int type, int value, int value2 = 0);
 	bool TestCondition(int id, int value);
+	bool HasCondition(int id) { return id == condId; }
 
 	unsigned int GetBarsSamples(int bars);
 

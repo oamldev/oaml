@@ -60,7 +60,9 @@ void oamlTrack::SetCondition(int id, int value) {
 	if (id == CONDITION_MAIN_LOOP) {
 		for (int i=0; i<loopCount; i++) {
 			oamlAudio *audio = loopAudios[i];
-			audio->SetPickable(audio->TestCondition(0, value));
+			if (audio->HasCondition(id)) {
+				audio->SetPickable(audio->TestCondition(id, value));
+			}
 		}
 		return;
 	}
@@ -181,7 +183,9 @@ oamlAudio* oamlTrack::PickNextAudio() {
 				list[count++] = audio;
 		}
 
-		if (count == 1) {
+		if (count == 0) {
+			return NULL;
+		} else if (count == 1) {
 			return list[0];
 		} else {
 			int r = Random(0, count-1);

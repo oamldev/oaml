@@ -85,6 +85,9 @@ bool oamlAudio::TestCondition(int id, int value) {
 }
 
 unsigned int oamlAudio::GetBarsSamples(int bars) {
+	if (bpm == 0)
+		return 0;
+
 	float secs = bars * (60.f / bpm) * beatsPerBar;
 	return (unsigned int)(secs * samplesPerSec);
 }
