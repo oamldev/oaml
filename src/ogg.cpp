@@ -28,13 +28,6 @@ long oggFile_tell(void *datasource) {
 	return ogg->GetFileCallbacks()->tell(ogg->GetFD());
 }
 
-static const ov_callbacks ogg_callbacks = {
-	oggFile_read,
-	oggFile_seek,
-	oggFile_close,
-	oggFile_tell
-};
-
 oggFile::oggFile(oamlFileCallbacks *cbs) : audioFile(cbs) {
 	fcbs = cbs;
 	fd = NULL;
@@ -64,12 +57,20 @@ int oggFile::Open(const char *filename) {
 		return -1;
 	}
 
-	OggVorbis_File *vf = new OggVorbis_File;
-	if (ov_open_callbacks((void*)this, vf, NULL, 0, ogg_callbacks) < 0) {
+	OggVorbis_File *ovf = new OggVorbis_File;
+
+	ov_callbacks ogg_callbacks = {
+		oggFile_read,
+		oggFile_seek,
+		oggFile_close,
+		oggFile_tell
+	};
+
+	if (ov_open_callbacks((void*)this, ovf, NULL, 0, ogg_callbacks) < 0) {
 		return -1;
 	}
 
-	vorbis_info *vi = ov_info(vf, -1);
+	vorbis_info *vi = ov_info(ovf, -1);
 	if (vi == NULL) {
 		return -1;
 	}
@@ -77,9 +78,9 @@ int oggFile::Open(const char *filename) {
 	channels = vi->channels;
 	samplesPerSec = vi->rate;
 	bitsPerSample = 16;
-	totalSamples = (int)ov_pcm_total(vf, -1) * channels;
+	totalSamples = (int)ov_pcm_total(ovf, -1) * channels;
 
-	fd = (void*)vf;
+	vf = (void*)ovf;
 
 	return 0;
 }
@@ -87,16 +88,16 @@ int oggFile::Open(const char *filename) {
 int oggFile::Read(ByteBuffer *buffer, int size) {
 	unsigned char buf[4096];
 
-	if (fd == NULL)
+	if (vf == NULL)
 		return -1;
 
-	OggVorbis_File *vf = (OggVorbis_File *)fd;
+	OggVorbis_File *ovf = (OggVorbis_File *)vf;
 
 	int bytesRead = 0;
 	while (size > 0) {
 		// Let's keep reading data!
 		int bytes = size < 4096 ? size : 4096;
-		int ret = (int)ov_read(vf, (char*)buf, bytes, 0, 2, 1, &currentSection);
+		int ret = (int)ov_read(ovf, (char*)buf, bytes, 0, 2, 1, &currentSection);
 		if (ret == 0) {
 			break;
 		} else {
@@ -113,9 +114,9 @@ void oggFile::WriteToFile(const char *filename, ByteBuffer *buffer, int channels
 }
 
 void oggFile::Close() {
-	if (fd != NULL) {
-		OggVorbis_File *vf = (OggVorbis_File *)fd;
-		delete vf;
-		fd = NULL;
+	if (vf != NULL) {
+		OggVorbis_File *ovf = (OggVorbis_File *)vf;
+		delete ovf;
+		vf = NULL;
 	}
 }

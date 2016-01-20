@@ -3,6 +3,8 @@
 
 class oggFile : public audioFile {
 private:
+	void *vf;
+
 	int format;
 	int channels;
 	int samplesPerSec;

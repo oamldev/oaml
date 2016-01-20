@@ -30,11 +30,11 @@ static int oamlClose(void *fd) {
 
 
 static oamlFileCallbacks defCbs = {
-	&oamlOpen,
-	&oamlRead,
-	&oamlSeek,
-	&oamlTell,
-	&oamlClose
+	oamlOpen,
+	oamlRead,
+	oamlSeek,
+	oamlTell,
+	oamlClose
 };
 
 oamlBase::oamlBase() {
