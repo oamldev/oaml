@@ -6,7 +6,9 @@
 #include "oamlCommon.h"
 
 
-oamlAudio::oamlAudio() {
+oamlAudio::oamlAudio(oamlFileCallbacks *cbs) {
+	fcbs = cbs;
+
 	buffer = new ByteBuffer();
 	handle = NULL;
 	memset(filename, 0, sizeof(filename));
@@ -95,12 +97,12 @@ int oamlAudio::Open() {
 		samplesCount = 0;
 	} else {
 		if (filename[strlen(filename)-1] == 'g') {
-			handle = (audioFile*)new oggFile();
+			handle = (audioFile*)new oggFile(fcbs);
 		} else
 		if (filename[strlen(filename)-1] == 'f') {
-			handle = (audioFile*)new aifFile();
+			handle = (audioFile*)new aifFile(fcbs);
 		} else {
-			handle = new wavFile();
+			handle = new wavFile(fcbs);
 		}
 
 		if (handle->Open(filename) == -1) {
@@ -189,7 +191,7 @@ int oamlAudio::Read32() {
 	if (fadeInSamples) {
 		if (samplesCount < fadeInSamples) {
 			float gain = 1.f - float(fadeInSamples - samplesCount) / float(fadeInSamples);
-			gain = log10(1.f + 9.f * gain);
+//			gain = log10(1.f + 9.f * gain);
 			ret = (int)(ret * gain);
 		} else {
 			fadeInSamples = 0;
@@ -200,7 +202,7 @@ int oamlAudio::Read32() {
 		unsigned int fadeOutFinish = fadeOutStart + fadeOutSamples;
 		if (samplesCount < fadeOutFinish) {
 			float gain = float(fadeOutFinish - samplesCount) / float(fadeOutSamples);
-			gain = log10(1.f + 9.f * gain);
+//			gain = log10(1.f + 9.f * gain);
 			ret = (int)(ret * gain);
 		} else {
 			ret = 0;

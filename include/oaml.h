@@ -18,6 +18,14 @@ enum {
 	COND_TYPE_RANGE		= 3
 };
 
+typedef struct {
+	void*  (*open)  (const char *filename);
+	size_t (*read)  (void *ptr, size_t size, size_t nitems, void *fd);
+	int    (*seek)  (void *fd, long offset, int whence);
+	long   (*tell)  (void *fd);
+	int    (*close) (void *fd);
+} oamlFileCallbacks;
+
 //
 // Internal declarations
 //
@@ -83,6 +91,9 @@ public:
 	void SetDebugClipping(bool option);
 	void SetMeasureDecibels(bool option);
 	void SetWriteAudioAtShutdown(bool option);
+
+	/** Set file handling callbacks */
+	void SetFileCallbacks(oamlFileCallbacks *cbs);
 };
 
 #endif /* __OAML_H__ */

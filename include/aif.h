@@ -3,8 +3,6 @@
 
 class aifFile : public audioFile {
 private:
-	FILE *fd;
-
 	int channels;
 	int samplesPerSec;
 	int bitsPerSample;
@@ -15,7 +13,7 @@ private:
 
 	int ReadChunk();
 public:
-	aifFile();
+	aifFile(oamlFileCallbacks *cbs);
 	~aifFile();
 
 	int GetFormat() const { return 0; }

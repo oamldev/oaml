@@ -3,8 +3,6 @@
 
 class oggFile : public audioFile {
 private:
-	void *fd;
-
 	int format;
 	int channels;
 	int samplesPerSec;
@@ -13,7 +11,7 @@ private:
 
 	int currentSection;
 public:
-	oggFile();
+	oggFile(oamlFileCallbacks *cbs);
 	~oggFile();
 
 	int GetFormat() const { return format; }

@@ -33,6 +33,8 @@ private:
 	uint64_t tensionMs;
 	int volume;
 
+	oamlFileCallbacks *fcbs;
+
 	uint64_t timeMs;
 
 	void ShowPlayingTracks();
@@ -74,6 +76,8 @@ public:
 	void Update();
 
 	int SafeAdd(int sample1, int sample2);
+
+	void SetFileCallbacks(oamlFileCallbacks *cbs);
 };
 
 #endif /* __OAMLBASE_H__ */

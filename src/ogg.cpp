@@ -8,7 +8,35 @@
 #include "oamlCommon.h"
 
 
-oggFile::oggFile() {
+static size_t oggFile_read(void *ptr, size_t size, size_t nmemb, void *datasource) {
+	oggFile *ogg = (oggFile*)datasource;
+	return ogg->GetFileCallbacks()->read(ptr, size, nmemb, ogg->GetFD());
+}
+
+static int oggFile_seek(void *datasource, ogg_int64_t offset, int whence) {
+	oggFile *ogg = (oggFile*)datasource;
+	return ogg->GetFileCallbacks()->seek(ogg->GetFD(), offset, whence);
+}
+
+int oggFile_close(void *datasource) {
+	oggFile *ogg = (oggFile*)datasource;
+	return ogg->GetFileCallbacks()->close(ogg->GetFD());
+}
+
+long oggFile_tell(void *datasource) {
+	oggFile *ogg = (oggFile*)datasource;
+	return ogg->GetFileCallbacks()->tell(ogg->GetFD());
+}
+
+static const ov_callbacks ogg_callbacks = {
+	oggFile_read,
+	oggFile_seek,
+	oggFile_close,
+	oggFile_tell
+};
+
+oggFile::oggFile(oamlFileCallbacks *cbs) : audioFile(cbs) {
+	fcbs = cbs;
 	fd = NULL;
 
 	format = 0;
@@ -31,14 +59,20 @@ int oggFile::Open(const char *filename) {
 		Close();
 	}
 
+	fd = fcbs->open(filename);
+	if (fd == NULL) {
+		return -1;
+	}
+
 	OggVorbis_File *vf = new OggVorbis_File;
-	if (ov_fopen(filename, vf) < 0) {
+	if (ov_open_callbacks((void*)this, vf, NULL, 0, ogg_callbacks) < 0) {
 		return -1;
 	}
 
 	vorbis_info *vi = ov_info(vf, -1);
-	if (vi == NULL)
+	if (vi == NULL) {
 		return -1;
+	}
 
 	channels = vi->channels;
 	samplesPerSec = vi->rate;

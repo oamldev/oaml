@@ -8,7 +8,8 @@
 #include "oamlCommon.h"
 
 
-audioFile::audioFile() {
+audioFile::audioFile(oamlFileCallbacks *cbs) {
+	fcbs = cbs;
 }
 
 audioFile::~audioFile() {

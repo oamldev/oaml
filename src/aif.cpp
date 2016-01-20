@@ -51,7 +51,7 @@ typedef struct {
 #endif
 
 
-aifFile::aifFile() {
+aifFile::aifFile(oamlFileCallbacks *cbs) : audioFile(cbs) {
 	fd = NULL;
 
 	channels = 0;
@@ -76,7 +76,7 @@ int aifFile::Open(const char *filename) {
 		Close();
 	}
 
-	fd = fopen(filename, "rb");
+	fd = fcbs->open(filename);
 	if (fd == NULL) {
 		return -1;
 	}
@@ -175,8 +175,8 @@ int aifFile::ReadChunk() {
 
 	// Read the common header for all aif chunks
 	aifHeader header;
-	if (fread(&header, 1, sizeof(aifHeader), fd) != sizeof(aifHeader)) {
-		fclose(fd);
+	if (fcbs->read(&header, 1, sizeof(aifHeader), fd) != sizeof(aifHeader)) {
+		fcbs->close(fd);
 		fd = NULL;
 		return -1;
 	}
@@ -184,7 +184,7 @@ int aifFile::ReadChunk() {
 	switch (header.id) {
 		case FORM_ID:
 			int aifId;
-			if (fread(&aifId, 1, sizeof(int), fd) != sizeof(int))
+			if (fcbs->read(&aifId, 1, sizeof(int), fd) != sizeof(int))
 				return -1;
 
 			// Check aifId signature for valid file
@@ -194,7 +194,7 @@ int aifFile::ReadChunk() {
 
 		case COMM_ID:
 			commHeader comm;
-			if (fread(&comm, 1, sizeof(commHeader), fd) != sizeof(commHeader))
+			if (fcbs->read(&comm, 1, sizeof(commHeader), fd) != sizeof(commHeader))
 				return -1;
 
 			channels = SWAP16(comm.channels);
@@ -205,11 +205,11 @@ int aifFile::ReadChunk() {
 
 		case SSND_ID:
 			ssndHeader ssnd;
-			if (fread(&ssnd, 1, sizeof(ssndHeader), fd) != sizeof(ssndHeader))
+			if (fcbs->read(&ssnd, 1, sizeof(ssndHeader), fd) != sizeof(ssndHeader))
 				return -1;
 
 			if (ssnd.offset) {
-				fseek(fd, SWAP32(ssnd.offset), SEEK_CUR);
+				fcbs->seek(fd, SWAP32(ssnd.offset), SEEK_CUR);
 			}
 
 			chunkSize = SWAP32(header.size) - 8;
@@ -218,7 +218,7 @@ int aifFile::ReadChunk() {
 			break;
 
 		default:
-			fseek(fd, SWAP32(header.size), SEEK_CUR);
+			fcbs->seek(fd, SWAP32(header.size), SEEK_CUR);
 			break;
 	}
 
@@ -240,7 +240,7 @@ int aifFile::Read(ByteBuffer *buffer, int size) {
 			int bytes = size < bufSize ? size : bufSize;
 			if (chunkSize < bytes)
 				bytes = chunkSize;
-			int ret = fread(buf, 1, bytes, fd);
+			int ret = fcbs->read(buf, 1, bytes, fd);
 			if (ret == 0) {
 				status = 3;
 				break;
@@ -286,7 +286,7 @@ void aifFile::WriteToFile(const char *filename, ByteBuffer *buffer, int channels
 
 void aifFile::Close() {
 	if (fd != NULL) {
-		fclose(fd);
+		fcbs->close(fd);
 		fd = NULL;
 	}
 }

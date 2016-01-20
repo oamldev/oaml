@@ -7,6 +7,8 @@ class ByteBuffer;
 
 class oamlAudio {
 private:
+	oamlFileCallbacks *fcbs;
+
 	ByteBuffer *buffer;
 	audioFile *handle;
 	char filename[1024];
@@ -42,7 +44,7 @@ private:
 	bool pickable;
 
 public:
-	oamlAudio();
+	oamlAudio(oamlFileCallbacks *cbs);
 	~oamlAudio();
 
 	void SetFilename(const char *audioFilename) { ASSERT(audioFilename != NULL); snprintf(filename, 1024, "%s", audioFilename); }

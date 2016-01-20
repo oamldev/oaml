@@ -76,6 +76,10 @@ void oamlApi::Update() {
 	oaml->Update();
 }
 
+void oamlApi::SetFileCallbacks(oamlFileCallbacks *cbs) {
+	oaml->SetFileCallbacks(cbs);
+}
+
 void oamlApi::Shutdown() {
 	oaml->Shutdown();
 }

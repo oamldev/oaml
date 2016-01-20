@@ -3,8 +3,6 @@
 
 class wavFile : public audioFile {
 private:
-	FILE *fd;
-
 	int format;
 	int channels;
 	int samplesPerSec;
@@ -16,7 +14,7 @@ private:
 
 	int ReadChunk();
 public:
-	wavFile();
+	wavFile(oamlFileCallbacks *cbs);
 	~wavFile();
 
 	int GetFormat() const { return format; }

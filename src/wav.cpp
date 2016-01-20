@@ -35,7 +35,8 @@ typedef struct {
 } fmtHeader;
 
 
-wavFile::wavFile() {
+wavFile::wavFile(oamlFileCallbacks *cbs) : audioFile(cbs) {
+	fcbs = cbs;
 	fd = NULL;
 
 	format = 0;
@@ -61,7 +62,7 @@ int wavFile::Open(const char *filename) {
 		Close();
 	}
 
-	fd = fopen(filename, "rb");
+	fd = fcbs->open(filename);
 	if (fd == NULL) {
 		return -1;
 	}
@@ -81,8 +82,8 @@ int wavFile::ReadChunk() {
 
 	// Read the common header for all wave chunks
 	wavHeader header;
-	if (fread(&header, 1, sizeof(wavHeader), fd) != sizeof(wavHeader)) {
-		fclose(fd);
+	if (fcbs->read(&header, 1, sizeof(wavHeader), fd) != sizeof(wavHeader)) {
+		fcbs->close(fd);
 		fd = NULL;
 		return -1;
 	}
@@ -90,7 +91,7 @@ int wavFile::ReadChunk() {
 	switch (header.id) {
 		case RIFF_ID:
 			int waveId;
-			if (fread(&waveId, 1, sizeof(int), fd) != sizeof(int))
+			if (fcbs->read(&waveId, 1, sizeof(int), fd) != sizeof(int))
 				return -1;
 
 			// Check waveId signature for valid file
@@ -100,11 +101,11 @@ int wavFile::ReadChunk() {
 
 		case FMT_ID:
 			fmtHeader fmt;
-			if (fread(&fmt, 1, sizeof(fmtHeader), fd) != sizeof(fmtHeader))
+			if (fcbs->read(&fmt, 1, sizeof(fmtHeader), fd) != sizeof(fmtHeader))
 				return -1;
 
 			if (header.size > sizeof(fmtHeader)) {
-				fseek(fd, header.size - sizeof(fmtHeader), SEEK_CUR);
+				fcbs->seek(fd, header.size - sizeof(fmtHeader), SEEK_CUR);
 			}
 			format = fmt.formatTag;
 			channels = fmt.channels;
@@ -120,7 +121,7 @@ int wavFile::ReadChunk() {
 			break;
 
 		default:
-			fseek(fd, header.size, SEEK_CUR);
+			fcbs->seek(fd, header.size, SEEK_CUR);
 			break;
 	}
 
@@ -141,7 +142,7 @@ int wavFile::Read(ByteBuffer *buffer, int size) {
 			int bytes = size < 4096 ? size : 4096;
 			if (chunkSize < bytes)
 				bytes = chunkSize;
-			int ret = fread(buf, 1, bytes, fd);
+			int ret = fcbs->read(buf, 1, bytes, fd);
 			if (ret == 0) {
 				status = 3;
 				break;
@@ -207,7 +208,7 @@ void wavFile::WriteToFile(const char *filename, ByteBuffer *buffer, int channels
 
 void wavFile::Close() {
 	if (fd != NULL) {
-		fclose(fd);
+		fcbs->close(fd);
 		fd = NULL;
 	}
 }

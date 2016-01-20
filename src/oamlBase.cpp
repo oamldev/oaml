@@ -8,6 +8,35 @@
 #include "oamlCommon.h"
 
 
+static void* oamlOpen(const char *filename) {
+	return fopen(filename, "rb");
+}
+
+static size_t oamlRead(void *ptr, size_t size, size_t nitems, void *fd) {
+	return fread(ptr, size, nitems, (FILE*)fd);
+}
+
+static int oamlSeek(void *fd, long offset, int whence) {
+	return fseek((FILE*)fd, offset, whence);
+}
+
+static long oamlTell(void *fd) {
+	return ftell((FILE*)fd);
+}
+
+static int oamlClose(void *fd) {
+	return fclose((FILE*)fd);
+}
+
+
+static oamlFileCallbacks defCbs = {
+	&oamlOpen,
+	&oamlRead,
+	&oamlSeek,
+	&oamlTell,
+	&oamlClose
+};
+
 oamlBase::oamlBase() {
 	debugClipping = false;
 	writeAudioAtShutdown = false;
@@ -28,6 +57,8 @@ oamlBase::oamlBase() {
 	timeMs = 0;
 	tension = 0;
 	tensionMs = 0;
+
+	fcbs = &defCbs;
 }
 
 oamlBase::~oamlBase() {
@@ -39,9 +70,27 @@ oamlBase::~oamlBase() {
 
 int oamlBase::ReadDefs(const char *filename, const char *path) {
 	tinyxml2::XMLDocument doc;
+	char buf[1*1024*1024];
+	void *fd;
 
-	if (doc.LoadFile(filename) != tinyxml2::XML_NO_ERROR) {
+	fd = fcbs->open(filename);
+	if (fd == NULL) {
 		fprintf(stderr, "liboaml: Error loading definitions '%s'\n", filename);
+		return -1;
+	}
+
+	size_t size = 1*1024*1024;
+	size_t bytes = fcbs->read(buf, 1, size, fd);
+	if (bytes <= 0) {
+		fprintf(stderr, "liboaml: Error reading xml '%s'\n", filename);
+		fcbs->close(fd);
+		return -1;
+	}
+
+	fcbs->close(fd);
+
+	if (doc.Parse(buf, bytes) != tinyxml2::XML_NO_ERROR) {
+		fprintf(stderr, "liboaml: Error parsing xml '%s'\n", filename);
 		return -1;
 	}
 
@@ -57,7 +106,7 @@ int oamlBase::ReadDefs(const char *filename, const char *path) {
 			else if (strcmp(trackEl->Name(), "xfadeIn") == 0) track->SetXFadeIn(strtol(trackEl->GetText(), NULL, 0));
 			else if (strcmp(trackEl->Name(), "xfadeOut") == 0) track->SetXFadeOut(strtol(trackEl->GetText(), NULL, 0));
 			else if (strcmp(trackEl->Name(), "audio") == 0) {
-				oamlAudio *audio = new oamlAudio();
+				oamlAudio *audio = new oamlAudio(fcbs);
 
 				tinyxml2::XMLElement *audioEl = trackEl->FirstChildElement();
 				while (audioEl != NULL) {
@@ -401,12 +450,16 @@ void oamlBase::Update() {
 	}*/
 }
 
+void oamlBase::SetFileCallbacks(oamlFileCallbacks *cbs) {
+	fcbs = cbs;
+}
+
 void oamlBase::Shutdown() {
 //	printf("%s\n", __FUNCTION__);
 	if (writeAudioAtShutdown && fullBuffer) {
 		char filename[1024];
 		snprintf(filename, 1024, "oaml-%d.wav", (int)time(NULL));
-		wavFile *wav = new wavFile();
+		wavFile *wav = new wavFile(fcbs);
 		wav->WriteToFile(filename, fullBuffer, channels, freq, 2);
 		delete wav;
 	}
