@@ -41,6 +41,9 @@ private:
 	int ReadDefs(const char *filaname, const char *path);
 	void ReadInternalDefs(const char *filaname);
 
+	int ReadSample(void *buffer, int index);
+	void WriteSample(void *buffer, int index, int sample);
+
 public:
 	oamlBase();
 	~oamlBase();

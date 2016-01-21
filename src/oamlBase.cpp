@@ -30,11 +30,11 @@ static int oamlClose(void *fd) {
 
 
 static oamlFileCallbacks defCbs = {
-	oamlOpen,
-	oamlRead,
-	oamlSeek,
-	oamlTell,
-	oamlClose
+	&oamlOpen,
+	&oamlRead,
+	&oamlSeek,
+	&oamlTell,
+	&oamlClose
 };
 
 oamlBase::oamlBase() {
@@ -303,11 +303,56 @@ int oamlBase::SafeAdd(int sample1, int sample2) {
 	return ret;
 }
 
+int oamlBase::ReadSample(void *buffer, int index) {
+	switch (bytesPerSample) {
+		case 1: { // 8bit (unsigned)
+			// TODO: Test me!
+			uint8_t *cbuf = (uint8_t *)buffer;
+			return (int)cbuf[index]<<23; }
+			break;
+
+		case 2: { // 16bit (signed)
+			int16_t *sbuf = (int16_t *)buffer;
+			return (int)sbuf[index]<<16; }
+			break;
+
+		case 3: { // 24bit
+			// TODO: Test me!
+			uint8_t *cbuf = (uint8_t *)buffer;
+			int tmp = (int)cbuf[index*3+0]<<8;
+			tmp|= (int)cbuf[index*3+1]<<16;
+			tmp|= (int)cbuf[index*3+2]<<24;
+			return tmp; }
+			break;
+	}
+}
+
+void oamlBase::WriteSample(void *buffer, int index, int sample) {
+	switch (bytesPerSample) {
+		case 1: { // 8bit (unsigned)
+			// TODO: Test me!
+			uint8_t *cbuf = (uint8_t *)buffer;
+			cbuf[index] = (uint8_t)(sample>>23); }
+			break;
+
+		case 2: { // 16bit (signed)
+			int16_t *sbuf = (int16_t *)buffer;
+			sbuf[index] = (int16_t)(sample>>16); }
+			break;
+
+		case 3: { // 24bit
+			// TODO: Test me!
+			uint8_t *cbuf = (uint8_t *)buffer;
+			cbuf[index*3+0] = (uint8_t)(sample>>8);
+			cbuf[index*3+1] = (uint8_t)(sample>>16);
+			cbuf[index*3+2] = (uint8_t)(sample>>24); }
+			break;
+	}
+}
+
 void oamlBase::MixToBuffer(void *buffer, int size) {
 	double sd[2] = { 0, 0 };
 	double sum[2] = { 0, 0 };
-	int16_t *sbuf = (int16_t *)buffer;
-	uint8_t *cbuf = (uint8_t *)buffer;
 	int chcount = 0;
 
 	ASSERT(buffer != NULL);
@@ -325,31 +370,9 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 		sample = (((sample>>8) * volume) / OAML_VOLUME_MAX) << 8;
 
 		// Mix our sample into the buffer
-		int tmp = 0;
-		switch (bytesPerSample) {
-			case 1: // 8bit (unsigned)
-				// TODO: Test me!
-				tmp = SafeAdd(sample, (int)cbuf[i]<<23);
-				cbuf[i] = (uint8_t)(tmp>>23);
-				break;
-
-			case 2: // 16bit (signed)
-				tmp = SafeAdd(sample, (int)sbuf[i]<<16);
-				sbuf[i] = (int16_t)(tmp>>16);
-				break;
-
-			case 3: // 24bit
-				// TODO: Test me!
-				tmp = (int)cbuf[i*3+0]<<8;
-				tmp|= (int)cbuf[i*3+1]<<16;
-				tmp|= (int)cbuf[i*3+2]<<24;
-
-				tmp = SafeAdd(sample, tmp);
-				cbuf[i*3+0] = (uint8_t)(tmp>>8);
-				cbuf[i*3+1] = (uint8_t)(tmp>>16);
-				cbuf[i*3+2] = (uint8_t)(tmp>>24);
-				break;
-		}
+		int tmp = ReadSample(buffer, i);
+		tmp = SafeAdd(sample, tmp);
+		WriteSample(buffer, i, tmp);
 		sample = tmp;
 
 		if (measureDecibels) {
