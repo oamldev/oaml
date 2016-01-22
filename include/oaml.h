@@ -92,6 +92,9 @@ public:
 	void SetMeasureDecibels(bool option);
 	void SetWriteAudioAtShutdown(bool option);
 
+	/** Enable dynamic compressor for music */
+	void EnableDynamicCompressor(bool enable = true, double thresholdDb = -3, double ratio = 4.0);
+
 	/** Set file handling callbacks */
 	void SetFileCallbacks(oamlFileCallbacks *cbs);
 };

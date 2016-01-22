@@ -30,7 +30,7 @@ endif()
 # 
 #
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-set(SRCS src/audioFile.cpp src/ByteBuffer.cpp src/oaml.cpp src/oamlAudio.cpp src/oamlBase.cpp src/oamlTrack.cpp src/aif.cpp src/ogg.cpp src/wav.cpp src/gettime.cpp src/tinyxml2.cpp)
+set(SRCS src/audioFile.cpp src/ByteBuffer.cpp src/oaml.cpp src/oamlAudio.cpp src/oamlBase.cpp src/oamlCompressor.cpp src/oamlTrack.cpp src/aif.cpp src/ogg.cpp src/wav.cpp src/gettime.cpp src/tinyxml2.cpp)
 add_library(oaml STATIC ${SRCS})
 
 add_executable(oamlTest ${SRCS} src/test.cpp)

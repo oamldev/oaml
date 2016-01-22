@@ -80,6 +80,10 @@ void oamlApi::SetFileCallbacks(oamlFileCallbacks *cbs) {
 	oaml->SetFileCallbacks(cbs);
 }
 
+void oamlApi::EnableDynamicCompressor(bool enable, double threshold, double ratio) {
+	oaml->EnableDynamicCompressor(enable, threshold, ratio);
+}
+
 void oamlApi::Shutdown() {
 	oaml->Shutdown();
 }

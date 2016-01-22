@@ -41,6 +41,7 @@ oamlBase::oamlBase() {
 	debugClipping = false;
 	writeAudioAtShutdown = false;
 	measureDecibels = false;
+	useCompressor = false;
 	avgDecibels = 0;
 	tracksN = 0;
 
@@ -200,6 +201,10 @@ void oamlBase::SetAudioFormat(int audioFreq, int audioChannels, int audioBytesPe
 	freq = audioFreq;
 	channels = audioChannels;
 	bytesPerSample = audioBytesPerSample;
+
+	if (useCompressor) {
+		compressor.SetAudioFormat(channels, freq);
+	}
 }
 
 int oamlBase::PlayTrackId(int id) {
@@ -325,6 +330,8 @@ int oamlBase::ReadSample(void *buffer, int index) {
 			return tmp; }
 			break;
 	}
+
+	return 0;
 }
 
 void oamlBase::WriteSample(void *buffer, int index, int sample) {
@@ -350,6 +357,16 @@ void oamlBase::WriteSample(void *buffer, int index, int sample) {
 	}
 }
 
+float Integer24ToFloat(int i) {
+	const float Q = 1.0 / (0x7fffff + 0.5);
+	if (i & 0x800000) i |= ~0xffffff;
+	return (i + 0.5) * Q;
+}
+
+int FloatToInteger24(float f) {
+	return ((int)(f * 8388608) & 0x00ffffff);
+}
+
 void oamlBase::MixToBuffer(void *buffer, int size) {
 	double sd[2] = { 0, 0 };
 	double sum[2] = { 0, 0 };
@@ -358,23 +375,56 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 	ASSERT(buffer != NULL);
 	ASSERT(size != 0);
 
-	for (int i=0; i<size; i++) {
-		int sample = 0;
+	if (useCompressor) {
+		for (int i=0; i<size; i+= channels) {
+			float fsample[2] = { 0, 0 };
+			int sample[2] = { 0, 0 };
 
-		// Mix all the tracks into a 32bit temp value
-		for (int j=0; j<tracksN; j++) {
-			sample = tracks[j]->Mix32(sample, this);
+			// Mix all the tracks into a 32bit temp value
+			for (int c=0; c<channels; c++) {
+				for (int j=0; j<tracksN; j++) {
+					sample[c] = tracks[j]->Mix32(sample[c], this);
+				}
+
+				fsample[c] = Integer24ToFloat(sample[c] >> 8);
+			}
+
+			// Apply effects
+			compressor.ProcessData(fsample);
+
+			for (int c=0; c<channels; c++) {
+				// Apply the volume
+				fsample[c] = fsample[c] * ((float)volume / OAML_VOLUME_MAX);
+
+				sample[c] = FloatToInteger24(fsample[c]) << 8;
+
+				// Mix our sample into the buffer
+				int tmp = ReadSample(buffer, i+c);
+				tmp = SafeAdd(sample[c], tmp);
+				WriteSample(buffer, i+c, tmp);
+			}
 		}
+	} else {
+		for (int i=0; i<size; i++) {
+			int sample = 0;
 
-		// Apply the volume
-		sample = (((sample>>8) * volume) / OAML_VOLUME_MAX) << 8;
+			// Mix all the tracks into a 32bit temp value
+			for (int j=0; j<tracksN; j++) {
+				sample = tracks[j]->Mix32(sample, this);
+			}
 
-		// Mix our sample into the buffer
-		int tmp = ReadSample(buffer, i);
-		tmp = SafeAdd(sample, tmp);
-		WriteSample(buffer, i, tmp);
-		sample = tmp;
+			// Apply the volume
+			sample = (((sample>>8) * volume) / OAML_VOLUME_MAX) << 8;
 
+			// Mix our sample into the buffer
+			int tmp = ReadSample(buffer, i);
+			tmp = SafeAdd(sample, tmp);
+			WriteSample(buffer, i, tmp);
+		}
+	}
+
+	for (int i=0; i<size; i++) {
+		int sample = ReadSample(buffer, i);
 		if (measureDecibels) {
 			sd[chcount] = (sample >> 16) / 32768.0;
 			sum[chcount]+= fabs(sd[chcount]);
@@ -475,6 +525,14 @@ void oamlBase::Update() {
 
 void oamlBase::SetFileCallbacks(oamlFileCallbacks *cbs) {
 	fcbs = cbs;
+}
+
+void oamlBase::EnableDynamicCompressor(bool enable, double threshold, double ratio) {
+	useCompressor = enable;
+	if (useCompressor) {
+		compressor.SetThreshold(threshold);
+		compressor.SetRatio(ratio);
+	}
 }
 
 void oamlBase::Shutdown() {

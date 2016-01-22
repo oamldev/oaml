@@ -16,6 +16,7 @@ private:
 	bool debugClipping;
 	bool writeAudioAtShutdown;
 	bool measureDecibels;
+	bool useCompressor;
 	double avgDecibels;
 
 	oamlTrack *tracks[1024];
@@ -36,6 +37,8 @@ private:
 	oamlFileCallbacks *fcbs;
 
 	uint64_t timeMs;
+
+	oamlCompressor compressor;
 
 	void ShowPlayingTracks();
 	int ReadDefs(const char *filaname, const char *path);
@@ -81,6 +84,8 @@ public:
 	int SafeAdd(int sample1, int sample2);
 
 	void SetFileCallbacks(oamlFileCallbacks *cbs);
+
+	void EnableDynamicCompressor(bool enable, double thresholdDb, double ratio);
 };
 
 #endif /* __OAMLBASE_H__ */

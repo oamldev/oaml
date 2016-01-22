@@ -40,6 +40,7 @@
 #include "wav.h"
 #include "oamlAudio.h"
 #include "oamlTrack.h"
+#include "oamlCompressor.h"
 #include "oamlBase.h"
 
 
