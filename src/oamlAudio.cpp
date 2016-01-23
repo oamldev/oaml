@@ -109,6 +109,7 @@ int oamlAudio::Open() {
 		}
 
 		if (handle->Open(filename) == -1) {
+			printf("Error opening: '%s'\n", filename);
 			return -1;
 		}
 
@@ -117,6 +118,9 @@ int oamlAudio::Open() {
 		totalSamples = handle->GetTotalSamples();
 
 		samplesToEnd = GetBarsSamples(bars);
+		if (samplesToEnd == 0) {
+			samplesToEnd = handle->GetTotalSamples();
+		}
 	}
 
 	fadeInSamples = 0;

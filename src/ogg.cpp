@@ -54,6 +54,7 @@ int oggFile::Open(const char *filename) {
 
 	fd = fcbs->open(filename);
 	if (fd == NULL) {
+		printf("Error opening '%s'\n", filename);
 		return -1;
 	}
 
@@ -67,11 +68,13 @@ int oggFile::Open(const char *filename) {
 	};
 
 	if (ov_open_callbacks((void*)this, ovf, NULL, 0, ogg_callbacks) < 0) {
+		printf("Error opening '%s'\n", filename);
 		return -1;
 	}
 
 	vorbis_info *vi = ov_info(ovf, -1);
 	if (vi == NULL) {
+		printf("Error reading info '%s'\n", filename);
 		return -1;
 	}
 

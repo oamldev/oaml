@@ -69,7 +69,7 @@ oamlBase::~oamlBase() {
 	}
 }
 
-int oamlBase::ReadDefs(const char *filename, const char *path) {
+int oamlBase::ReadDefs(const char *filename) {
 	tinyxml2::XMLDocument doc;
 	char buf[64*1024];
 	void *fd;
@@ -111,11 +111,7 @@ int oamlBase::ReadDefs(const char *filename, const char *path) {
 
 				tinyxml2::XMLElement *audioEl = trackEl->FirstChildElement();
 				while (audioEl != NULL) {
-					if (strcmp(audioEl->Name(), "filename") == 0) {
-						char fname[1024];
-						snprintf(fname, 1024, "%s%s", path, audioEl->GetText());
-						audio->SetFilename(fname);
-					}
+					if (strcmp(audioEl->Name(), "filename") == 0) audio->SetFilename(audioEl->GetText());
 					else if (strcmp(audioEl->Name(), "type") == 0) audio->SetType(strtol(audioEl->GetText(), NULL, 0));
 					else if (strcmp(audioEl->Name(), "bars") == 0) audio->SetBars(strtol(audioEl->GetText(), NULL, 0));
 					else if (strcmp(audioEl->Name(), "bpm") == 0) audio->SetBPM((float)atof(audioEl->GetText()));
@@ -175,21 +171,10 @@ void oamlBase::ReadInternalDefs(const char *filename) {
 	}
 }
 
-int oamlBase::Init(const char *pathToMusic) {
-	char path[1024];
-	char filename[1024];
+int oamlBase::Init(const char *defsFilename) {
+	ASSERT(defsFilename != NULL);
 
-	ASSERT(pathToMusic != NULL);
-
-	int len = strlen(pathToMusic);
-	if (len > 0 && (pathToMusic[len-1] == '/')) {
-		snprintf(path, 1024, "%s", pathToMusic);
-	} else {
-		snprintf(path, 1024, "%s/", pathToMusic);
-	}
-
-	snprintf(filename, 1024, "%soaml.defs", path);
-	if (ReadDefs(filename, path) == -1)
+	if (ReadDefs(defsFilename) == -1)
 		return -1;
 
 	ReadInternalDefs("oamlInternal.defs");

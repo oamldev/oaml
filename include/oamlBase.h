@@ -41,7 +41,7 @@ private:
 	oamlCompressor compressor;
 
 	void ShowPlayingTracks();
-	int ReadDefs(const char *filaname, const char *path);
+	int ReadDefs(const char *filaname);
 	void ReadInternalDefs(const char *filaname);
 
 	int ReadSample(void *buffer, int index);
@@ -51,7 +51,7 @@ public:
 	oamlBase();
 	~oamlBase();
 
-	int Init(const char *pathToMusic);
+	int Init(const char *defsFilename);
 	void Shutdown();
 
 	void SetDebugClipping(bool option) { debugClipping = option; }
