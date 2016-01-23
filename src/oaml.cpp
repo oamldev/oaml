@@ -12,8 +12,8 @@ oamlApi::~oamlApi() {
 	delete oaml;
 }
 
-int oamlApi::Init(const char *pathToMusic) {
-	return oaml->Init(pathToMusic);
+int oamlApi::Init(const char *defsFilename) {
+	return oaml->Init(defsFilename);
 }
 
 void oamlApi::SetMeasureDecibels(bool option) {

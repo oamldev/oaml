@@ -44,10 +44,10 @@ public:
 	oamlApi();
 	~oamlApi();
 
-	/** Initilize the Open Adaptive Music Library with specific path
+	/** Initilize the Open Adaptive Music Library with the fullpath to 'oaml.defs'
 	 *  @return returns 0, or -1 on error
 	 */
-	int Init(const char *pathToMusic);
+	int Init(const char *defsFilename);
 
 	/** Shutdown the library */
 	void Shutdown();
