@@ -63,6 +63,7 @@ public:
 	int GetVolume() const { return volume; }
 
 	int PlayTrack(const char *name);
+	int PlayTrackWithStringRandom(const char *str);
 	int PlayTrackId(int id);
 
 	void StopPlaying();

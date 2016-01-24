@@ -222,6 +222,29 @@ int oamlBase::PlayTrack(const char *name) {
 	return -1;
 }
 
+int oamlBase::PlayTrackWithStringRandom(const char *str) {
+	std::vector<int> list;
+
+	ASSERT(str != NULL);
+
+//	printf("%s %s\n", __FUNCTION__, name);
+
+	for (int i=0; i<tracksN; i++) {
+		if (strstr(tracks[i]->GetName(), str)) {
+			list.push_back(i);
+		}
+	}
+
+	if (list.empty() == false) {
+		int i = rand() % list.size();
+		return PlayTrackId(list[i]);
+	}
+
+	fprintf(stderr, "liboaml::%s: Unable to find track any track with '%s'\n", __FUNCTION__, str);
+
+	return -1;
+}
+
 bool oamlBase::IsTrackPlaying(const char *name) {
 	ASSERT(name != NULL);
 
