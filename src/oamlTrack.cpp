@@ -17,10 +17,6 @@ oamlTrack::oamlTrack() {
 	xfadeIn = 0;
 	xfadeOut = 0;
 
-	loopCount = 0;
-	condCount = 0;
-	randCount = 0;
-
 	tailPos = 0;
 
 	introAudio = NULL;
@@ -42,11 +38,11 @@ void oamlTrack::AddAudio(oamlAudio *audio) {
 	} else if (audio->GetType() == 3) {
 		endAudio = audio;
 	} else if (audio->GetType() == 4) {
-		condAudios[condCount++] = audio;
+		condAudios.push_back(audio);
 	} else if (audio->GetRandomChance() > 0) {
-		randAudios[randCount++] = audio;
+		randAudios.push_back(audio);
 	} else {
-		loopAudios[loopCount++] = audio;
+		loopAudios.push_back(audio);
 	}
 }
 
@@ -58,7 +54,7 @@ void oamlTrack::SetCondition(int id, int value) {
 		return;
 
 	if (id == CONDITION_MAIN_LOOP) {
-		for (int i=0; i<loopCount; i++) {
+		for (size_t i=0; i<loopAudios.size(); i++) {
 			oamlAudio *audio = loopAudios[i];
 			if (audio->HasCondition(id)) {
 				audio->SetPickable(audio->TestCondition(id, value));
@@ -67,7 +63,7 @@ void oamlTrack::SetCondition(int id, int value) {
 		return;
 	}
 
-	for (int i=0; i<condCount; i++) {
+	for (size_t i=0; i<condAudios.size(); i++) {
 		oamlAudio *audio = condAudios[i];
 		if (audio->GetCondId() != id)
 			continue;
@@ -156,12 +152,12 @@ int oamlTrack::Random(int min, int max) {
 }
 
 void oamlTrack::ShowInfo() {
-	printf("%s %d %d %d\n", GetNameStr(), loopCount, randCount, condCount);
+	printf("%s %ld %ld %ld\n", GetNameStr(), loopAudios.size(), randAudios.size(), condAudios.size());
 }
 
 oamlAudio* oamlTrack::PickNextAudio() {
-	if (randCount > 0 && (curAudio == NULL || curAudio->GetRandomChance() == 0)) {
-		for (int i=0; i<randCount; i++) {
+	if (randAudios.size() > 0 && (curAudio == NULL || curAudio->GetRandomChance() == 0)) {
+		for (size_t i=0; i<randAudios.size(); i++) {
 			int chance = randAudios[i]->GetRandomChance();
 			if (Random(0, 100) > chance) {
 				continue;
@@ -171,13 +167,13 @@ oamlAudio* oamlTrack::PickNextAudio() {
 		}
 	}
 
-	if (loopCount == 1) {
+	if (loopAudios.size() == 1) {
 		return loopAudios[0];
-	} else if (loopCount >= 2) {
+	} else if (loopAudios.size() >= 2) {
 		oamlAudio *list[256];
 		int count = 0;
 
-		for (int i=0; i<loopCount; i++) {
+		for (size_t i=0; i<loopAudios.size(); i++) {
 			oamlAudio *audio = loopAudios[i];
 			if (audio->IsPickable())
 				list[count++] = audio;

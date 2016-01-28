@@ -9,10 +9,6 @@ private:
 	std::string name;
 	int mode;
 
-	int loopCount;
-	int condCount;
-	int randCount;
-
 	int fadeIn;
 	int fadeOut;
 	int xfadeIn;
@@ -22,9 +18,9 @@ private:
 
 	unsigned int tailPos;
 
-	oamlAudio *loopAudios[256];
-	oamlAudio *randAudios[256];
-	oamlAudio *condAudios[256];
+	std::vector<oamlAudio*> loopAudios;
+	std::vector<oamlAudio*> randAudios;
+	std::vector<oamlAudio*> condAudios;
 	oamlAudio *introAudio;
 	oamlAudio *endAudio;
 	oamlAudio *playCondAudio;

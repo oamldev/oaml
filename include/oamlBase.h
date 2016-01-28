@@ -19,8 +19,7 @@ private:
 	bool useCompressor;
 	double avgDecibels;
 
-	oamlTrack *tracks[1024];
-	int tracksN;
+	std::vector<oamlTrack*> tracks;
 
 	oamlTrack *curTrack;
 

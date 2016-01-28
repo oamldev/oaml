@@ -43,7 +43,6 @@ oamlBase::oamlBase() {
 	measureDecibels = false;
 	useCompressor = false;
 	avgDecibels = 0;
-	tracksN = 0;
 
 	curTrack = NULL;
 
@@ -150,7 +149,7 @@ int oamlBase::ReadDefs(const char *filename) {
 
 		tinfo.name = track->GetName();
 		tracksInfo.tracks.push_back(tinfo);
-		tracks[tracksN++] = track;
+		tracks.push_back(track);
 //		track->ShowInfo();
 
 		el = el->NextSiblingElement();
@@ -202,7 +201,7 @@ void oamlBase::SetAudioFormat(int audioFreq, int audioChannels, int audioBytesPe
 }
 
 int oamlBase::PlayTrackId(int id) {
-	if (id >= tracksN)
+	if (id >= (int)tracks.size())
 		return -1;
 
 	if (curTrack) {
@@ -220,7 +219,7 @@ int oamlBase::PlayTrack(const char *name) {
 
 //	printf("%s %s\n", __FUNCTION__, name);
 
-	for (int i=0; i<tracksN; i++) {
+	for (size_t i=0; i<tracks.size(); i++) {
 		if (tracks[i]->GetName().compare(name) == 0) {
 			return PlayTrackId(i);
 		}
@@ -238,7 +237,7 @@ int oamlBase::PlayTrackWithStringRandom(const char *str) {
 
 //	printf("%s %s\n", __FUNCTION__, name);
 
-	for (int i=0; i<tracksN; i++) {
+	for (size_t i=0; i<tracks.size(); i++) {
 		if (tracks[i]->GetName().find(str) == std::string::npos) {
 			list.push_back(i);
 		}
@@ -257,7 +256,7 @@ int oamlBase::PlayTrackWithStringRandom(const char *str) {
 bool oamlBase::IsTrackPlaying(const char *name) {
 	ASSERT(name != NULL);
 
-	for (int i=0; i<tracksN; i++) {
+	for (size_t i=0; i<tracks.size(); i++) {
 		if (tracks[i]->GetName().compare(name) == 0) {
 			return IsTrackPlayingId(i);
 		}
@@ -267,14 +266,14 @@ bool oamlBase::IsTrackPlaying(const char *name) {
 }
 
 bool oamlBase::IsTrackPlayingId(int id) {
-	if (id >= tracksN)
+	if (id >= (int)tracks.size())
 		return false;
 
 	return tracks[id]->IsPlaying();
 }
 
 bool oamlBase::IsPlaying() {
-	for (int i=0; i<tracksN; i++) {
+	for (size_t i=0; i<tracks.size(); i++) {
 		if (tracks[i]->IsPlaying())
 			return true;
 	}
@@ -283,7 +282,7 @@ bool oamlBase::IsPlaying() {
 }
 
 void oamlBase::StopPlaying() {
-	for (int i=0; i<tracksN; i++) {
+	for (size_t i=0; i<tracks.size(); i++) {
 		if (tracks[i]->IsPlaying()) {
 			tracks[i]->Stop();
 			break;
@@ -292,7 +291,7 @@ void oamlBase::StopPlaying() {
 }
 
 void oamlBase::ShowPlayingTracks() {
-	for (int i=0; i<tracksN; i++) {
+	for (size_t i=0; i<tracks.size(); i++) {
 		tracks[i]->ShowPlaying();
 	}
 }
@@ -399,7 +398,7 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 
 			// Mix all the tracks into a 32bit temp value
 			for (int c=0; c<channels; c++) {
-				for (int j=0; j<tracksN; j++) {
+				for (size_t j=0; j<tracks.size(); j++) {
 					sample[c] = tracks[j]->Mix32(sample[c], this);
 				}
 
@@ -426,7 +425,7 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 			int sample = 0;
 
 			// Mix all the tracks into a 32bit temp value
-			for (int j=0; j<tracksN; j++) {
+			for (size_t j=0; j<tracks.size(); j++) {
 				sample = tracks[j]->Mix32(sample, this);
 			}
 
