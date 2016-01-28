@@ -1,8 +1,6 @@
 #ifndef __OAMLAUDIO_H__
 #define __OAMLAUDIO_H__
 
-#include "wav.h"
-
 class ByteBuffer;
 
 class oamlAudio {
@@ -11,7 +9,7 @@ private:
 
 	ByteBuffer *buffer;
 	audioFile *handle;
-	char filename[1024];
+	std::string filename;
 	int type;
 	int bars;
 
@@ -47,7 +45,7 @@ public:
 	oamlAudio(oamlFileCallbacks *cbs);
 	~oamlAudio();
 
-	void SetFilename(const char *audioFilename) { ASSERT(audioFilename != NULL); snprintf(filename, 1024, "%s", audioFilename); }
+	void SetFilename(std::string audioFilename) { filename = audioFilename; }
 	void SetType(int audioType) { type = audioType; }
 	void SetBPM(float audioBpm) { bpm = audioBpm; }
 	void SetBeatsPerBar(int audioBeatsPerBar) { beatsPerBar = audioBeatsPerBar; }
@@ -81,7 +79,8 @@ public:
 	void DoFadeIn(int msec);
 	void DoFadeOut(int msec);
 
-	const char *GetFilename() const { return filename; }
+	std::string GetFilename() const { return filename; }
+	const char *GetFilenameStr() const { return filename.c_str(); }
 	float GetBPM() const { return bpm; }
 	int GetBeatsPerBar() const { return beatsPerBar; }
 	int GetBars() const { return bars; }

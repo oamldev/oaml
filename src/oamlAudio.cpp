@@ -11,7 +11,7 @@ oamlAudio::oamlAudio(oamlFileCallbacks *cbs) {
 
 	buffer = new ByteBuffer();
 	handle = NULL;
-	memset(filename, 0, sizeof(filename));
+	filename = "";
 	type = 0;
 	bars = 0;
 
@@ -93,23 +93,26 @@ unsigned int oamlAudio::GetBarsSamples(int bars) {
 }
 
 int oamlAudio::Open() {
-	printf("%s %s\n", __FUNCTION__, filename);
+	printf("%s %s\n", __FUNCTION__, GetFilenameStr());
 
 	if (buffer->size() > 0) {
 		buffer->setReadPos(0);
 		samplesCount = 0;
 	} else {
-		if (filename[strlen(filename)-1] == 'g') {
+		std::string ext = filename.substr(filename.find_last_of(".") + 1);
+		if (ext == "ogg") {
 			handle = (audioFile*)new oggFile(fcbs);
-		} else
-		if (filename[strlen(filename)-1] == 'f') {
+		} else if (ext == "aif" || ext == "aiff") {
 			handle = (audioFile*)new aifFile(fcbs);
-		} else {
+		} else if (ext == "wav" || ext == "wave") {
 			handle = new wavFile(fcbs);
+		} else {
+			fprintf(stderr, "liboaml: Unknown audio format: '%s'\n", GetFilenameStr());
+			return -1;
 		}
 
-		if (handle->Open(filename) == -1) {
-			printf("Error opening: '%s'\n", filename);
+		if (handle->Open(GetFilenameStr()) == -1) {
+			fprintf(stderr, "liboaml: Error opening: '%s'\n", GetFilenameStr());
 			return -1;
 		}
 
