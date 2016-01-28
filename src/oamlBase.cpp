@@ -97,6 +97,7 @@ int oamlBase::ReadDefs(const char *filename) {
 
 	tinyxml2::XMLElement *el = doc.FirstChildElement("track");
 	while (el != NULL) {
+		oamlTrackInfo tinfo;
 		oamlTrack *track = new oamlTrack();
 
 		tinyxml2::XMLElement *trackEl = el->FirstChildElement();
@@ -107,6 +108,7 @@ int oamlBase::ReadDefs(const char *filename) {
 			else if (strcmp(trackEl->Name(), "xfadeIn") == 0) track->SetXFadeIn(strtol(trackEl->GetText(), NULL, 0));
 			else if (strcmp(trackEl->Name(), "xfadeOut") == 0) track->SetXFadeOut(strtol(trackEl->GetText(), NULL, 0));
 			else if (strcmp(trackEl->Name(), "audio") == 0) {
+				oamlAudioInfo ainfo;
 				oamlAudio *audio = new oamlAudio(fcbs);
 
 				tinyxml2::XMLElement *audioEl = trackEl->FirstChildElement();
@@ -133,6 +135,11 @@ int oamlBase::ReadDefs(const char *filename) {
 					audioEl = audioEl->NextSiblingElement();
 				}
 
+				ainfo.filename = audio->GetFilename();
+				ainfo.bpm = audio->GetBPM();
+				ainfo.beatsPerBar = audio->GetBeatsPerBar();
+				ainfo.bars = audio->GetBars();
+				tinfo.audios.push_back(ainfo);
 				track->AddAudio(audio);
 			} else {
 				printf("%s: Unknown track tag: %s\n", __FUNCTION__, trackEl->Name());
@@ -141,6 +148,8 @@ int oamlBase::ReadDefs(const char *filename) {
 			trackEl = trackEl->NextSiblingElement();
 		}
 
+		tinfo.name = track->GetName();
+		tracksInfo.tracks.push_back(tinfo);
 		tracks[tracksN++] = track;
 //		track->ShowInfo();
 
@@ -212,7 +221,7 @@ int oamlBase::PlayTrack(const char *name) {
 //	printf("%s %s\n", __FUNCTION__, name);
 
 	for (int i=0; i<tracksN; i++) {
-		if (strcmp(tracks[i]->GetName(), name) == 0) {
+		if (tracks[i]->GetName().compare(name) == 0) {
 			return PlayTrackId(i);
 		}
 	}
@@ -230,7 +239,7 @@ int oamlBase::PlayTrackWithStringRandom(const char *str) {
 //	printf("%s %s\n", __FUNCTION__, name);
 
 	for (int i=0; i<tracksN; i++) {
-		if (strstr(tracks[i]->GetName(), str)) {
+		if (tracks[i]->GetName().find(str) == std::string::npos) {
 			list.push_back(i);
 		}
 	}
@@ -249,7 +258,7 @@ bool oamlBase::IsTrackPlaying(const char *name) {
 	ASSERT(name != NULL);
 
 	for (int i=0; i<tracksN; i++) {
-		if (strcmp(tracks[i]->GetName(), name) == 0) {
+		if (tracks[i]->GetName().compare(name) == 0) {
 			return IsTrackPlayingId(i);
 		}
 	}
@@ -541,6 +550,10 @@ void oamlBase::EnableDynamicCompressor(bool enable, double threshold, double rat
 		compressor.SetThreshold(threshold);
 		compressor.SetRatio(ratio);
 	}
+}
+
+oamlTracksInfo* oamlBase::GetTracksInfo() {
+	return &tracksInfo;
 }
 
 void oamlBase::Shutdown() {

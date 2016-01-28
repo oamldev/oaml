@@ -6,7 +6,7 @@ class oamlAudio;
 
 class oamlTrack {
 private:
-	char name[256];
+	std::string name;
 	int mode;
 
 	int loopCount;
@@ -45,14 +45,15 @@ public:
 	oamlTrack();
 	~oamlTrack();
 
-	void SetName(const char *trackName) { ASSERT(trackName != NULL); snprintf(name, 256, "%s", trackName); }
+	void SetName(std::string trackName) { name = trackName; }
 	void SetMode(int trackMode) { mode = trackMode; }
 	void SetFadeIn(int trackFadeIn) { fadeIn = trackFadeIn; }
 	void SetFadeOut(int trackFadeOut) { fadeOut = trackFadeOut; }
 	void SetXFadeIn(int trackXFadeIn) { xfadeIn = trackXFadeIn; }
 	void SetXFadeOut(int trackXFadeOut) { xfadeOut = trackXFadeOut; }
 
-	char *GetName() { return name; }
+	const char *GetNameStr() { return name.c_str(); }
+	std::string GetName() { return name; }
 
 	void AddAudio(oamlAudio *audio);
 	void Play();

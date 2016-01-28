@@ -1,6 +1,8 @@
 #ifndef __OAML_H__
 #define __OAML_H__
 
+#include <string>
+#include <vector>
 
 //
 // Definitions
@@ -25,6 +27,22 @@ typedef struct {
 	long   (*tell)  (void *fd);
 	int    (*close) (void *fd);
 } oamlFileCallbacks;
+
+typedef struct {
+	std::string filename;
+	float bpm;
+	int beatsPerBar;
+	int bars;
+} oamlAudioInfo;
+
+typedef struct {
+	std::string name;
+	std::vector<oamlAudioInfo> audios;
+} oamlTrackInfo;
+
+typedef struct {
+	std::vector<oamlTrackInfo> tracks;
+} oamlTracksInfo;
 
 //
 // Internal declarations
@@ -76,6 +94,9 @@ public:
 
 	/** Check if any track is playing */
 	bool IsPlaying();
+
+	/** Returns a pointer to the tracks information */
+	oamlTracksInfo *GetTracksInfo();
 
 	/** Add tension that triggers different aspects of the music */
 	void AddTension(int value);

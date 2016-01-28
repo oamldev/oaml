@@ -88,6 +88,10 @@ void oamlApi::EnableDynamicCompressor(bool enable, double threshold, double rati
 	oaml->EnableDynamicCompressor(enable, threshold, ratio);
 }
 
+oamlTracksInfo* oamlApi::GetTracksInfo() {
+	return oaml->GetTracksInfo();
+}
+
 void oamlApi::Shutdown() {
 	oaml->Shutdown();
 }

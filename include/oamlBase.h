@@ -40,6 +40,8 @@ private:
 
 	oamlCompressor compressor;
 
+	oamlTracksInfo tracksInfo;
+
 	void ShowPlayingTracks();
 	int ReadDefs(const char *filaname);
 	void ReadInternalDefs(const char *filaname);
@@ -87,6 +89,8 @@ public:
 	void SetFileCallbacks(oamlFileCallbacks *cbs);
 
 	void EnableDynamicCompressor(bool enable, double thresholdDb, double ratio);
+
+	oamlTracksInfo *GetTracksInfo();
 };
 
 #endif /* __OAMLBASE_H__ */

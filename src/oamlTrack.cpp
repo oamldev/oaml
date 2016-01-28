@@ -6,7 +6,7 @@
 
 
 oamlTrack::oamlTrack() {
-	memset(name, 0, sizeof(name));
+	name = "Track";
 	mode = 0;
 
 	playCondSamples = 0;
@@ -156,7 +156,7 @@ int oamlTrack::Random(int min, int max) {
 }
 
 void oamlTrack::ShowInfo() {
-	printf("%s %d %d %d\n", name, loopCount, randCount, condCount);
+	printf("%s %d %d %d\n", GetNameStr(), loopCount, randCount, condCount);
 }
 
 oamlAudio* oamlTrack::PickNextAudio() {
@@ -309,7 +309,7 @@ void oamlTrack::ShowPlaying() {
 	}
 
 	if (strlen(str) > 0) {
-		printf("%s: %s\n", GetName(), str);
+		printf("%s: %s\n", GetNameStr(), str);
 	}
 }
 

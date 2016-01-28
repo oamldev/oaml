@@ -82,6 +82,9 @@ public:
 	void DoFadeOut(int msec);
 
 	const char *GetFilename() const { return filename; }
+	float GetBPM() const { return bpm; }
+	int GetBeatsPerBar() const { return beatsPerBar; }
+	int GetBars() const { return bars; }
 	int GetMinMovementBars() const { return minMovementBars; }
 	int GetRandomChance() const { return randomChance; }
 	int GetCondId() const { return condId; }
