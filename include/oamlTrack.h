@@ -48,8 +48,12 @@ public:
 	void SetXFadeIn(int trackXFadeIn) { xfadeIn = trackXFadeIn; }
 	void SetXFadeOut(int trackXFadeOut) { xfadeOut = trackXFadeOut; }
 
-	const char *GetNameStr() { return name.c_str(); }
-	std::string GetName() { return name; }
+	const char *GetNameStr() const { return name.c_str(); }
+	std::string GetName() const { return name; }
+	int GetFadeIn() const { return fadeIn; }
+	int GetFadeOut() const { return fadeOut; }
+	int GetXFadeIn() const { return xfadeIn; }
+	int GetXFadeOut() const { return xfadeOut; }
 
 	void AddAudio(oamlAudio *audio);
 	void Play();

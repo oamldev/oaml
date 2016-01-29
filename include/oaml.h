@@ -30,13 +30,24 @@ typedef struct {
 
 typedef struct {
 	std::string filename;
+	int type;
 	float bpm;
 	int beatsPerBar;
 	int bars;
+	int minMovementBars;
+	int randomChance;
+	int fadeIn;
+	int fadeOut;
+	int xfadeIn;
+	int xfadeOut;
 } oamlAudioInfo;
 
 typedef struct {
 	std::string name;
+	int fadeIn;
+	int fadeOut;
+	int xfadeIn;
+	int xfadeOut;
 	std::vector<oamlAudioInfo> audios;
 } oamlTrackInfo;
 

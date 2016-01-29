@@ -135,9 +135,16 @@ int oamlBase::ReadDefs(const char *filename) {
 				}
 
 				ainfo.filename = audio->GetFilename();
+				ainfo.type = audio->GetType();
+				ainfo.bars = audio->GetBars();
 				ainfo.bpm = audio->GetBPM();
 				ainfo.beatsPerBar = audio->GetBeatsPerBar();
-				ainfo.bars = audio->GetBars();
+				ainfo.minMovementBars = audio->GetMinMovementBars();
+				ainfo.randomChance = audio->GetRandomChance();
+				ainfo.fadeIn = audio->GetFadeIn();
+				ainfo.fadeOut = audio->GetFadeOut();
+				ainfo.xfadeIn = audio->GetXFadeIn();
+				ainfo.xfadeOut = audio->GetXFadeOut();
 				tinfo.audios.push_back(ainfo);
 				track->AddAudio(audio);
 			} else {
@@ -148,6 +155,10 @@ int oamlBase::ReadDefs(const char *filename) {
 		}
 
 		tinfo.name = track->GetName();
+		tinfo.fadeIn = track->GetFadeIn();
+		tinfo.fadeOut = track->GetFadeOut();
+		tinfo.xfadeIn = track->GetXFadeIn();
+		tinfo.xfadeOut = track->GetXFadeOut();
 		tracksInfo.tracks.push_back(tinfo);
 		tracks.push_back(track);
 //		track->ShowInfo();
