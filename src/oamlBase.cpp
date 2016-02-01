@@ -38,6 +38,8 @@ static oamlFileCallbacks defCbs = {
 };
 
 oamlBase::oamlBase() {
+	defsFile = "";
+
 	debugClipping = false;
 	writeAudioAtShutdown = false;
 	measureDecibels = false;
@@ -73,6 +75,7 @@ int oamlBase::ReadDefs(const char *filename) {
 	char buf[64*1024];
 	void *fd;
 
+	defsFile = filename;
 	fd = fcbs->open(filename);
 	if (fd == NULL) {
 		fprintf(stderr, "liboaml: Error loading definitions '%s'\n", filename);
@@ -564,6 +567,10 @@ void oamlBase::EnableDynamicCompressor(bool enable, double threshold, double rat
 
 oamlTracksInfo* oamlBase::GetTracksInfo() {
 	return &tracksInfo;
+}
+
+const char* oamlBase::GetDefsFile() {
+	return defsFile.c_str();
 }
 
 void oamlBase::Shutdown() {

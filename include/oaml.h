@@ -73,7 +73,7 @@ public:
 	oamlApi();
 	~oamlApi();
 
-	/** Initilize the Open Adaptive Music Library with the fullpath to 'oaml.defs'
+	/** Initilize the Open Adaptive Music Library with the path to 'oaml.defs'
 	 *  @return returns 0, or -1 on error
 	 */
 	int Init(const char *defsFilename);
@@ -134,6 +134,9 @@ public:
 
 	/** Set file handling callbacks */
 	void SetFileCallbacks(oamlFileCallbacks *cbs);
+
+	/** Returns the 'oaml.defs' filename that was used for initialization */
+	const char* GetDefsFile();
 };
 
 #endif /* __OAML_H__ */

@@ -13,6 +13,8 @@ enum {
 
 class oamlBase {
 private:
+	std::string defsFile;
+
 	bool debugClipping;
 	bool writeAudioAtShutdown;
 	bool measureDecibels;
@@ -90,6 +92,8 @@ public:
 	void EnableDynamicCompressor(bool enable, double thresholdDb, double ratio);
 
 	oamlTracksInfo *GetTracksInfo();
+
+	const char* GetDefsFile();
 };
 
 #endif /* __OAMLBASE_H__ */

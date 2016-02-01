@@ -92,6 +92,10 @@ oamlTracksInfo* oamlApi::GetTracksInfo() {
 	return oaml->GetTracksInfo();
 }
 
+const char* oamlApi::GetDefsFile() {
+	return oaml->GetDefsFile();
+}
+
 void oamlApi::Shutdown() {
 	oaml->Shutdown();
 }
