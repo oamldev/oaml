@@ -99,6 +99,18 @@ public:
 	/** Stop playing any track currently playing */
 	void StopPlaying();
 
+	/** Pause playback */
+	void Pause();
+
+	/** Resume playback */
+	void Resume();
+
+	/** Pause/resume playback */
+	void PauseToggle();
+
+	/** Are we in pause state? */
+	bool IsPaused();
+
 	/** Check if a track is playing */
 	bool IsTrackPlaying(const char *name);
 	bool IsTrackPlayingId(int id);

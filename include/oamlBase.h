@@ -34,6 +34,7 @@ private:
 	int tension;
 	uint64_t tensionMs;
 	int volume;
+	bool pause;
 
 	oamlFileCallbacks *fcbs;
 
@@ -70,6 +71,11 @@ public:
 	int PlayTrackId(int id);
 
 	void StopPlaying();
+	void Pause();
+	void Resume();
+	void PauseToggle();
+
+	bool IsPaused() const { return pause; }
 
 	bool IsTrackPlaying(const char *name);
 	bool IsTrackPlayingId(int id);

@@ -52,6 +52,22 @@ void oamlApi::StopPlaying() {
 	oaml->StopPlaying();
 }
 
+void oamlApi::Pause() {
+	oaml->Pause();
+}
+
+void oamlApi::Resume() {
+	oaml->Resume();
+}
+
+void oamlApi::PauseToggle() {
+	oaml->PauseToggle();
+}
+
+bool oamlApi::IsPaused() {
+	return oaml->IsPaused();
+}
+
 void oamlApi::MixToBuffer(void *buffer, int size) {
 	oaml->MixToBuffer(buffer, size);
 }

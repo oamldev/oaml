@@ -55,6 +55,7 @@ oamlBase::oamlBase() {
 	bytesPerSample = 0;
 
 	volume = OAML_VOLUME_DEFAULT;
+	pause = false;
 
 	timeMs = 0;
 	tension = 0;
@@ -304,6 +305,18 @@ void oamlBase::StopPlaying() {
 	}
 }
 
+void oamlBase::Pause() {
+	pause = true;
+}
+
+void oamlBase::Resume() {
+	pause = true;
+}
+
+void oamlBase::PauseToggle() {
+	pause = !pause;
+}
+
 void oamlBase::ShowPlayingTracks() {
 	for (size_t i=0; i<tracks.size(); i++) {
 		tracks[i]->ShowPlaying();
@@ -404,6 +417,9 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 
 	ASSERT(buffer != NULL);
 	ASSERT(size != 0);
+
+	if (pause)
+		return;
 
 	if (useCompressor) {
 		for (int i=0; i<size; i+= channels) {
