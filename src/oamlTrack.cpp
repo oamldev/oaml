@@ -27,7 +27,19 @@ oamlTrack::oamlTrack() {
 	fadeAudio = NULL;
 }
 
+void oamlTrack::ClearAudios(std::vector<oamlAudio*> *audios) {
+	while (audios->empty() == false) {
+		oamlAudio *audio = audios->back();
+		audios->pop_back();
+
+		delete audio;
+	}
+}
+
 oamlTrack::~oamlTrack() {
+	ClearAudios(&loopAudios);
+	ClearAudios(&randAudios);
+	ClearAudios(&condAudios);
 }
 
 void oamlTrack::AddAudio(oamlAudio *audio) {

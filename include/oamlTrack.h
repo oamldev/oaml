@@ -37,6 +37,8 @@ private:
 	void PlayCondWithMovement(oamlAudio *audio);
 	void XFadePlay();
 
+	void ClearAudios(std::vector<oamlAudio*> *audios);
+
 public:
 	oamlTrack();
 	~oamlTrack();

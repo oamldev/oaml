@@ -71,30 +71,11 @@ oamlBase::~oamlBase() {
 	}
 }
 
-int oamlBase::ReadDefs(const char *filename) {
+int oamlBase::ReadDefs(const char *buf) {
 	tinyxml2::XMLDocument doc;
-	char buf[64*1024];
-	void *fd;
 
-	defsFile = filename;
-	fd = fcbs->open(filename);
-	if (fd == NULL) {
-		fprintf(stderr, "liboaml: Error loading definitions '%s'\n", filename);
-		return -1;
-	}
-
-	size_t size = 64*1024;
-	size_t bytes = fcbs->read(buf, 1, size, fd);
-	if (bytes <= 0) {
-		fprintf(stderr, "liboaml: Error reading xml '%s'\n", filename);
-		fcbs->close(fd);
-		return -1;
-	}
-
-	fcbs->close(fd);
-
-	if (doc.Parse(buf, bytes) != tinyxml2::XML_NO_ERROR) {
-		fprintf(stderr, "liboaml: Error parsing xml '%s'\n", filename);
+	if (doc.Parse(buf, strlen(buf)) != tinyxml2::XML_NO_ERROR) {
+		fprintf(stderr, "liboaml: Error parsing xml\n");
 		return -1;
 	}
 
@@ -195,9 +176,46 @@ void oamlBase::ReadInternalDefs(const char *filename) {
 }
 
 int oamlBase::Init(const char *defsFilename) {
+	char buf[64*1024];
+	void *fd;
+
 	ASSERT(defsFilename != NULL);
 
-	if (ReadDefs(defsFilename) == -1)
+	// In case we're being re-initialized clear previous tracks
+	Clear();
+
+	defsFile = defsFilename;
+	fd = fcbs->open(defsFilename);
+	if (fd == NULL) {
+		fprintf(stderr, "liboaml: Error loading definitions '%s'\n", defsFilename);
+		return -1;
+	}
+
+	size_t size = 64*1024;
+	size_t bytes = fcbs->read(buf, 1, size, fd);
+	if (bytes <= 0) {
+		fprintf(stderr, "liboaml: Error reading xml '%s'\n", defsFilename);
+		fcbs->close(fd);
+		return -1;
+	}
+
+	fcbs->close(fd);
+
+	if (ReadDefs(buf) == -1)
+		return -1;
+
+	ReadInternalDefs("oamlInternal.defs");
+
+	return 0;
+}
+
+int oamlBase::InitString(const char *defs) {
+	ASSERT(defs != NULL);
+
+	// In case we're being re-initialized clear previous tracks
+	Clear();
+
+	if (ReadDefs(defs) == -1)
 		return -1;
 
 	ReadInternalDefs("oamlInternal.defs");
@@ -589,8 +607,19 @@ const char* oamlBase::GetDefsFile() {
 	return defsFile.c_str();
 }
 
+void oamlBase::Clear() {
+	while (tracks.empty() == false) {
+		oamlTrack *track = tracks.back();
+		tracks.pop_back();
+
+		delete track;
+	}
+}
+
 void oamlBase::Shutdown() {
 //	printf("%s\n", __FUNCTION__);
+	Clear();
+
 	if (writeAudioAtShutdown && fullBuffer) {
 		char filename[1024];
 		snprintf(filename, 1024, "oaml-%d.wav", (int)time(NULL));

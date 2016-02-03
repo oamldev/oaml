@@ -78,6 +78,11 @@ public:
 	 */
 	int Init(const char *defsFilename);
 
+	/** Initilize the Open Adaptive Music Library with xml definitions on value defs
+	 *  @return returns 0, or -1 on error
+	 */
+	int InitString(const char *defs);
+
 	/** Shutdown the library */
 	void Shutdown();
 

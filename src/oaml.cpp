@@ -16,6 +16,10 @@ int oamlApi::Init(const char *defsFilename) {
 	return oaml->Init(defsFilename);
 }
 
+int oamlApi::InitString(const char *defs) {
+	return oaml->InitString(defs);
+}
+
 void oamlApi::SetMeasureDecibels(bool option) {
 	oaml->SetMeasureDecibels(option);
 }

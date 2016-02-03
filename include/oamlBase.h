@@ -44,6 +44,8 @@ private:
 
 	oamlTracksInfo tracksInfo;
 
+	void Clear();
+
 	void ShowPlayingTracks();
 	int ReadDefs(const char *filaname);
 	void ReadInternalDefs(const char *filaname);
@@ -56,6 +58,7 @@ public:
 	~oamlBase();
 
 	int Init(const char *defsFilename);
+	int InitString(const char *defs);
 	void Shutdown();
 
 	void SetDebugClipping(bool option) { debugClipping = option; }
