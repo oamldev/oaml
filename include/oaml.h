@@ -95,7 +95,6 @@ public:
 	 *  @return returns 0, or -1 on error
 	 */
 	int PlayTrack(const char *name);
-	int PlayTrackId(int id);
 
 	/** Play a random music track that contains str in the name
 	 *  @return returns 0, or -1 on error

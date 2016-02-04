@@ -47,6 +47,8 @@ private:
 
 	void Clear();
 
+	int PlayTrackId(int id);
+
 	void ShowPlayingTracks();
 	int ReadDefs(const char *filaname);
 	void ReadInternalDefs(const char *filaname);
@@ -74,7 +76,6 @@ public:
 
 	int PlayTrack(const char *name);
 	int PlayTrackWithStringRandom(const char *str);
-	int PlayTrackId(int id);
 
 	void StopPlaying();
 	void Pause();

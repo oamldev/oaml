@@ -629,6 +629,11 @@ void oamlBase::Clear() {
 
 		delete track;
 	}
+
+	for (size_t i=0; i<tracksInfo.tracks.size(); i++) {
+		tracksInfo.tracks[i].audios.clear();
+	}
+	tracksInfo.tracks.clear();
 }
 
 void oamlBase::Shutdown() {

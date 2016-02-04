@@ -28,10 +28,6 @@ void oamlApi::SetAudioFormat(int sampleRate, int channels, int bytesPerSample, b
 	oaml->SetAudioFormat(sampleRate, channels, bytesPerSample, floatBuffer);
 }
 
-int oamlApi::PlayTrackId(int id) {
-	return oaml->PlayTrackId(id);
-}
-
 int oamlApi::PlayTrack(const char *name) {
 	return oaml->PlayTrack(name);
 }

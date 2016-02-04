@@ -33,10 +33,6 @@ void oamlSetAudioFormat(int freq, int channels, int bytesPerSample) {
 	oaml->SetAudioFormat(freq, channels, bytesPerSample);
 }
 
-int oamlPlayTrackId(int id) {
-	return oaml->PlayTrackId(id);
-}
-
 int oamlPlayTrack(const char *name) {
 	return oaml->PlayTrack(name);
 }
