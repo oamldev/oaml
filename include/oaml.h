@@ -86,7 +86,8 @@ public:
 	/** Shutdown the library */
 	void Shutdown();
 
-	void SetAudioFormat(int freq, int channels, int bytesPerSample);
+	/** Set the audio format to be used by MixToBuffer */
+	void SetAudioFormat(int sampleRate, int channels, int bytesPerSample, bool floatBuffer = false);
 	void SetVolume(int vol);
 	int GetVolume();
 

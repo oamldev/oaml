@@ -27,9 +27,10 @@ private:
 
 	ByteBuffer *fullBuffer;
 
-	int freq;
+	int sampleRate;
 	int channels;
 	int bytesPerSample;
+	bool floatBuffer;
 
 	int tension;
 	uint64_t tensionMs;
@@ -53,6 +54,8 @@ private:
 	int ReadSample(void *buffer, int index);
 	void WriteSample(void *buffer, int index, int sample);
 
+	bool IsAudioFormatSupported();
+
 public:
 	oamlBase();
 	~oamlBase();
@@ -65,7 +68,7 @@ public:
 	void SetMeasureDecibels(bool option) { measureDecibels = option; }
 	void SetWriteAudioAtShutdown(bool option) { writeAudioAtShutdown = option; }
 
-	void SetAudioFormat(int audioFreq, int audioChannels, int audioBytesPerSample);
+	void SetAudioFormat(int audioSampleRate, int audioChannels, int audioBytesPerSample, bool audioFloatBuffer);
 	void SetVolume(int vol);
 	int GetVolume() const { return volume; }
 

@@ -50,7 +50,7 @@ oamlBase::oamlBase() {
 
 	fullBuffer = NULL;
 
-	freq = 0;
+	sampleRate = 0;
 	channels = 0;
 	bytesPerSample = 0;
 
@@ -223,13 +223,14 @@ int oamlBase::InitString(const char *defs) {
 	return 0;
 }
 
-void oamlBase::SetAudioFormat(int audioFreq, int audioChannels, int audioBytesPerSample) {
-	freq = audioFreq;
+void oamlBase::SetAudioFormat(int audioSampleRate, int audioChannels, int audioBytesPerSample, bool audioFloatBuffer) {
+	sampleRate = audioSampleRate;
 	channels = audioChannels;
 	bytesPerSample = audioBytesPerSample;
+	floatBuffer = audioFloatBuffer;
 
 	if (useCompressor) {
-		compressor.SetAudioFormat(channels, freq);
+		compressor.SetAudioFormat(channels, sampleRate);
 	}
 }
 
@@ -390,6 +391,12 @@ int oamlBase::ReadSample(void *buffer, int index) {
 			tmp|= (int)cbuf[index*3+2]<<24;
 			return tmp; }
 			break;
+
+		case 4: { // 32bit (signed)
+			int32_t *ibuf = (int32_t *)buffer;
+			return (int)ibuf[index]; }
+			break;
+
 	}
 
 	return 0;
@@ -415,6 +422,12 @@ void oamlBase::WriteSample(void *buffer, int index, int sample) {
 			cbuf[index*3+1] = (uint8_t)(sample>>16);
 			cbuf[index*3+2] = (uint8_t)(sample>>24); }
 			break;
+
+		case 4: { // 32bit (signed)
+			int32_t *ibuf = (int32_t *)buffer;
+			ibuf[index] = (int32_t)sample; }
+			break;
+
 	}
 }
 
@@ -428,15 +441,27 @@ int FloatToInteger24(float f) {
 	return ((int)(f * 8388608) & 0x00ffffff);
 }
 
-void oamlBase::MixToBuffer(void *buffer, int size) {
-	double sd[2] = { 0, 0 };
-	double sum[2] = { 0, 0 };
-	int chcount = 0;
+bool oamlBase::IsAudioFormatSupported() {
+	// Basic check, we need a sampleRate
+	if (sampleRate == 0)
+		return false;
 
+	// Only mono or stereo for now
+	if (channels <= 0 || channels > 2)
+		return false;
+
+	// Supported 8bit, 16bit, 24bit and 32bit, also float with floatBuffer == true
+	if (bytesPerSample <= 0 || bytesPerSample > 4)
+		return false;
+
+	return true;
+}
+
+void oamlBase::MixToBuffer(void *buffer, int size) {
 	ASSERT(buffer != NULL);
 	ASSERT(size != 0);
 
-	if (pause)
+	if (IsAudioFormatSupported() == false || pause)
 		return;
 
 	if (useCompressor) {
@@ -460,12 +485,16 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 				// Apply the volume
 				fsample[c] = fsample[c] * ((float)volume / OAML_VOLUME_MAX);
 
-				sample[c] = FloatToInteger24(fsample[c]) << 8;
+				if (floatBuffer) {
+					((float*)buffer)[i+c]+= fsample[c];
+				} else {
+					sample[c] = FloatToInteger24(fsample[c]) << 8;
 
-				// Mix our sample into the buffer
-				int tmp = ReadSample(buffer, i+c);
-				tmp = SafeAdd(sample[c], tmp);
-				WriteSample(buffer, i+c, tmp);
+					// Mix our sample into the buffer
+					int tmp = ReadSample(buffer, i+c);
+					tmp = SafeAdd(sample[c], tmp);
+					WriteSample(buffer, i+c, tmp);
+				}
 			}
 		}
 	} else {
@@ -481,38 +510,24 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 			sample = (((sample>>8) * volume) / OAML_VOLUME_MAX) << 8;
 
 			// Mix our sample into the buffer
-			int tmp = ReadSample(buffer, i);
-			tmp = SafeAdd(sample, tmp);
-			WriteSample(buffer, i, tmp);
+			if (floatBuffer) {
+				((float*)buffer)[i]+= Integer24ToFloat(sample >> 8);
+			} else {
+				int tmp = ReadSample(buffer, i);
+				tmp = SafeAdd(sample, tmp);
+				WriteSample(buffer, i, tmp);
+			}
 		}
 	}
 
-	for (int i=0; i<size; i++) {
-		int sample = ReadSample(buffer, i);
-		if (measureDecibels) {
-			sd[chcount] = (sample >> 16) / 32768.0;
-			sum[chcount]+= fabs(sd[chcount]);
-
-			if (++chcount >= channels) {
-				chcount = 0;
-			}
-		}
-
-		if (writeAudioAtShutdown) {
+	if (writeAudioAtShutdown) {
+		for (int i=0; i<size; i++) {
+			int sample = ReadSample(buffer, i);
 			if (fullBuffer == NULL) {
 				fullBuffer = new ByteBuffer();
 			}
 
 			fullBuffer->putShort(sample >> 16);
-		}
-	}
-
-	if (measureDecibels) {
-		for (int i=0; i<channels; i++) {
-			double rms = sqrt(sum[i] / (size / channels));
-			double decibels = 20 * log10(rms);
-
-			avgDecibels = (avgDecibels + decibels) / 2;
 		}
 	}
 
@@ -624,7 +639,7 @@ void oamlBase::Shutdown() {
 		char filename[1024];
 		snprintf(filename, 1024, "oaml-%d.wav", (int)time(NULL));
 		wavFile *wav = new wavFile(fcbs);
-		wav->WriteToFile(filename, fullBuffer, channels, freq, 2);
+		wav->WriteToFile(filename, fullBuffer, channels, sampleRate, 2);
 		delete wav;
 	}
 }

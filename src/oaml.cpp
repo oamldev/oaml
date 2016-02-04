@@ -24,8 +24,8 @@ void oamlApi::SetMeasureDecibels(bool option) {
 	oaml->SetMeasureDecibels(option);
 }
 
-void oamlApi::SetAudioFormat(int freq, int channels, int bytesPerSample) {
-	oaml->SetAudioFormat(freq, channels, bytesPerSample);
+void oamlApi::SetAudioFormat(int sampleRate, int channels, int bytesPerSample, bool floatBuffer) {
+	oaml->SetAudioFormat(sampleRate, channels, bytesPerSample, floatBuffer);
 }
 
 int oamlApi::PlayTrackId(int id) {
