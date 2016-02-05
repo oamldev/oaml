@@ -26,98 +26,140 @@ int oamlInitString(const char *defs) {
 }
 
 void oamlSetMeasureDecibels(bool option) {
+	if (oaml == NULL)
+		return;
 	oaml->SetMeasureDecibels(option);
 }
 
 void oamlSetAudioFormat(int freq, int channels, int bytesPerSample) {
+	if (oaml == NULL)
+		return;
 	oaml->SetAudioFormat(freq, channels, bytesPerSample);
 }
 
 int oamlPlayTrack(const char *name) {
+	if (oaml == NULL)
+		return -1;
 	return oaml->PlayTrack(name);
 }
 
 int oamlPlayTrackWithStringRandom(const char *str) {
+	if (oaml == NULL)
+		return -1;
 	return oaml->PlayTrackWithStringRandom(str);
 }
 
 bool oamlIsTrackPlaying(const char *name) {
+	if (oaml == NULL)
+		return false;
 	return oaml->IsTrackPlaying(name);
 }
 
-bool oamlIsTrackPlayingId(int id) {
-	return oaml->IsTrackPlayingId(id);
-}
-
 bool oamlIsPlaying() {
+	if (oaml == NULL)
+		return false;
 	return oaml->IsPlaying();
 }
 
 void oamlStopPlaying() {
+	if (oaml == NULL)
+		return;
 	oaml->StopPlaying();
 }
 
 void oamlPause() {
+	if (oaml == NULL)
+		return;
 	oaml->Pause();
 }
 
 void oamlResume() {
+	if (oaml == NULL)
+		return;
 	oaml->Resume();
 }
 
 void oamlPauseToggle() {
+	if (oaml == NULL)
+		return;
 	oaml->PauseToggle();
 }
 
 bool oamlIsPaused() {
+	if (oaml == NULL)
+		return false;
 	return oaml->IsPaused();
 }
 
 void oamlMixToBuffer(void *buffer, int size) {
+	if (oaml == NULL)
+		return;
 	oaml->MixToBuffer(buffer, size);
 }
 
 void oamlSetCondition(int id, int value) {
+	if (oaml == NULL)
+		return;
 	oaml->SetCondition(id, value);
 }
 
 void oamlSetVolume(int vol) {
+	if (oaml == NULL)
+		return;
 	oaml->SetVolume(vol);
 }
 
 int oamlGetVolume() {
+	if (oaml == NULL)
+		return 0;
 	return oaml->GetVolume();
 }
 
 void oamlAddTension(int value) {
+	if (oaml == NULL)
+		return;
 	oaml->AddTension(value);
 }
 
 void oamlSetMainLoopCondition(int value) {
+	if (oaml == NULL)
+		return;
 	oaml->SetMainLoopCondition(value);
 }
 
 void oamlUpdate() {
+	if (oaml == NULL)
+		return;
 	oaml->Update();
 }
 
 void oamlSetFileCallbacks(oamlFileCallbacks *cbs) {
+	if (oaml == NULL)
+		return;
 	oaml->SetFileCallbacks(cbs);
 }
 
 void oamlEnableDynamicCompressor(bool enable, double threshold, double ratio) {
+	if (oaml == NULL)
+		return;
 	oaml->EnableDynamicCompressor(enable, threshold, ratio);
 }
 
 oamlTracksInfo* oamlGetTracksInfo() {
+	if (oaml == NULL)
+		return NULL;
 	return oaml->GetTracksInfo();
 }
 
 const char* oamlGetDefsFile() {
+	if (oaml == NULL)
+		return NULL;
 	return oaml->GetDefsFile();
 }
 
 void oamlShutdown() {
+	if (oaml == NULL)
+		return;
 	oaml->Shutdown();
 
 	delete oaml;
@@ -138,6 +180,7 @@ UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK ProcessCallback(UnityAudioEffectSt
 	if (oaml) {
 		oaml->SetAudioFormat(state->samplerate, inchannels, 4, true);
 		oaml->MixToBuffer(outbuffer, length * inchannels);
+		oaml->Update();
 	}
 
 	return UNITY_AUDIODSP_OK;

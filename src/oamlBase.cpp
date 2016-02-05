@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 #include <math.h>
 #include <time.h>
@@ -130,6 +131,10 @@ int oamlBase::ReadDefs(const char *buf) {
 				ainfo.fadeOut = audio->GetFadeOut();
 				ainfo.xfadeIn = audio->GetXFadeIn();
 				ainfo.xfadeOut = audio->GetXFadeOut();
+				ainfo.condId = audio->GetCondId();
+				ainfo.condType = audio->GetCondType();
+				ainfo.condValue = audio->GetCondValue();
+				ainfo.condValue2 = audio->GetCondValue2();
 				tinfo.audios.push_back(ainfo);
 				track->AddAudio(audio);
 			} else {
@@ -329,7 +334,7 @@ void oamlBase::Pause() {
 }
 
 void oamlBase::Resume() {
-	pause = true;
+	pause = false;
 }
 
 void oamlBase::PauseToggle() {
@@ -634,6 +639,18 @@ void oamlBase::Clear() {
 		tracksInfo.tracks[i].audios.clear();
 	}
 	tracksInfo.tracks.clear();
+}
+
+void oamlBase::Log(const char* fmt, ...) {
+	va_list args;
+
+	FILE *log = fopen("/tmp/log.txt", "a+");
+	if (log == NULL)
+		return;
+
+	va_start(args, fmt);
+	fprintf(log, fmt, args);
+	fclose(log);
 }
 
 void oamlBase::Shutdown() {

@@ -40,10 +40,6 @@ bool oamlApi::IsTrackPlaying(const char *name) {
 	return oaml->IsTrackPlaying(name);
 }
 
-bool oamlApi::IsTrackPlayingId(int id) {
-	return oaml->IsTrackPlayingId(id);
-}
-
 bool oamlApi::IsPlaying() {
 	return oaml->IsPlaying();
 }

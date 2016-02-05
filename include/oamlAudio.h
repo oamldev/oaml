@@ -87,6 +87,9 @@ public:
 	int GetMinMovementBars() const { return minMovementBars; }
 	int GetRandomChance() const { return randomChance; }
 	int GetCondId() const { return condId; }
+	int GetCondType() const { return condType; }
+	int GetCondValue() const { return condValue; }
+	int GetCondValue2() const { return condValue2; }
 	int GetType() const { return type; }
 	unsigned int GetFadeIn() const { return fadeIn; }
 	unsigned int GetFadeOut() const { return fadeOut; }

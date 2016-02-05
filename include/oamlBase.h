@@ -48,6 +48,7 @@ private:
 	void Clear();
 
 	int PlayTrackId(int id);
+	bool IsTrackPlayingId(int id);
 
 	void ShowPlayingTracks();
 	int ReadDefs(const char *filaname);
@@ -57,6 +58,8 @@ private:
 	void WriteSample(void *buffer, int index, int sample);
 
 	bool IsAudioFormatSupported();
+
+	void Log(const char* fmt, ...);
 
 public:
 	oamlBase();
@@ -85,7 +88,6 @@ public:
 	bool IsPaused() const { return pause; }
 
 	bool IsTrackPlaying(const char *name);
-	bool IsTrackPlayingId(int id);
 	bool IsPlaying();
 
 	void AddTension(int value);

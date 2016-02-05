@@ -15,7 +15,6 @@ extern "C" {
 	DLLEXPORT void oamlSetVolume(int vol);
 	DLLEXPORT int oamlGetVolume();
 	DLLEXPORT int oamlPlayTrack(const char *name);
-	DLLEXPORT int oamlPlayTrackId(int id);
 	DLLEXPORT int oamlPlayTrackWithStringRandom(const char *str);
 	DLLEXPORT void oamlStopPlaying();
 	DLLEXPORT void oamlPause();
@@ -23,7 +22,6 @@ extern "C" {
 	DLLEXPORT void oamlPauseToggle();
 	DLLEXPORT bool oamlIsPaused();
 	DLLEXPORT bool oamlIsTrackPlaying(const char *name);
-	DLLEXPORT bool oamlIsTrackPlayingId(int id);
 	DLLEXPORT bool oamlIsPlaying();
 	DLLEXPORT oamlTracksInfo *oamlGetTracksInfo();
 	DLLEXPORT void oamlAddTension(int value);

@@ -40,6 +40,10 @@ typedef struct {
 	int fadeOut;
 	int xfadeIn;
 	int xfadeOut;
+	int condId;
+	int condType;
+	int condValue;
+	int condValue2;
 } oamlAudioInfo;
 
 typedef struct {
@@ -118,7 +122,6 @@ public:
 
 	/** Check if a track is playing */
 	bool IsTrackPlaying(const char *name);
-	bool IsTrackPlayingId(int id);
 
 	/** Check if any track is playing */
 	bool IsPlaying();
