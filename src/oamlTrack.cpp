@@ -319,7 +319,6 @@ std::string oamlTrack::GetPlayingInfo() {
 
 	if (curAudio) {
 		snprintf(str, 1024, " curAudio = %s (pos=%d)", curAudio->GetFilenameStr(), curAudio->GetSamplesCount());
-		info+= curAudio->GetFilename();
 		info+= str;
 	}
 

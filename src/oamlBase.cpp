@@ -632,6 +632,13 @@ const char* oamlBase::GetPlayingInfo() {
 	for (size_t i=0; i<tracks.size(); i++) {
 		playingInfo+= tracks[i]->GetPlayingInfo();
 	}
+
+	if (tension > 0) {
+		char str[1024];
+		snprintf(str, 1024, " tension=%d", tension);
+		playingInfo+= str;
+	}
+
 	return playingInfo.c_str();
 }
 
