@@ -35,6 +35,7 @@ extern "C" {
 	DLLEXPORT void oamlEnableDynamicCompressor(bool enable = true, double thresholdDb = -3, double ratio = 4.0);
 	DLLEXPORT void oamlSetFileCallbacks(oamlFileCallbacks *cbs);
 	DLLEXPORT const char* oamlGetDefsFile();
+	DLLEXPORT const char* oamlGetPlayingInfo();
 }
 
 #endif

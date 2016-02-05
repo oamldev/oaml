@@ -14,6 +14,7 @@ enum {
 class oamlBase {
 private:
 	std::string defsFile;
+	std::string playingInfo;
 
 	bool debugClipping;
 	bool writeAudioAtShutdown;
@@ -109,6 +110,7 @@ public:
 	oamlTracksInfo *GetTracksInfo();
 
 	const char* GetDefsFile();
+	const char* GetPlayingInfo();
 };
 
 #endif /* __OAMLBASE_H__ */

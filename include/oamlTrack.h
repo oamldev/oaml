@@ -64,6 +64,7 @@ public:
 	bool IsPlaying();
 	void ShowPlaying();
 	void ShowInfo();
+	std::string GetPlayingInfo();
 
 	int Mix32(int sample, oamlBase *oaml);
 

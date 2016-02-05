@@ -302,23 +302,38 @@ bool oamlTrack::IsPlaying() {
 }
 
 void oamlTrack::ShowPlaying() {
-	char str[1024] = "";
+	std::string info;
+
+	info = GetPlayingInfo();
+	printf("%s\n", info.c_str());
+}
+
+std::string oamlTrack::GetPlayingInfo() {
+	char str[1024];
+	std::string info = "";
+
+	if (curAudio == NULL && tailAudio == NULL && fadeAudio == NULL)
+		return info;
+
+	info+= GetName() + ":";
 
 	if (curAudio) {
-		snprintf(str, 1024, "%s curAudio = %s (pos=%d)", str, curAudio->GetFilenameStr(), curAudio->GetSamplesCount());
+		snprintf(str, 1024, " curAudio = %s (pos=%d)", curAudio->GetFilenameStr(), curAudio->GetSamplesCount());
+		info+= curAudio->GetFilename();
+		info+= str;
 	}
 
 	if (tailAudio) {
-		snprintf(str, 1024, "%s tailAudio = %s (pos=%d)", str, tailAudio->GetFilenameStr(), tailAudio->GetSamplesCount());
+		snprintf(str, 1024, " tailAudio = %s (pos=%d)", tailAudio->GetFilenameStr(), tailAudio->GetSamplesCount());
+		info+= str;
 	}
 
 	if (fadeAudio) {
-		snprintf(str, 1024, "%s fadeAudio = %s (pos=%d)", str, fadeAudio->GetFilenameStr(), fadeAudio->GetSamplesCount());
+		snprintf(str, 1024, " fadeAudio = %s (pos=%d)", fadeAudio->GetFilenameStr(), fadeAudio->GetSamplesCount());
+		info+= str;
 	}
 
-	if (strlen(str) > 0) {
-		printf("%s: %s\n", GetNameStr(), str);
-	}
+	return info;
 }
 
 void oamlTrack::Stop() {

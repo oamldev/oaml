@@ -627,6 +627,14 @@ const char* oamlBase::GetDefsFile() {
 	return defsFile.c_str();
 }
 
+const char* oamlBase::GetPlayingInfo() {
+	playingInfo = "";
+	for (size_t i=0; i<tracks.size(); i++) {
+		playingInfo+= tracks[i]->GetPlayingInfo();
+	}
+	return playingInfo.c_str();
+}
+
 void oamlBase::Clear() {
 	while (tracks.empty() == false) {
 		oamlTrack *track = tracks.back();
@@ -649,7 +657,9 @@ void oamlBase::Log(const char* fmt, ...) {
 		return;
 
 	va_start(args, fmt);
-	fprintf(log, fmt, args);
+	vfprintf(log, fmt, args);
+	va_end(args);
+
 	fclose(log);
 }
 

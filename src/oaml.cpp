@@ -108,6 +108,10 @@ const char* oamlApi::GetDefsFile() {
 	return oaml->GetDefsFile();
 }
 
+const char* oamlApi::GetPlayingInfo() {
+	return oaml->GetPlayingInfo();
+}
+
 void oamlApi::Shutdown() {
 	oaml->Shutdown();
 }

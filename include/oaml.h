@@ -157,6 +157,9 @@ public:
 
 	/** Returns the 'oaml.defs' filename that was used for initialization */
 	const char* GetDefsFile();
+
+	/** Returns a simple text showing the track and audios being played */
+	const char* GetPlayingInfo();
 };
 
 #endif /* __OAML_H__ */

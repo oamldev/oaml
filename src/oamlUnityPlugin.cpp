@@ -157,6 +157,12 @@ const char* oamlGetDefsFile() {
 	return oaml->GetDefsFile();
 }
 
+const char* oamlGetPlayingInfo() {
+	if (oaml == NULL)
+		return NULL;
+	return oaml->GetPlayingInfo();
+}
+
 void oamlShutdown() {
 	if (oaml == NULL)
 		return;
