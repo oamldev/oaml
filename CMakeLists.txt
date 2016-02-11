@@ -65,10 +65,14 @@ target_link_libraries(oaml_shared ${OAML_LIBS})
 # Build AudioPluginOAML (for Unity) if we ENABLE_UNITYPLUGIN is TRUE
 #
 if (ENABLE_UNITYPLUGIN)
-	add_library(AudioPluginOAML MODULE ${SRCS} src/oamlUnityPlugin.cpp)
+	if (APPLE)
+		add_library(AudioPluginOAML MODULE ${SRCS} src/oamlUnityPlugin.cpp)
+		set_target_properties(AudioPluginOAML PROPERTIES
+			BUNDLE_EXTENSION bundle
+			BUNDLE TRUE)
+	else()
+		add_library(AudioPluginOAML MODULE ${SRCS} src/oamlUnityPlugin.cpp)
+	endif()
 	target_link_libraries(AudioPluginOAML ${OAML_LIBS})
-	set_target_properties(AudioPluginOAML PROPERTIES
-		BUNDLE_EXTENSION bundle
-		BUNDLE TRUE)
 endif()
 
