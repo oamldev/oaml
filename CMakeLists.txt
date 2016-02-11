@@ -17,7 +17,7 @@ endif()
 ##
 # Options
 #
-option(ENABLE_UNITYPLUGIN "Build AudioPluginOAML plugin for Unity" OFF)
+option(ENABLE_UNITYPLUGIN "Build AudioPluginOAML plugin for Unity" ON)
 
 if(ENABLE_UNITYPLUGIN)
 	message("Build AudioPluginOAML: Yes (Disable by param -DENABLE_UNITYPLUGIN=OFF)")
