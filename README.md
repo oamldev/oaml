@@ -1,6 +1,6 @@
 ### Open Adaptive Music Library
 
-Oaml is a library the makes it easy to implement adaptive music in games.
+OAML is a library the makes it easy to implement adaptive music in games.
 
 
 ### How does it works?
@@ -19,13 +19,15 @@ Note that a track is only required to have one main loop at least, all the other
 
 ### Features
 
-Supports the following audio formats: ogg, wav, aif.
+Supports the following audio formats: **ogg, wav, aif**.
 
 
 ### Usage
 
 Example of basic usage in C++:
-{
+
+```C++
+	{
 	// Defined somewhere in your code
 	oamlApi *oaml;
 
@@ -48,12 +50,13 @@ Example of basic usage in C++:
 	// Shutdown OAML
 	oaml->Shutdown();
 	delete oaml;
-}
+	}
+```
 
 
 ### Exporting music for OAML
 
-When exporting music from your DAW to use with OAML the key to make the loops work seeamlessly is to enable the tail on export.
+When exporting music from your DAW to use with OAML the key to make the loops work seeamlessly is to **enable the tail on export**.
 
 
 ### About
