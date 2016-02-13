@@ -27,7 +27,7 @@ Supports the following audio formats: **ogg, wav, aif**.
 Example of basic usage in C++:
 
 ```C++
-	{
+{
 	// Defined somewhere in your code
 	oamlApi *oaml;
 
@@ -50,8 +50,10 @@ Example of basic usage in C++:
 	// Shutdown OAML
 	oaml->Shutdown();
 	delete oaml;
-	}
+}
 ```
+
+To create the oaml.defs file check [oamlStudio](https://github.com/marcelofg55/oamlStudio).
 
 
 ### Exporting music for OAML
