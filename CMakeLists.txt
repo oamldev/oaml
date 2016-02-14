@@ -76,3 +76,10 @@ if (ENABLE_UNITYPLUGIN)
 	target_link_libraries(AudioPluginOAML ${OAML_LIBS})
 endif()
 
+
+##
+# Install rules
+#
+install(TARGETS oaml DESTINATION lib)
+install(TARGETS oaml_shared DESTINATION lib)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/oaml.h DESTINATION include)
