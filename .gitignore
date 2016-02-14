@@ -1,10 +1,6 @@
 CMakeCache.txt
 CMakeFiles/
-liboaml.a
-liboaml_shared.dylib
 Makefile
 cmake_install.cmake
-make.sh
 oamlTest
 build/
-vs/

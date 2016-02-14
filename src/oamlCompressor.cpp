@@ -44,7 +44,7 @@ oamlCompressor::~oamlCompressor() {
 }
 
 void oamlCompressor::SetThreshold(double db) {
-	threshold = pow(10.0f, db / 20.0f);
+	threshold = pow(10.0, db / 20.0);
 }
 
 void oamlCompressor::SetRatio(double value) {

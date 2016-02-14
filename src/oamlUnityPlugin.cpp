@@ -29,7 +29,6 @@
 #include "AudioPluginInterface.h"
 
 oamlApi *oaml = NULL;
-FILE *log = NULL;
 
 int oamlInit(const char *defsFilename) {
 	if (oaml == NULL) {
