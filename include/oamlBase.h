@@ -40,7 +40,6 @@ private:
 
 	bool debugClipping;
 	bool writeAudioAtShutdown;
-	bool measureDecibels;
 	bool useCompressor;
 	double avgDecibels;
 
@@ -93,7 +92,6 @@ public:
 	void Shutdown();
 
 	void SetDebugClipping(bool option) { debugClipping = option; }
-	void SetMeasureDecibels(bool option) { measureDecibels = option; }
 	void SetWriteAudioAtShutdown(bool option) { writeAudioAtShutdown = option; }
 
 	void SetAudioFormat(int audioSampleRate, int audioChannels, int audioBytesPerSample, bool audioFloatBuffer);

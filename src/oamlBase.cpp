@@ -65,7 +65,6 @@ oamlBase::oamlBase() {
 
 	debugClipping = false;
 	writeAudioAtShutdown = false;
-	measureDecibels = false;
 	useCompressor = false;
 	avgDecibels = 0;
 
@@ -193,7 +192,6 @@ void oamlBase::ReadInternalDefs(const char *filename) {
 		while (cel != NULL) {
 			if (strcmp(cel->Name(), "writeAudioAtShutdown") == 0) SetWriteAudioAtShutdown(strtol(cel->GetText(), NULL, 0));
 			else if (strcmp(cel->Name(), "debugClipping") == 0) SetDebugClipping(strtol(cel->GetText(), NULL, 0));
-			else if (strcmp(cel->Name(), "measureDecibels") == 0) SetMeasureDecibels(strtol(cel->GetText(), NULL, 0));
 
 			cel = cel->NextSiblingElement();
 		}
@@ -614,11 +612,6 @@ void oamlBase::Update() {
 			} else {
 				tension--;
 			}
-		}
-
-		if (measureDecibels) {
-			printf("Measured decibels: %.2g db\n", avgDecibels);
-			avgDecibels = 0;
 		}
 
 		timeMs = ms;

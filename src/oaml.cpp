@@ -42,10 +42,6 @@ int oamlApi::InitString(const char *defs) {
 	return oaml->InitString(defs);
 }
 
-void oamlApi::SetMeasureDecibels(bool option) {
-	oaml->SetMeasureDecibels(option);
-}
-
 void oamlApi::SetAudioFormat(int sampleRate, int channels, int bytesPerSample, bool floatBuffer) {
 	oaml->SetAudioFormat(sampleRate, channels, bytesPerSample, floatBuffer);
 }

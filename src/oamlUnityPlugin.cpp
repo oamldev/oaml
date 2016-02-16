@@ -46,12 +46,6 @@ int oamlInitString(const char *defs) {
 	return oaml->InitString(defs);
 }
 
-void oamlSetMeasureDecibels(bool option) {
-	if (oaml == NULL)
-		return;
-	oaml->SetMeasureDecibels(option);
-}
-
 void oamlSetAudioFormat(int freq, int channels, int bytesPerSample) {
 	if (oaml == NULL)
 		return;

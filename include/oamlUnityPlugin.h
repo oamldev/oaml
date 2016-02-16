@@ -52,7 +52,6 @@ extern "C" {
 	DLLEXPORT void oamlMixToBuffer(void *buffer, int size);
 	DLLEXPORT void oamlUpdate();
 	DLLEXPORT void oamlSetDebugClipping(bool option);
-	DLLEXPORT void oamlSetMeasureDecibels(bool option);
 	DLLEXPORT void oamlSetWriteAudioAtShutdown(bool option);
 	DLLEXPORT void oamlEnableDynamicCompressor(bool enable = true, double thresholdDb = -3, double ratio = 4.0);
 	DLLEXPORT void oamlSetFileCallbacks(oamlFileCallbacks *cbs);

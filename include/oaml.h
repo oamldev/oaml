@@ -168,7 +168,6 @@ public:
 
 	/** Debugging functions */
 	void SetDebugClipping(bool option);
-	void SetMeasureDecibels(bool option);
 	void SetWriteAudioAtShutdown(bool option);
 
 	/** Enable dynamic compressor for music */
