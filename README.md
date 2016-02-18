@@ -22,6 +22,29 @@ Note that a track is only required to have one main loop at least, all the other
 Supports the following audio formats: **ogg, wav, aif**.
 
 
+### Demos
+
+Folder 'demos' contains so far:
+
+- msnake:
+Based on Mogria's Snake [https://github.com/mogria/msnake.git](https://github.com/mogria/msnake.git).
+This is a ncurses based snake game that I've adapted to use OAML, music in this demo gets faster as the snake grows. The music is a simple 8bit theme that starts with 80bpm and goes up to 140bpm.
+
+
+### How to compile
+
+On Linux and OSX:
+```
+	mkdir build
+	cd build
+	cmake ..
+	make
+	sudo make install
+```
+
+On Windows with Visual Studio check the folder 'vs'.
+
+
 ### Usage
 
 Example of basic usage in C++:

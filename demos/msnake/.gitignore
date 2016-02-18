@@ -1,0 +1,16 @@
+snake
+*~
+*.sw*
+game.log
+*.o
+bin
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+install_manifest.txt
+usr/*
+*.deb
+msnake_scores.dat
+packaging
+build
