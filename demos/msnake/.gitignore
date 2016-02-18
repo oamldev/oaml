@@ -13,4 +13,7 @@ usr/*
 *.deb
 msnake_scores.dat
 packaging
-build
+build/CMakeFiles/
+build/cmake_install.cmake
+build/Makefile
+build/CMakeCache.txt
