@@ -41,8 +41,8 @@ endif()
 #
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
-find_package(OggVorbis)
-find_package(VorbisFile)
+find_package(OggVorbis REQUIRED)
+find_package(VorbisFile REQUIRED)
 
 if (OGGVORBIS_FOUND AND VORBISFILE_FOUND)
 	include_directories(${VORBISFILE_INCLUDE_DIR})
