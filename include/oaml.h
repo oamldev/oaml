@@ -23,8 +23,8 @@
 #ifndef __OAML_H__
 #define __OAML_H__
 
-#include <string>
-#include <vector>
+#include <stddef.h>
+#include <stdbool.h>
 
 //
 // Definitions
@@ -49,6 +49,39 @@ typedef struct {
 	long   (*tell)  (void *fd);
 	int    (*close) (void *fd);
 } oamlFileCallbacks;
+
+
+#ifndef __cplusplus
+
+int oamlInit(const char *defsFilename);
+int oamlInitString(const char *defs);
+void oamlSetAudioFormat(int sampleRate, int channels, int bytesPerSample, bool floatBuffer);
+int oamlPlayTrack(const char *name);
+int oamlPlayTrackWithStringRandom(const char *str);
+bool oamlIsTrackPlaying(const char *name);
+bool oamlIsPlaying();
+void oamlStopPlaying();
+void oamlPause();
+void oamlResume();
+void oamlPauseToggle();
+bool oamlIsPaused();
+void oamlMixToBuffer(void *buffer, int size);
+void oamlSetCondition(int id, int value);
+void oamlSetVolume(int vol);
+int oamlGetVolume();
+void oamlAddTension(int value);
+void oamlSetMainLoopCondition(int value);
+void oamlUpdate();
+void oamlSetFileCallbacks(oamlFileCallbacks *cbs);
+void oamlEnableDynamicCompressor(bool enable, double threshold, double ratio);
+const char* oamlGetDefsFile();
+const char* oamlGetPlayingInfo();
+void oamlShutdown();
+
+#else
+
+#include <string>
+#include <vector>
 
 typedef struct {
 	std::string filename;
@@ -80,6 +113,7 @@ typedef struct {
 typedef struct {
 	std::vector<oamlTrackInfo> tracks;
 } oamlTracksInfo;
+
 
 //
 // Internal declarations
@@ -182,5 +216,7 @@ public:
 	/** Returns a simple text showing the track and audios being played */
 	const char* GetPlayingInfo();
 };
+
+#endif
 
 #endif /* __OAML_H__ */

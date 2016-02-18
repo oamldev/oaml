@@ -115,7 +115,7 @@ unsigned int oamlAudio::GetBarsSamples(int bars) {
 }
 
 int oamlAudio::Open() {
-	printf("%s %s\n", __FUNCTION__, GetFilenameStr());
+//	printf("%s %s\n", __FUNCTION__, GetFilenameStr());
 
 	if (buffer->size() > 0) {
 		buffer->setReadPos(0);

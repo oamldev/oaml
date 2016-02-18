@@ -32,6 +32,8 @@ enum {
 	CONDITION_USER			= 10
 };
 
+void __Log(const char* fmt, ...);
+
 
 class oamlBase {
 private:
@@ -80,8 +82,6 @@ private:
 	void WriteSample(void *buffer, int index, int sample);
 
 	bool IsAudioFormatSupported();
-
-	void Log(const char* fmt, ...);
 
 public:
 	oamlBase();

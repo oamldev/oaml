@@ -94,6 +94,10 @@ void oamlTrack::SetCondition(int id, int value) {
 				audio->SetPickable(audio->TestCondition(id, value));
 			}
 		}
+
+		if (curAudio == NULL) {
+			PlayNext();
+		}
 		return;
 	}
 
@@ -156,12 +160,14 @@ void oamlTrack::PlayCond(oamlAudio *audio) {
 void oamlTrack::Play() {
 	int doFade = 0;
 
-//	printf("%s %s\n", __FUNCTION__, name);
+//	__Log("%s %s\n", __FUNCTION__, GetNameStr());
 	fadeAudio = NULL;
 
 	if (curAudio == NULL) {
 		doFade = 1;
 	}
+
+	SetCondition(CONDITION_MAIN_LOOP, 0);
 
 	if (introAudio) {
 		curAudio = introAudio;

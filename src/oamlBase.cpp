@@ -671,7 +671,20 @@ void oamlBase::Clear() {
 	tracksInfo.tracks.clear();
 }
 
-void oamlBase::Log(const char* fmt, ...) {
+void oamlBase::Shutdown() {
+//	printf("%s\n", __FUNCTION__);
+	Clear();
+
+	if (writeAudioAtShutdown && fullBuffer) {
+		char filename[1024];
+		snprintf(filename, 1024, "oaml-%d.wav", (int)time(NULL));
+		wavFile *wav = new wavFile(fcbs);
+		wav->WriteToFile(filename, fullBuffer, channels, sampleRate, 2);
+		delete wav;
+	}
+}
+
+void __Log(const char* fmt, ...) {
 	va_list args;
 
 	FILE *log = fopen("/tmp/log.txt", "a+");
@@ -685,15 +698,3 @@ void oamlBase::Log(const char* fmt, ...) {
 	fclose(log);
 }
 
-void oamlBase::Shutdown() {
-//	printf("%s\n", __FUNCTION__);
-	Clear();
-
-	if (writeAudioAtShutdown && fullBuffer) {
-		char filename[1024];
-		snprintf(filename, 1024, "oaml-%d.wav", (int)time(NULL));
-		wavFile *wav = new wavFile(fcbs);
-		wav->WriteToFile(filename, fullBuffer, channels, sampleRate, 2);
-		delete wav;
-	}
-}

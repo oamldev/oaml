@@ -24,11 +24,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "oamlCommon.h"
-#include "oamlUnityPlugin.h"
-#include "AudioPluginInterface.h"
+#include <oaml.h>
 
-oamlApi oaml;
+static oamlApi oaml;
+
+extern "C" {
 
 int oamlInit(const char *defsFilename) {
 	return oaml.Init(defsFilename);
@@ -38,8 +38,8 @@ int oamlInitString(const char *defs) {
 	return oaml.InitString(defs);
 }
 
-void oamlSetAudioFormat(int freq, int channels, int bytesPerSample) {
-	oaml.SetAudioFormat(freq, channels, bytesPerSample);
+void oamlSetAudioFormat(int sampleRate, int channels, int bytesPerSample, bool floatBuffer) {
+	oaml.SetAudioFormat(sampleRate, channels, bytesPerSample, floatBuffer);
 }
 
 int oamlPlayTrack(const char *name) {
@@ -114,10 +114,6 @@ void oamlEnableDynamicCompressor(bool enable, double threshold, double ratio) {
 	oaml.EnableDynamicCompressor(enable, threshold, ratio);
 }
 
-oamlTracksInfo* oamlGetTracksInfo() {
-	return oaml.GetTracksInfo();
-}
-
 const char* oamlGetDefsFile() {
 	return oaml.GetDefsFile();
 }
@@ -130,54 +126,4 @@ void oamlShutdown() {
 	oaml.Shutdown();
 }
 
-UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK CreateCallback(UnityAudioEffectState* state) {
-	return UNITY_AUDIODSP_OK;
-}
-
-UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK ReleaseCallback(UnityAudioEffectState* state) {
-	return UNITY_AUDIODSP_OK;
-}
-
-UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK ProcessCallback(UnityAudioEffectState* state, float* inbuffer, float* outbuffer, unsigned int length, int inchannels, int outchannels) {
-	memcpy(outbuffer, inbuffer, sizeof(float) * length * inchannels);
-
-	oaml.SetAudioFormat(state->samplerate, inchannels, 4, true);
-	oaml.MixToBuffer(outbuffer, length * inchannels);
-	oaml.Update();
-
-	return UNITY_AUDIODSP_OK;
-}
-
-UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK SetFloatParameterCallback(UnityAudioEffectState* state, int index, float value) {
-	return UNITY_AUDIODSP_OK;
-}
-
-UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK GetFloatParameterCallback(UnityAudioEffectState* state, int index, float* value, char *valuestr) {
-	return UNITY_AUDIODSP_OK;
-}
-
-int UNITY_AUDIODSP_CALLBACK GetFloatBufferCallback(UnityAudioEffectState* state, const char* name, float* buffer, int numsamples) {
-	return UNITY_AUDIODSP_OK;
-}
-
-extern "C" UNITY_AUDIODSP_EXPORT_API int UnityGetAudioEffectDefinitions (UnityAudioEffectDefinition*** definitionptr) {
-	static UnityAudioEffectDefinition definition;
-	static UnityAudioEffectDefinition* definitionp[1];
-
-	memset(&definition, 0, sizeof(definition));
-	strcpy(definition.name, "AudioPluginOAML");
-	definition.structsize = sizeof(UnityAudioEffectDefinition);
-	definition.paramstructsize = sizeof(UnityAudioParameterDefinition);
-	definition.apiversion = UNITY_AUDIO_PLUGIN_API_VERSION;
-	definition.pluginversion = 0x010000;
-	definition.create = CreateCallback;
-	definition.release = ReleaseCallback;
-	definition.process = ProcessCallback;
-	definition.setfloatparameter = SetFloatParameterCallback;
-	definition.getfloatparameter = GetFloatParameterCallback;
-	definition.getfloatbuffer = GetFloatBufferCallback;
-
-	definitionp[0] = &definition;
-	*definitionptr = definitionp;
-	return 1;
 }
