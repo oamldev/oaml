@@ -2,5 +2,6 @@ CMakeCache.txt
 CMakeFiles/
 Makefile
 cmake_install.cmake
-oamlTest
-build/
+AudioPluginOAML*
+liboaml*
+install_manifest.txt
