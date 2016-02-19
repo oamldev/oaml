@@ -51,6 +51,7 @@ typedef struct game {
   int highscore; // the number of points
   int rows;
   int columns;
+  long long interval;
 } GAME;
 
 

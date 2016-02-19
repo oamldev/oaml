@@ -23,7 +23,7 @@ void run() {
   struct timespec last_time              = {};
   struct timespec current_time           = {};
   long long default_interval             = 100000000; // 100 ms
-  long long interval                     = default_interval;
+  long long min_interval                 = 40000000;  // 40 ms
   long long res;
   char playername[HIGHSCORE_NAME_LENGTH] = {};
 
@@ -31,6 +31,9 @@ void run() {
 
   // create the game struct
   GAME game = {};
+
+  // initialize interval
+  game.interval = default_interval;
 
   // set the eat range to 1
   game.snake.eat_range = 1;
@@ -72,15 +75,6 @@ void run() {
   while((ich = getch()) && success) {
     // key typed?
     if(ich == ERR) {
-    } else if(ich == '0') {
-      // reset the speed
-      interval = default_interval;
-    } else if(ich == '8') {
-      // speed up
-      interval *= 1.1;
-    } else if(ich == '9') {
-      // slow down
-      interval *= 0.9;
     } else {
       // use this key as a direction
       ch = ich;
@@ -92,7 +86,7 @@ void run() {
     res = timeval_diff(&last_time, &current_time);
 
     // is the interval over?
-    if(res > interval) {
+    if(res > game.interval) {
       // has an effect on the eat_range ?
       if(game.snake.eat_range > 1) {
         // every 200th field, decrease the range
@@ -121,7 +115,10 @@ void run() {
       // display the status bar (top-right)
       status_display(&game);
 
-      oamlSetMainLoopCondition(1 + game.snake.length / 25);
+      oamlSetMainLoopCondition(1 + game.snake.length / 10);
+      game.interval = default_interval - (default_interval * (game.snake.length / 200.0));
+      if (game.interval < min_interval)
+        game.interval = min_interval;
 
       // update the time when we last moved the snake
       last_time = current_time;

@@ -24,7 +24,7 @@
     <audio>
         <filename>music/8bitSnake_B1.ogg</filename>
         <type>2</type>
-        <bpm>86</bpm>
+        <bpm>88</bpm>
         <beatsPerBar>4</beatsPerBar>
         <bars>4</bars>
         <condId>2</condId>
@@ -34,7 +34,7 @@
     <audio>
         <filename>music/8bitSnake_B2.ogg</filename>
         <type>2</type>
-        <bpm>86</bpm>
+        <bpm>88</bpm>
         <beatsPerBar>4</beatsPerBar>
         <bars>4</bars>
         <condId>2</condId>
@@ -44,7 +44,7 @@
     <audio>
         <filename>music/8bitSnake_C1.ogg</filename>
         <type>2</type>
-        <bpm>92</bpm>
+        <bpm>96</bpm>
         <beatsPerBar>4</beatsPerBar>
         <bars>4</bars>
         <condId>2</condId>
@@ -54,7 +54,7 @@
     <audio>
         <filename>music/8bitSnake_C2.ogg</filename>
         <type>2</type>
-        <bpm>92</bpm>
+        <bpm>96</bpm>
         <beatsPerBar>4</beatsPerBar>
         <bars>4</bars>
         <condId>2</condId>
@@ -64,7 +64,7 @@
     <audio>
         <filename>music/8bitSnake_D1.ogg</filename>
         <type>2</type>
-        <bpm>98</bpm>
+        <bpm>102</bpm>
         <beatsPerBar>4</beatsPerBar>
         <bars>4</bars>
         <condId>2</condId>
@@ -74,7 +74,7 @@
     <audio>
         <filename>music/8bitSnake_D2.ogg</filename>
         <type>2</type>
-        <bpm>98</bpm>
+        <bpm>102</bpm>
         <beatsPerBar>4</beatsPerBar>
         <bars>4</bars>
         <condId>2</condId>
@@ -84,7 +84,7 @@
     <audio>
         <filename>music/8bitSnake_E1.ogg</filename>
         <type>2</type>
-        <bpm>104</bpm>
+        <bpm>110</bpm>
         <beatsPerBar>4</beatsPerBar>
         <bars>4</bars>
         <condId>2</condId>
@@ -94,7 +94,7 @@
     <audio>
         <filename>music/8bitSnake_E2.ogg</filename>
         <type>2</type>
-        <bpm>104</bpm>
+        <bpm>110</bpm>
         <beatsPerBar>4</beatsPerBar>
         <bars>4</bars>
         <condId>2</condId>
@@ -104,7 +104,7 @@
     <audio>
         <filename>music/8bitSnake_F1.ogg</filename>
         <type>2</type>
-        <bpm>110</bpm>
+        <bpm>118</bpm>
         <beatsPerBar>4</beatsPerBar>
         <bars>4</bars>
         <condId>2</condId>
@@ -114,7 +114,7 @@
     <audio>
         <filename>music/8bitSnake_F2.ogg</filename>
         <type>2</type>
-        <bpm>110</bpm>
+        <bpm>118</bpm>
         <beatsPerBar>4</beatsPerBar>
         <bars>4</bars>
         <condId>2</condId>
@@ -124,7 +124,7 @@
     <audio>
         <filename>music/8bitSnake_G1.ogg</filename>
         <type>2</type>
-        <bpm>116</bpm>
+        <bpm>126</bpm>
         <beatsPerBar>4</beatsPerBar>
         <bars>4</bars>
         <condId>2</condId>
@@ -134,7 +134,7 @@
     <audio>
         <filename>music/8bitSnake_G2.ogg</filename>
         <type>2</type>
-        <bpm>116</bpm>
+        <bpm>126</bpm>
         <beatsPerBar>4</beatsPerBar>
         <bars>4</bars>
         <condId>2</condId>
@@ -144,7 +144,7 @@
     <audio>
         <filename>music/8bitSnake_H1.ogg</filename>
         <type>2</type>
-        <bpm>122</bpm>
+        <bpm>134</bpm>
         <beatsPerBar>4</beatsPerBar>
         <bars>4</bars>
         <condId>2</condId>
@@ -154,7 +154,7 @@
     <audio>
         <filename>music/8bitSnake_H2.ogg</filename>
         <type>2</type>
-        <bpm>122</bpm>
+        <bpm>134</bpm>
         <beatsPerBar>4</beatsPerBar>
         <bars>4</bars>
         <condId>2</condId>
@@ -164,7 +164,7 @@
     <audio>
         <filename>music/8bitSnake_I1.ogg</filename>
         <type>2</type>
-        <bpm>130</bpm>
+        <bpm>140</bpm>
         <beatsPerBar>4</beatsPerBar>
         <bars>4</bars>
         <condId>2</condId>
@@ -174,7 +174,7 @@
     <audio>
         <filename>music/8bitSnake_I2.ogg</filename>
         <type>2</type>
-        <bpm>130</bpm>
+        <bpm>140</bpm>
         <beatsPerBar>4</beatsPerBar>
         <bars>4</bars>
         <condId>2</condId>
@@ -184,21 +184,101 @@
     <audio>
         <filename>music/8bitSnake_J1.ogg</filename>
         <type>2</type>
-        <bpm>140</bpm>
+        <bpm>148</bpm>
         <beatsPerBar>4</beatsPerBar>
         <bars>4</bars>
         <condId>2</condId>
-        <condType>1</condType>
-        <condValue>9</condValue>
+        <condType>0</condType>
+        <condValue>10</condValue>
     </audio>
     <audio>
         <filename>music/8bitSnake_J2.ogg</filename>
         <type>2</type>
-        <bpm>140</bpm>
+        <bpm>148</bpm>
+        <beatsPerBar>4</beatsPerBar>
+        <bars>4</bars>
+        <condId>2</condId>
+        <condType>0</condType>
+        <condValue>10</condValue>
+    </audio>
+    <audio>
+        <filename>music/8bitSnake_K1.ogg</filename>
+        <type>2</type>
+        <bpm>156</bpm>
+        <beatsPerBar>4</beatsPerBar>
+        <bars>4</bars>
+        <condId>2</condId>
+        <condType>0</condType>
+        <condValue>11</condValue>
+    </audio>
+    <audio>
+        <filename>music/8bitSnake_K2.ogg</filename>
+        <type>2</type>
+        <bpm>156</bpm>
+        <beatsPerBar>4</beatsPerBar>
+        <bars>4</bars>
+        <condId>2</condId>
+        <condType>0</condType>
+        <condValue>11</condValue>
+    </audio>
+    <audio>
+        <filename>music/8bitSnake_L1.ogg</filename>
+        <type>2</type>
+        <bpm>164</bpm>
+        <beatsPerBar>4</beatsPerBar>
+        <bars>4</bars>
+        <condId>2</condId>
+        <condType>0</condType>
+        <condValue>12</condValue>
+    </audio>
+    <audio>
+        <filename>music/8bitSnake_L2.ogg</filename>
+        <type>2</type>
+        <bpm>164</bpm>
+        <beatsPerBar>4</beatsPerBar>
+        <bars>4</bars>
+        <condId>2</condId>
+        <condType>0</condType>
+        <condValue>12</condValue>
+    </audio>
+    <audio>
+        <filename>music/8bitSnake_M1.ogg</filename>
+        <type>2</type>
+        <bpm>172</bpm>
+        <beatsPerBar>4</beatsPerBar>
+        <bars>4</bars>
+        <condId>2</condId>
+        <condType>0</condType>
+        <condValue>13</condValue>
+    </audio>
+    <audio>
+        <filename>music/8bitSnake_M2.ogg</filename>
+        <type>2</type>
+        <bpm>172</bpm>
+        <beatsPerBar>4</beatsPerBar>
+        <bars>4</bars>
+        <condId>2</condId>
+        <condType>0</condType>
+        <condValue>13</condValue>
+    </audio>
+    <audio>
+        <filename>music/8bitSnake_N1.ogg</filename>
+        <type>2</type>
+        <bpm>180</bpm>
         <beatsPerBar>4</beatsPerBar>
         <bars>4</bars>
         <condId>2</condId>
         <condType>1</condType>
-        <condValue>9</condValue>
+        <condValue>13</condValue>
+    </audio>
+    <audio>
+        <filename>music/8bitSnake_N2.ogg</filename>
+        <type>2</type>
+        <bpm>180</bpm>
+        <beatsPerBar>4</beatsPerBar>
+        <bars>4</bars>
+        <condId>2</condId>
+        <condType>1</condType>
+        <condValue>13</condValue>
     </audio>
 </track>

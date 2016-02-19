@@ -156,9 +156,6 @@ void display_controls() {
   "d - move right",
   "you can use the arrow keys too",
   "",
-  "8 - slower",
-  "9 - faster",
-  "0 - reset speed",
   "p - pause the game"
   "",
   "press enter to go back to the menu .."
