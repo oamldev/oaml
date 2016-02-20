@@ -86,4 +86,4 @@ When exporting music from your DAW to use with OAML the key to make the loops wo
 
 ### About
 
-Copyright (c) 2015-2016 Marcelo Fernandez
+Copyright (c) 2015-2016 Marcelo Fernandez <marcelofg55@gmail.com>
