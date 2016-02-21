@@ -3,10 +3,10 @@ CMakeFiles/
 Makefile
 cmake_install.cmake
 /AudioPluginOAML*
-/build/AudioPluginOAML*
+/build*/AudioPluginOAML*
 /libAudioPluginOAML*
-/build/libAudioPluginOAML*
+/build*/libAudioPluginOAML*
 /liboaml*
-/build/liboaml*
+/build*/liboaml*
 install_manifest.txt
 msnake
