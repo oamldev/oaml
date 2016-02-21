@@ -17,7 +17,21 @@ endif()
 ##
 # Options
 #
+option(ENABLE_STATIC "Build static library" ON)
+option(ENABLE_SHARED "Build shared library" ON)
 option(ENABLE_UNITYPLUGIN "Build AudioPluginOAML plugin for Unity" ON)
+
+if(ENABLE_STATIC)
+	message("Build static: Yes (Disable by param -DENABLE_STATIC=OFF)")
+else()
+	message("Build static: No  (Enable by param -DENABLE_STATIC=ON)")
+endif()
+
+if(ENABLE_SHARED)
+	message("Build shared: Yes (Disable by param -DENABLE_SHARED=OFF)")
+else()
+	message("Build shared: No  (Enable by param -DENABLE_SHARED=ON)")
+endif()
 
 if(ENABLE_UNITYPLUGIN)
 	message("Build AudioPluginOAML: Yes (Disable by param -DENABLE_UNITYPLUGIN=OFF)")
@@ -55,10 +69,14 @@ endif()
 #
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(SRCS src/audioFile.cpp src/ByteBuffer.cpp src/oaml.cpp src/oamlAudio.cpp src/oamlBase.cpp src/oamlCompressor.cpp src/oamlTrack.cpp src/aif.cpp src/ogg.cpp src/wav.cpp src/gettime.cpp src/tinyxml2.cpp)
-add_library(oaml STATIC ${SRCS} src/oamlC.cpp )
-add_library(oaml_shared SHARED ${SRCS} src/oamlC.cpp)
+if (ENABLE_STATIC)
+	add_library(oaml STATIC ${SRCS} src/oamlC.cpp)
+endif()
 
-target_link_libraries(oaml_shared ${OAML_LIBS})
+if (ENABLE_SHARED)
+	add_library(oaml_shared SHARED ${SRCS} src/oamlC.cpp)
+	target_link_libraries(oaml_shared ${OAML_LIBS})
+endif()
 
 
 ##
@@ -80,6 +98,12 @@ endif()
 ##
 # Install rules
 #
-install(TARGETS oaml DESTINATION lib)
-install(TARGETS oaml_shared DESTINATION lib)
+if (ENABLE_STATIC)
+	install(TARGETS oaml DESTINATION lib)
+endif()
+
+if (ENABLE_SHARED)
+	install(TARGETS oaml_shared DESTINATION lib)
+endif()
+
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/oaml.h DESTINATION include)
