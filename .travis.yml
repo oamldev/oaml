@@ -1,0 +1,23 @@
+before_install:
+- |
+  if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+   brew update
+   brew install libogg
+   brew install libvorbis
+  fi
+  if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+   sudo apt-get -qq update
+   sudo apt-get install -y libogg-dev libvorbis-dev
+  fi
+language: cpp
+script:
+- mkdir build
+- cd build
+- cmake ..
+- make
+compiler:
+- clang
+- gcc
+os:
+- linux
+- osx
