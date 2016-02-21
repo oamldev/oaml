@@ -26,7 +26,11 @@
 
 #include "oamlCommon.h"
 #include "oamlUnityPlugin.h"
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 #include "AudioPluginInterface.h"
+#pragma GCC diagnostic pop
 
 oamlApi oaml;
 
@@ -130,15 +134,18 @@ void oamlShutdown() {
 	oaml.Shutdown();
 }
 
-UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK CreateCallback(UnityAudioEffectState* state) {
+UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK CreateCallback(UnityAudioEffectState*) {
 	return UNITY_AUDIODSP_OK;
 }
 
-UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK ReleaseCallback(UnityAudioEffectState* state) {
+UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK ReleaseCallback(UnityAudioEffectState*) {
 	return UNITY_AUDIODSP_OK;
 }
 
 UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK ProcessCallback(UnityAudioEffectState* state, float* inbuffer, float* outbuffer, unsigned int length, int inchannels, int outchannels) {
+	if (inchannels != outchannels)
+		return UNITY_AUDIODSP_ERR_UNSUPPORTED;
+
 	memcpy(outbuffer, inbuffer, sizeof(float) * length * inchannels);
 
 	oaml.SetAudioFormat(state->samplerate, inchannels, 4, true);
@@ -148,15 +155,15 @@ UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK ProcessCallback(UnityAudioEffectSt
 	return UNITY_AUDIODSP_OK;
 }
 
-UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK SetFloatParameterCallback(UnityAudioEffectState* state, int index, float value) {
+UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK SetFloatParameterCallback(UnityAudioEffectState*, int, float) {
 	return UNITY_AUDIODSP_OK;
 }
 
-UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK GetFloatParameterCallback(UnityAudioEffectState* state, int index, float* value, char *valuestr) {
+UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK GetFloatParameterCallback(UnityAudioEffectState*, int, float*, char *) {
 	return UNITY_AUDIODSP_OK;
 }
 
-int UNITY_AUDIODSP_CALLBACK GetFloatBufferCallback(UnityAudioEffectState* state, const char* name, float* buffer, int numsamples) {
+int UNITY_AUDIODSP_CALLBACK GetFloatBufferCallback(UnityAudioEffectState*, const char*, float*, int) {
 	return UNITY_AUDIODSP_OK;
 }
 

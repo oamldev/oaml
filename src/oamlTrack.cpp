@@ -192,7 +192,7 @@ int oamlTrack::Random(int min, int max) {
 }
 
 void oamlTrack::ShowInfo() {
-	printf("%s %ld %ld %ld\n", GetNameStr(), loopAudios.size(), randAudios.size(), condAudios.size());
+	printf("%s %lu %lu %lu\n", GetNameStr(), loopAudios.size(), randAudios.size(), condAudios.size());
 }
 
 oamlAudio* oamlTrack::PickNextAudio() {

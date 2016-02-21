@@ -135,7 +135,7 @@ int oggFile::Read(ByteBuffer *buffer, int size) {
 	return bytesRead;
 }
 
-void oggFile::WriteToFile(const char *filename, ByteBuffer *buffer, int channels, unsigned int sampleRate, int bytesPerSample) {
+void oggFile::WriteToFile(const char *, ByteBuffer *, int, unsigned int, int) {
 }
 
 void oggFile::Close() {

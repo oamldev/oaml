@@ -154,7 +154,7 @@ typedef signed long long SInt64;
 enum
 {
     UNITY_AUDIODSP_OK = 0,
-    UNITY_AUDIODSP_ERR_UNSUPPORTED = 1,
+    UNITY_AUDIODSP_ERR_UNSUPPORTED = 1
 };
 
 struct UnityAudioEffectState;
@@ -171,7 +171,7 @@ typedef UNITY_AUDIODSP_RESULT (UNITY_AUDIODSP_CALLBACK * UnityAudioEffect_GetFlo
 enum UnityAudioEffectDefinitionFlags
 {
     UnityAudioEffectDefinitionFlags_IsSideChainTarget  = 1 << 0,   // Does this effect need a side chain buffer and can it be targeted by a Send?
-    UnityAudioEffectDefinitionFlags_IsSpatializer      = 2 << 0,   // Should this plugin be inserted at sources and take over panning?
+    UnityAudioEffectDefinitionFlags_IsSpatializer      = 2 << 0    // Should this plugin be inserted at sources and take over panning?
 };
 
 enum UnityAudioEffectStateFlags
@@ -179,7 +179,7 @@ enum UnityAudioEffectStateFlags
     UnityAudioEffectStateFlags_IsPlaying               = 1 << 0,   // Set when engine is in play mode. Also true while paused.
     UnityAudioEffectStateFlags_IsPaused                = 1 << 1,   // Set when engine is paused mode.
     UnityAudioEffectStateFlags_IsMuted                 = 1 << 2,   // Set when effect is being muted (only available in the editor)
-    UnityAudioEffectStateFlags_IsSideChainTarget       = 1 << 3,   // Does this effect need a side chain buffer and can it be targeted by a Send?
+    UnityAudioEffectStateFlags_IsSideChainTarget       = 1 << 3    // Does this effect need a side chain buffer and can it be targeted by a Send?
 };
 
 // This callback can be used to override the way distance attenuation is performed on AudioSources.

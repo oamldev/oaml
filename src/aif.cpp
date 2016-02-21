@@ -28,8 +28,8 @@
 #include "oamlCommon.h"
 
 
-#define	SWAP16(x) (((x) & 0xff) << 8 | ((x) & 0xff00) >> 8)
-#define	SWAP32(x) (((x) & 0xff) << 24 | ((x) & 0xff00) << 8 | ((x) & 0xff0000) >> 8 | ((x) >> 24) & 0xff)
+#define	SWAP16(x) ((((x) & 0xff) << 8) | (((x) & 0xff00) >> 8))
+#define	SWAP32(x) ((((x) & 0xff) << 24) | (((x) & 0xff00) << 8) | (((x) & 0xff0000) >> 8) | (((x) >> 24) & 0xff))
 
 enum {
 	AIFF_ID = 0x46464941,
@@ -303,7 +303,7 @@ int aifFile::Read(ByteBuffer *buffer, int size) {
 	return bytesRead;
 }
 
-void aifFile::WriteToFile(const char *filename, ByteBuffer *buffer, int channels, unsigned int sampleRate, int bytesPerSample) {
+void aifFile::WriteToFile(const char *, ByteBuffer *, int, unsigned int, int) {
 }
 
 void aifFile::Close() {
@@ -312,3 +312,4 @@ void aifFile::Close() {
 		fd = NULL;
 	}
 }
+
