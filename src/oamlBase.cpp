@@ -93,11 +93,11 @@ oamlBase::~oamlBase() {
 	}
 }
 
-int oamlBase::ReadDefs(const char *buf) {
+int oamlBase::ReadDefs(const char *buf, int size) {
 	tinyxml2::XMLDocument doc;
 
-	if (doc.Parse(buf, strlen(buf)) != tinyxml2::XML_NO_ERROR) {
-		fprintf(stderr, "liboaml: Error parsing xml\n");
+	if (doc.Parse(buf, size) != tinyxml2::XML_NO_ERROR) {
+		fprintf(stderr, "liboaml: Error parsing xml: %s\n", doc.ErrorName());
 		return -1;
 	}
 
@@ -226,7 +226,7 @@ int oamlBase::Init(const char *defsFilename) {
 
 	fcbs->close(fd);
 
-	if (ReadDefs(buf) == -1)
+	if (ReadDefs(buf, bytes) == -1)
 		return -1;
 
 	ReadInternalDefs("oamlInternal.defs");
@@ -240,7 +240,7 @@ int oamlBase::InitString(const char *defs) {
 	// In case we're being re-initialized clear previous tracks
 	Clear();
 
-	if (ReadDefs(defs) == -1)
+	if (ReadDefs(defs, strlen(defs)) == -1)
 		return -1;
 
 	ReadInternalDefs("oamlInternal.defs");

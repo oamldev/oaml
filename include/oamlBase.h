@@ -75,7 +75,7 @@ private:
 	bool IsTrackPlayingId(int id);
 
 	void ShowPlayingTracks();
-	int ReadDefs(const char *filaname);
+	int ReadDefs(const char *buf, int size);
 	void ReadInternalDefs(const char *filaname);
 
 	int ReadSample(void *buffer, int index);
