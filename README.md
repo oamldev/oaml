@@ -30,6 +30,9 @@ Folder 'demos' contains so far:
 Based on Mogria's Snake [https://github.com/mogria/msnake.git](https://github.com/mogria/msnake.git).
 This is a ncurses based snake game that I've adapted to use OAML, music in this demo gets faster as the snake grows. The music is a simple 8bit theme that starts with 80bpm and goes up to 180bpm.
 
+- UnityOAMLdemo:
+This is a demo I've created using Unity, it's a very simple 2d platformer that implements adaptive music through OAML, it features two possible themes, one in 8bit style and another one in orchestral style, both have "day" and "night" music loops and a battle loop (which you can trigger "engaging" the spikes, I will add a proper enemy sometime in the future). 
+
 
 ### How to compile
 
@@ -81,7 +84,21 @@ To create the oaml.defs file check [oamlStudio](https://github.com/marcelofg55/o
 
 ### Exporting music for OAML
 
-When exporting music from your DAW to use with OAML the key to make the loops work seeamlessly is to **enable the tail on export**.
+When exporting music from your DAW to use with OAML the key to make the loops work seamlessly is to **enable the tail on export**.
+For now since resampling is not implemented in OAML you need to export the music in the same sample rate that your project is going to use, for example if your project uses 44100hz export all your music in 44100hz as well.
+
+
+### Notes
+
+- If you're using OAML on your project or you're interested to do so and need some help contact me.
+
+
+### TODO
+
+- Resampling music?
+- Playing SFX's.
+- Add a loudness effect, and a reverb effect as well.
+- Implement OAML in more game engines, love2d, godot, etc.
 
 
 ### About
