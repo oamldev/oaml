@@ -29,6 +29,12 @@
 // Definitions
 //
 
+#ifdef _WIN32
+#define PATH_SEPARATOR "\\"
+#else
+#define PATH_SEPARATOR "/"
+#endif
+
 
 // Visual Studio specific stuff
 #ifdef _MSC_VER
@@ -62,6 +68,8 @@
 #include "wav.h"
 #include "oamlAudio.h"
 #include "oamlTrack.h"
+#include "oamlMusicTrack.h"
+#include "oamlSfxTrack.h"
 #include "oamlCompressor.h"
 #include "oamlBase.h"
 

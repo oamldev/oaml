@@ -23,14 +23,6 @@
 #ifndef __OAMLBASE_H__
 #define __OAMLBASE_H__
 
-//
-// Reserved condition id's
-//
-enum {
-	CONDITION_TENSION		= 1,
-	CONDITION_MAIN_LOOP		= 2,
-	CONDITION_USER			= 10
-};
 
 void __Log(const char* fmt, ...);
 
@@ -43,9 +35,9 @@ private:
 	bool debugClipping;
 	bool writeAudioAtShutdown;
 	bool useCompressor;
-	double avgDecibels;
 
-	std::vector<oamlTrack*> tracks;
+	std::vector<oamlTrack*> musicTracks;
+	std::vector<oamlTrack*> sfxTracks;
 
 	oamlTrack *curTrack;
 
@@ -100,6 +92,7 @@ public:
 
 	int PlayTrack(const char *name);
 	int PlayTrackWithStringRandom(const char *str);
+	int PlaySfx(const char *name);
 
 	void StopPlaying();
 	void Pause();

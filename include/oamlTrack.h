@@ -27,46 +27,25 @@ class ByteBuffer;
 class oamlAudio;
 
 class oamlTrack {
-private:
+protected:
 	std::string name;
-	int mode;
+	int type;
 
 	int fadeIn;
 	int fadeOut;
 	int xfadeIn;
 	int xfadeOut;
 
-	int playCondSamples;
-
-	unsigned int tailPos;
-
-	std::vector<oamlAudio*> loopAudios;
-	std::vector<oamlAudio*> randAudios;
-	std::vector<oamlAudio*> condAudios;
-	oamlAudio *introAudio;
-	oamlAudio *endAudio;
-	oamlAudio *playCondAudio;
-
-	oamlAudio *curAudio;
-	oamlAudio *tailAudio;
-	oamlAudio *fadeAudio;
-
 	int Random(int min, int max);
-	oamlAudio* PickNextAudio();
-
-	void PlayNext();
-	void PlayCond(oamlAudio *audio);
-	void PlayCondWithMovement(oamlAudio *audio);
-	void XFadePlay();
 
 	void ClearAudios(std::vector<oamlAudio*> *audios);
 
 public:
 	oamlTrack();
-	~oamlTrack();
+	virtual ~oamlTrack();
 
 	void SetName(std::string trackName) { name = trackName; }
-	void SetMode(int trackMode) { mode = trackMode; }
+	void SetType(int trackType) { type = trackType; }
 	void SetFadeIn(int trackFadeIn) { fadeIn = trackFadeIn; }
 	void SetFadeOut(int trackFadeOut) { fadeOut = trackFadeOut; }
 	void SetXFadeIn(int trackXFadeIn) { xfadeIn = trackXFadeIn; }
@@ -74,23 +53,28 @@ public:
 
 	const char *GetNameStr() const { return name.c_str(); }
 	std::string GetName() const { return name; }
+	int GetType() const { return type; }
 	int GetFadeIn() const { return fadeIn; }
 	int GetFadeOut() const { return fadeOut; }
 	int GetXFadeIn() const { return xfadeIn; }
 	int GetXFadeOut() const { return xfadeOut; }
 
-	void AddAudio(oamlAudio *audio);
-	void Play();
-	void Stop();
+	virtual void AddAudio(oamlAudio *) { }
+	virtual void Play() { }
+	virtual int Play(const char *) { return -1; }
+	virtual void Stop() { }
 
-	bool IsPlaying();
+	virtual bool IsPlaying() { return false; }
 	void ShowPlaying();
-	void ShowInfo();
-	std::string GetPlayingInfo();
+	virtual void ShowInfo() { }
+	virtual std::string GetPlayingInfo() { return ""; }
 
-	int Mix32(int sample, oamlBase *oaml);
+	virtual int Mix32(int sample, oamlBase *) { return sample; }
 
-	void SetCondition(int id, int value);
+	virtual void SetCondition(int, int) { }
+
+	virtual bool IsMusicTrack() const { return false; }
+	virtual bool IsSfxTrack() const { return false; }
 };
 
 #endif

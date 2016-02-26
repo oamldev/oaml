@@ -50,6 +50,10 @@ int oamlPlayTrackWithStringRandom(const char *str) {
 	return oaml.PlayTrackWithStringRandom(str);
 }
 
+int oamlPlaySfx(const char *name) {
+	return oaml.PlaySfx(name);
+}
+
 bool oamlIsTrackPlaying(const char *name) {
 	return oaml.IsTrackPlaying(name);
 }

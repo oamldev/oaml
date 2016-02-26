@@ -27,36 +27,62 @@
 #include "oamlCommon.h"
 
 
-oamlTrack::oamlTrack() {
-	name = "Track";
-	type = 0;
-
-	fadeIn = 0;
-	fadeOut = 0;
-	xfadeIn = 0;
-	xfadeOut = 0;
+oamlSfxTrack::oamlSfxTrack() {
 }
 
-oamlTrack::~oamlTrack() {
+oamlSfxTrack::~oamlSfxTrack() {
+	ClearAudios(&sfxAudios);
 }
 
-void oamlTrack::ClearAudios(std::vector<oamlAudio*> *audios) {
-	while (audios->empty() == false) {
-		oamlAudio *audio = audios->back();
-		audios->pop_back();
+void oamlSfxTrack::AddAudio(oamlAudio *audio) {
+	ASSERT(audio != NULL);
 
-		delete audio;
+	sfxAudios.push_back(audio);
+}
+
+int oamlSfxTrack::Play(const char *name) {
+	for (size_t i=0; i<sfxAudios.size(); i++) {
+		oamlAudio *audio = sfxAudios[i];
+		if (audio->GetName().compare(name) == 0) {
+			audio->Open();
+
+			sfxPlayInfo info = { audio, 0 };
+			playingAudios.push_back(info);
+			return 0;
+		}
 	}
+
+	return -1;
 }
 
-int oamlTrack::Random(int min, int max) {
-	int range = max - min + 1;
-	return rand() % range + min;
+int oamlSfxTrack::Mix32(int sample, oamlBase *oaml) {
+	for (size_t i=0; i<playingAudios.size(); i++) {
+		sfxPlayInfo *info = &playingAudios[i];
+		sample = oaml->SafeAdd(sample, info->audio->Read32(info->pos++));
+	}
+
+	for (size_t i=0; i<playingAudios.size(); i++) {
+		sfxPlayInfo *info = &playingAudios[i];
+		if (info->audio->HasFinishedTail(info->pos)) {
+			playingAudios.erase(playingAudios.begin()+i);
+		}
+	}
+
+	return sample;
 }
 
-void oamlTrack::ShowPlaying() {
-	std::string info;
+bool oamlSfxTrack::IsPlaying() {
+	return false;
+}
 
-	info = GetPlayingInfo();
-	printf("%s\n", info.c_str());
+void oamlSfxTrack::ShowInfo() {
+}
+
+std::string oamlSfxTrack::GetPlayingInfo() {
+	std::string info = "";
+
+	return info;
+}
+
+void oamlSfxTrack::Stop() {
 }

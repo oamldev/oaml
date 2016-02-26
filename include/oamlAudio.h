@@ -32,6 +32,7 @@ private:
 	ByteBuffer *buffer;
 	audioFile *handle;
 	std::string filename;
+	std::string name;
 	int type;
 	int bars;
 
@@ -67,7 +68,7 @@ public:
 	oamlAudio(oamlFileCallbacks *cbs);
 	~oamlAudio();
 
-	void SetFilename(std::string audioFilename) { filename = audioFilename; }
+	void SetFilename(std::string audioFilename);
 	void SetType(int audioType) { type = audioType; }
 	void SetBPM(float audioBpm) { bpm = audioBpm; }
 	void SetBeatsPerBar(int audioBeatsPerBar) { beatsPerBar = audioBeatsPerBar; }
@@ -103,6 +104,7 @@ public:
 
 	std::string GetFilename() const { return filename; }
 	const char *GetFilenameStr() const { return filename.c_str(); }
+	std::string GetName() const { return name; }
 	float GetBPM() const { return bpm; }
 	int GetBeatsPerBar() const { return beatsPerBar; }
 	int GetBars() const { return bars; }

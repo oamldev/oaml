@@ -20,43 +20,54 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ifndef __OAMLMUSICTRACK_H__
+#define __OAMLMUSICTRACK_H__
 
-#include "oamlCommon.h"
+class ByteBuffer;
+class oamlAudio;
 
+class oamlMusicTrack : public oamlTrack {
+private:
+	int playCondSamples;
 
-oamlTrack::oamlTrack() {
-	name = "Track";
-	type = 0;
+	unsigned int tailPos;
 
-	fadeIn = 0;
-	fadeOut = 0;
-	xfadeIn = 0;
-	xfadeOut = 0;
-}
+	std::vector<oamlAudio*> loopAudios;
+	std::vector<oamlAudio*> randAudios;
+	std::vector<oamlAudio*> condAudios;
+	oamlAudio *introAudio;
+	oamlAudio *endAudio;
+	oamlAudio *playCondAudio;
 
-oamlTrack::~oamlTrack() {
-}
+	oamlAudio *curAudio;
+	oamlAudio *tailAudio;
+	oamlAudio *fadeAudio;
 
-void oamlTrack::ClearAudios(std::vector<oamlAudio*> *audios) {
-	while (audios->empty() == false) {
-		oamlAudio *audio = audios->back();
-		audios->pop_back();
+	oamlAudio* PickNextAudio();
 
-		delete audio;
-	}
-}
+	void PlayNext();
+	void PlayCond(oamlAudio *audio);
+	void PlayCondWithMovement(oamlAudio *audio);
+	void XFadePlay();
 
-int oamlTrack::Random(int min, int max) {
-	int range = max - min + 1;
-	return rand() % range + min;
-}
+public:
+	oamlMusicTrack();
+	~oamlMusicTrack();
 
-void oamlTrack::ShowPlaying() {
-	std::string info;
+	void AddAudio(oamlAudio *audio);
+	void Play();
+	void Stop();
 
-	info = GetPlayingInfo();
-	printf("%s\n", info.c_str());
-}
+	bool IsPlaying();
+	void ShowPlaying();
+	void ShowInfo();
+	std::string GetPlayingInfo();
+
+	int Mix32(int sample, oamlBase *oaml);
+
+	void SetCondition(int id, int value);
+
+	bool IsMusicTrack() const { return true; }
+};
+
+#endif

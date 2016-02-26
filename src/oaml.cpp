@@ -54,6 +54,10 @@ int oamlApi::PlayTrackWithStringRandom(const char *str) {
 	return oaml->PlayTrackWithStringRandom(str);
 }
 
+int oamlApi::PlaySfx(const char *name) {
+	return oaml->PlaySfx(name);
+}
+
 bool oamlApi::IsTrackPlaying(const char *name) {
 	return oaml->IsTrackPlaying(name);
 }

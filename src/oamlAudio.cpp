@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libgen.h>
 #include <math.h>
 
 #include "oamlCommon.h"
@@ -270,4 +271,16 @@ int oamlAudio::Read32(unsigned int pos) {
 	}
 
 	return ret;
+}
+
+void oamlAudio::SetFilename(std::string audioFilename) {
+	filename = audioFilename;
+	size_t pos = filename.find_last_of(PATH_SEPARATOR);
+	if (pos != std::string::npos) {
+		name = filename.substr(pos+1);
+		size_t pos = name.find_last_of('.');
+		if (pos != std::string::npos) {
+			name = name.substr(0, pos);
+		}
+	}
 }

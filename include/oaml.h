@@ -42,6 +42,18 @@ enum {
 	COND_TYPE_RANGE		= 3
 };
 
+// Condition id's 1-9 are reserved
+enum {
+	CONDITION_TENSION		= 1,
+	CONDITION_MAIN_LOOP		= 2,
+	CONDITION_USER			= 10
+};
+
+enum {
+	TRACK_TYPE_MUSIC		= 0,
+	TRACK_TYPE_SFX			= 1
+};
+
 typedef struct {
 	void*  (*open)  (const char *filename);
 	size_t (*read)  (void *ptr, size_t size, size_t nitems, void *fd);
@@ -58,6 +70,7 @@ int oamlInitString(const char *defs);
 void oamlSetAudioFormat(int sampleRate, int channels, int bytesPerSample, bool floatBuffer);
 int oamlPlayTrack(const char *name);
 int oamlPlayTrackWithStringRandom(const char *str);
+int oamlPlaySfx(const char *name);
 bool oamlIsTrackPlaying(const char *name);
 bool oamlIsPlaying();
 void oamlStopPlaying();
@@ -160,6 +173,11 @@ public:
 	 *  @return returns 0, or -1 on error
 	 */
 	int PlayTrackWithStringRandom(const char *str);
+
+	/** Play a sound fx
+	 *  @return returns 0, or -1 on error
+	 */
+	int PlaySfx(const char *name);
 
 	/** Stop playing any track currently playing */
 	void StopPlaying();

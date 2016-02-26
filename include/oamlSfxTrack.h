@@ -20,43 +20,37 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ifndef __OAMLSFXTRACK_H__
+#define __OAMLSFXTRACK_H__
 
-#include "oamlCommon.h"
+class ByteBuffer;
+class oamlAudio;
 
+typedef struct {
+	oamlAudio *audio;
+	int pos;
+} sfxPlayInfo;
 
-oamlTrack::oamlTrack() {
-	name = "Track";
-	type = 0;
+class oamlSfxTrack : public oamlTrack {
+private:
+	std::vector<oamlAudio*> sfxAudios;
+	std::vector<sfxPlayInfo> playingAudios;
 
-	fadeIn = 0;
-	fadeOut = 0;
-	xfadeIn = 0;
-	xfadeOut = 0;
-}
+public:
+	oamlSfxTrack();
+	~oamlSfxTrack();
 
-oamlTrack::~oamlTrack() {
-}
+	void AddAudio(oamlAudio *audio);
+	int Play(const char *name);
+	void Stop();
 
-void oamlTrack::ClearAudios(std::vector<oamlAudio*> *audios) {
-	while (audios->empty() == false) {
-		oamlAudio *audio = audios->back();
-		audios->pop_back();
+	bool IsPlaying();
+	void ShowInfo();
+	std::string GetPlayingInfo();
 
-		delete audio;
-	}
-}
+	int Mix32(int sample, oamlBase *oaml);
 
-int oamlTrack::Random(int min, int max) {
-	int range = max - min + 1;
-	return rand() % range + min;
-}
+	bool IsSfxTrack() const { return true; }
+};
 
-void oamlTrack::ShowPlaying() {
-	std::string info;
-
-	info = GetPlayingInfo();
-	printf("%s\n", info.c_str());
-}
+#endif

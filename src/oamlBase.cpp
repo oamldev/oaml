@@ -66,7 +66,6 @@ oamlBase::oamlBase() {
 	debugClipping = false;
 	writeAudioAtShutdown = false;
 	useCompressor = false;
-	avgDecibels = 0;
 
 	curTrack = NULL;
 
@@ -104,11 +103,21 @@ int oamlBase::ReadDefs(const char *buf, int size) {
 	tinyxml2::XMLElement *el = doc.FirstChildElement("track");
 	while (el != NULL) {
 		oamlTrackInfo tinfo;
-		oamlTrack *track = new oamlTrack();
+		oamlTrack *track;
+
+		if (el->Attribute("type", "music")) {
+			track = new oamlMusicTrack();
+		} else if (el->Attribute("type", "sfx")) {
+			track = new oamlSfxTrack();
+		} else {
+			fprintf(stderr, "liboaml: Error parsing xml: %s\n", doc.ErrorName());
+			return -1;
+		}
 
 		tinyxml2::XMLElement *trackEl = el->FirstChildElement();
 		while (trackEl != NULL) {
 			if (strcmp(trackEl->Name(), "name") == 0) track->SetName(trackEl->GetText());
+			else if (strcmp(trackEl->Name(), "type") == 0) track->SetType(strtol(trackEl->GetText(), NULL, 0));
 			else if (strcmp(trackEl->Name(), "fadeIn") == 0) track->SetFadeIn(strtol(trackEl->GetText(), NULL, 0));
 			else if (strcmp(trackEl->Name(), "fadeOut") == 0) track->SetFadeOut(strtol(trackEl->GetText(), NULL, 0));
 			else if (strcmp(trackEl->Name(), "xfadeIn") == 0) track->SetXFadeIn(strtol(trackEl->GetText(), NULL, 0));
@@ -171,7 +180,11 @@ int oamlBase::ReadDefs(const char *buf, int size) {
 		tinfo.xfadeIn = track->GetXFadeIn();
 		tinfo.xfadeOut = track->GetXFadeOut();
 		tracksInfo.tracks.push_back(tinfo);
-		tracks.push_back(track);
+		if (track->IsMusicTrack()) {
+			musicTracks.push_back(track);
+		} else {
+			sfxTracks.push_back(track);
+		}
 //		track->ShowInfo();
 
 		el = el->NextSiblingElement();
@@ -260,14 +273,14 @@ void oamlBase::SetAudioFormat(int audioSampleRate, int audioChannels, int audioB
 }
 
 int oamlBase::PlayTrackId(int id) {
-	if (id >= (int)tracks.size())
+	if (id >= (int)musicTracks.size())
 		return -1;
 
 	if (curTrack) {
 		curTrack->Stop();
 	}
 
-	curTrack = tracks[id];
+	curTrack = musicTracks[id];
 	curTrack->Play();
 
 	return 0;
@@ -278,13 +291,29 @@ int oamlBase::PlayTrack(const char *name) {
 
 //	printf("%s %s\n", __FUNCTION__, name);
 
-	for (size_t i=0; i<tracks.size(); i++) {
-		if (tracks[i]->GetName().compare(name) == 0) {
+	for (size_t i=0; i<musicTracks.size(); i++) {
+		if (musicTracks[i]->GetName().compare(name) == 0) {
 			return PlayTrackId(i);
 		}
 	}
 
 	fprintf(stderr, "liboaml: Unable to find track name '%s'\n", name);
+
+	return -1;
+}
+
+int oamlBase::PlaySfx(const char *name) {
+	ASSERT(name != NULL);
+
+//	__Log("%s %s\n", __FUNCTION__, name);
+
+	for (size_t i=0; i<sfxTracks.size(); i++) {
+		if (sfxTracks[i]->Play(name) == 0) {
+			return 0;
+		}
+	}
+
+	fprintf(stderr, "liboaml: Unable to find sfx name '%s'\n", name);
 
 	return -1;
 }
@@ -296,8 +325,8 @@ int oamlBase::PlayTrackWithStringRandom(const char *str) {
 
 //	printf("%s %s\n", __FUNCTION__, name);
 
-	for (size_t i=0; i<tracks.size(); i++) {
-		if (tracks[i]->GetName().find(str) == std::string::npos) {
+	for (size_t i=0; i<musicTracks.size(); i++) {
+		if (musicTracks[i]->GetName().find(str) == std::string::npos) {
 			list.push_back(i);
 		}
 	}
@@ -315,8 +344,8 @@ int oamlBase::PlayTrackWithStringRandom(const char *str) {
 bool oamlBase::IsTrackPlaying(const char *name) {
 	ASSERT(name != NULL);
 
-	for (size_t i=0; i<tracks.size(); i++) {
-		if (tracks[i]->GetName().compare(name) == 0) {
+	for (size_t i=0; i<musicTracks.size(); i++) {
+		if (musicTracks[i]->GetName().compare(name) == 0) {
 			return IsTrackPlayingId(i);
 		}
 	}
@@ -325,15 +354,15 @@ bool oamlBase::IsTrackPlaying(const char *name) {
 }
 
 bool oamlBase::IsTrackPlayingId(int id) {
-	if (id >= (int)tracks.size())
+	if (id >= (int)musicTracks.size())
 		return false;
 
-	return tracks[id]->IsPlaying();
+	return musicTracks[id]->IsPlaying();
 }
 
 bool oamlBase::IsPlaying() {
-	for (size_t i=0; i<tracks.size(); i++) {
-		if (tracks[i]->IsPlaying())
+	for (size_t i=0; i<musicTracks.size(); i++) {
+		if (musicTracks[i]->IsPlaying())
 			return true;
 	}
 
@@ -341,9 +370,9 @@ bool oamlBase::IsPlaying() {
 }
 
 void oamlBase::StopPlaying() {
-	for (size_t i=0; i<tracks.size(); i++) {
-		if (tracks[i]->IsPlaying()) {
-			tracks[i]->Stop();
+	for (size_t i=0; i<musicTracks.size(); i++) {
+		if (musicTracks[i]->IsPlaying()) {
+			musicTracks[i]->Stop();
 			break;
 		}
 	}
@@ -362,8 +391,8 @@ void oamlBase::PauseToggle() {
 }
 
 void oamlBase::ShowPlayingTracks() {
-	for (size_t i=0; i<tracks.size(); i++) {
-		tracks[i]->ShowPlaying();
+	for (size_t i=0; i<musicTracks.size(); i++) {
+		musicTracks[i]->ShowPlaying();
 	}
 }
 
@@ -496,8 +525,11 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 		for (int c=0; c<channels; c++) {
 			int sample = 0;
 
-			for (size_t j=0; j<tracks.size(); j++) {
-				sample = tracks[j]->Mix32(sample, this);
+			for (size_t j=0; j<musicTracks.size(); j++) {
+				sample = musicTracks[j]->Mix32(sample, this);
+			}
+			for (size_t j=0; j<sfxTracks.size(); j++) {
+				sample = sfxTracks[j]->Mix32(sample, this);
 			}
 
 			fsample[c] = Integer24ToFloat(sample >> 8);
@@ -624,8 +656,8 @@ const char* oamlBase::GetDefsFile() {
 
 const char* oamlBase::GetPlayingInfo() {
 	playingInfo = "";
-	for (size_t i=0; i<tracks.size(); i++) {
-		playingInfo+= tracks[i]->GetPlayingInfo();
+	for (size_t i=0; i<musicTracks.size(); i++) {
+		playingInfo+= musicTracks[i]->GetPlayingInfo();
 	}
 
 	if (tension > 0) {
@@ -638,9 +670,9 @@ const char* oamlBase::GetPlayingInfo() {
 }
 
 void oamlBase::Clear() {
-	while (tracks.empty() == false) {
-		oamlTrack *track = tracks.back();
-		tracks.pop_back();
+	while (musicTracks.empty() == false) {
+		oamlTrack *track = musicTracks.back();
+		musicTracks.pop_back();
 
 		delete track;
 	}

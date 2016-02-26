@@ -1,3 +1,5 @@
+#include <oaml.h>
+
 #include "effects.h"
 #include "fruits.h"
 
@@ -12,6 +14,7 @@ void normal_effect(GAME *game) {
   grow_fruit(game);
   game->snake.grow++;
   game->highscore++;
+  oamlPlaySfx("eat");
 }
 
 // ---- double grow ----
@@ -22,6 +25,7 @@ void normal_effect(GAME *game) {
 void double_grow(GAME *game) {
   normal_effect(game);
   grow_fruit(game);
+  oamlPlaySfx("eat");
 }
 
 // ---- mega food ----
@@ -33,6 +37,7 @@ void mega_food(GAME *game) {
   normal_effect(game);
   game->snake.grow += 4;
   game->highscore += 9;
+  oamlPlaySfx("eat");
 }
 
 // ---- eat boost ----
@@ -44,4 +49,5 @@ void mega_food(GAME *game) {
 void eat_boost(GAME *game) {
   normal_effect(game);
   game->snake.eat_range++;
+  oamlPlaySfx("eat");
 }

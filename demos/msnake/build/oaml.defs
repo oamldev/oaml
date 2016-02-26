@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<track>
+<track type="music">
     <name>Theme</name>
     <audio>
         <filename>music/8bitSnake_A1.ogg</filename>
@@ -280,5 +280,14 @@
         <condId>2</condId>
         <condType>1</condType>
         <condValue>13</condValue>
+    </audio>
+</track>
+<track type="sfx">
+    <name>Sfx</name>
+    <audio>
+        <filename>sfx/eat.wav</filename>
+    </audio>
+    <audio>
+        <filename>sfx/lose.wav</filename>
     </audio>
 </track>
