@@ -489,58 +489,38 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 	if (IsAudioFormatSupported() == false || pause)
 		return;
 
-	if (useCompressor) {
-		for (int i=0; i<size; i+= channels) {
-			float fsample[2] = { 0, 0 };
-			int sample[2] = { 0, 0 };
+	for (int i=0; i<size; i+= channels) {
+		float fsample[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-			// Mix all the tracks into a 32bit temp value
-			for (int c=0; c<channels; c++) {
-				for (size_t j=0; j<tracks.size(); j++) {
-					sample[c] = tracks[j]->Mix32(sample[c], this);
-				}
-
-				fsample[c] = Integer24ToFloat(sample[c] >> 8);
-			}
-
-			// Apply effects
-			compressor.ProcessData(fsample);
-
-			for (int c=0; c<channels; c++) {
-				// Apply the volume
-				fsample[c] = fsample[c] * ((float)volume / OAML_VOLUME_MAX);
-
-				if (floatBuffer) {
-					((float*)buffer)[i+c]+= fsample[c];
-				} else {
-					sample[c] = FloatToInteger24(fsample[c]) << 8;
-
-					// Mix our sample into the buffer
-					int tmp = ReadSample(buffer, i+c);
-					tmp = SafeAdd(sample[c], tmp);
-					WriteSample(buffer, i+c, tmp);
-				}
-			}
-		}
-	} else {
-		for (int i=0; i<size; i++) {
+		// Mix all the tracks into a 32bit temp value
+		for (int c=0; c<channels; c++) {
 			int sample = 0;
 
-			// Mix all the tracks into a 32bit temp value
 			for (size_t j=0; j<tracks.size(); j++) {
 				sample = tracks[j]->Mix32(sample, this);
 			}
 
-			// Apply the volume
-			sample = (((sample>>8) * volume) / OAML_VOLUME_MAX) << 8;
+			fsample[c] = Integer24ToFloat(sample >> 8);
+		}
 
-			// Mix our sample into the buffer
+		// Apply effects
+		if (useCompressor) {
+			compressor.ProcessData(fsample);
+		}
+
+		for (int c=0; c<channels; c++) {
+			// Apply the volume
+			fsample[c] = fsample[c] * volume;
+
 			if (floatBuffer) {
-				((float*)buffer)[i]+= Integer24ToFloat(sample >> 8);
+				((float*)buffer)[i+c]+= fsample[c];
 			} else {
-				int tmp = ReadSample(buffer, i);
+				int sample = FloatToInteger24(fsample[c]) << 8;
+
+				// Mix our sample into the buffer
+				int tmp = ReadSample(buffer, i+c);
 				tmp = SafeAdd(sample, tmp);
-				WriteSample(buffer, i, tmp);
+				WriteSample(buffer, i+c, tmp);
 			}
 		}
 	}
@@ -566,7 +546,7 @@ void oamlBase::SetCondition(int id, int value) {
 	}
 }
 
-void oamlBase::SetVolume(int vol) {
+void oamlBase::SetVolume(float vol) {
 	volume = vol;
 
 	if (volume < OAML_VOLUME_MIN) volume = OAML_VOLUME_MIN;

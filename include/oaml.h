@@ -30,10 +30,10 @@
 // Definitions
 //
 
-#define OAML_VOLUME_MIN		0
-#define OAML_VOLUME_MAX		100
+#define OAML_VOLUME_MIN		0.f
+#define OAML_VOLUME_MAX		1.f
 
-#define OAML_VOLUME_DEFAULT	50
+#define OAML_VOLUME_DEFAULT	0.5f
 
 enum {
 	COND_TYPE_EQUAL		= 0,
@@ -67,7 +67,7 @@ void oamlPauseToggle();
 bool oamlIsPaused();
 void oamlMixToBuffer(void *buffer, int size);
 void oamlSetCondition(int id, int value);
-void oamlSetVolume(int vol);
+void oamlSetVolume(float vol);
 int oamlGetVolume();
 void oamlAddTension(int value);
 void oamlSetMainLoopCondition(int value);
@@ -148,8 +148,8 @@ public:
 
 	/** Set the audio format to be used by MixToBuffer */
 	void SetAudioFormat(int sampleRate, int channels, int bytesPerSample, bool floatBuffer = false);
-	void SetVolume(int vol);
-	int GetVolume();
+	void SetVolume(float vol);
+	float GetVolume();
 
 	/** Play a music track by name (recommended) or id
 	 *  @return returns 0, or -1 on error

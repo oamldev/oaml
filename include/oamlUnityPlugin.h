@@ -34,8 +34,8 @@ extern "C" {
 	DLLEXPORT int oamlInitString(const char *defs);
 	DLLEXPORT void oamlShutdown();
 	DLLEXPORT void oamlSetAudioFormat(int freq, int channels, int bytesPerSample);
-	DLLEXPORT void oamlSetVolume(int vol);
-	DLLEXPORT int oamlGetVolume();
+	DLLEXPORT void oamlSetVolume(float vol);
+	DLLEXPORT float oamlGetVolume();
 	DLLEXPORT int oamlPlayTrack(const char *name);
 	DLLEXPORT int oamlPlayTrackWithStringRandom(const char *str);
 	DLLEXPORT void oamlStopPlaying();

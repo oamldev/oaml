@@ -90,11 +90,11 @@ void oamlSetCondition(int id, int value) {
 	oaml.SetCondition(id, value);
 }
 
-void oamlSetVolume(int vol) {
+void oamlSetVolume(float vol) {
 	oaml.SetVolume(vol);
 }
 
-int oamlGetVolume() {
+float oamlGetVolume() {
 	return oaml.GetVolume();
 }
 

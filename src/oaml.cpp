@@ -90,11 +90,11 @@ void oamlApi::SetCondition(int id, int value) {
 	oaml->SetCondition(id, value);
 }
 
-void oamlApi::SetVolume(int vol) {
+void oamlApi::SetVolume(float vol) {
 	oaml->SetVolume(vol);
 }
 
-int oamlApi::GetVolume() {
+float oamlApi::GetVolume() {
 	return oaml->GetVolume();
 }
 

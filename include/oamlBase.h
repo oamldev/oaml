@@ -58,7 +58,7 @@ private:
 
 	int tension;
 	uint64_t tensionMs;
-	int volume;
+	float volume;
 	bool pause;
 
 	oamlFileCallbacks *fcbs;
@@ -95,8 +95,8 @@ public:
 	void SetWriteAudioAtShutdown(bool option) { writeAudioAtShutdown = option; }
 
 	void SetAudioFormat(int audioSampleRate, int audioChannels, int audioBytesPerSample, bool audioFloatBuffer);
-	void SetVolume(int vol);
-	int GetVolume() const { return volume; }
+	void SetVolume(float vol);
+	float GetVolume() const { return volume; }
 
 	int PlayTrack(const char *name);
 	int PlayTrackWithStringRandom(const char *str);
