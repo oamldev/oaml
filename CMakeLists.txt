@@ -68,7 +68,7 @@ endif()
 # Build static and shared libraries
 #
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-set(SRCS src/audioFile.cpp src/ByteBuffer.cpp src/oaml.cpp src/oamlAudio.cpp src/oamlBase.cpp src/oamlCompressor.cpp src/oamlMusicTrack.cpp src/oamlSfxTrack.cpp src/oamlTrack.cpp src/aif.cpp src/ogg.cpp src/wav.cpp src/gettime.cpp src/tinyxml2.cpp)
+set(SRCS src/audioFile.cpp src/ByteBuffer.cpp src/oaml.cpp src/oamlAudio.cpp src/oamlBase.cpp src/oamlCompressor.cpp src/oamlMusicTrack.cpp src/oamlSfxTrack.cpp src/oamlTrack.cpp src/oamlUtil.cpp src/aif.cpp src/ogg.cpp src/wav.cpp src/gettime.cpp src/tinyxml2.cpp)
 if (ENABLE_STATIC)
 	add_library(oaml STATIC ${SRCS} src/oamlC.cpp)
 endif()

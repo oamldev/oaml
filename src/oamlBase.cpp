@@ -485,16 +485,6 @@ void oamlBase::WriteSample(void *buffer, int index, int sample) {
 	}
 }
 
-float Integer24ToFloat(int i) {
-	const float Q = 1.0 / (0x7fffff + 0.5);
-	if (i & 0x800000) i |= ~0xffffff;
-	return (i + 0.5) * Q;
-}
-
-int FloatToInteger24(float f) {
-	return ((int)(f * 8388608) & 0x00ffffff);
-}
-
 bool oamlBase::IsAudioFormatSupported() {
 	// Basic check, we need a sampleRate
 	if (sampleRate == 0)
@@ -532,7 +522,7 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 				sample = sfxTracks[j]->Mix32(sample, this);
 			}
 
-			fsample[c] = Integer24ToFloat(sample >> 8);
+			fsample[c] = __oamlInteger24ToFloat(sample >> 8);
 		}
 
 		// Apply effects
@@ -547,7 +537,7 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 			if (floatBuffer) {
 				((float*)buffer)[i+c]+= fsample[c];
 			} else {
-				int sample = FloatToInteger24(fsample[c]) << 8;
+				int sample = __oamlFloatToInteger24(fsample[c]) << 8;
 
 				// Mix our sample into the buffer
 				int tmp = ReadSample(buffer, i+c);
@@ -695,18 +685,3 @@ void oamlBase::Shutdown() {
 		delete wav;
 	}
 }
-
-void __Log(const char* fmt, ...) {
-	va_list args;
-
-	FILE *log = fopen("/tmp/log.txt", "a+");
-	if (log == NULL)
-		return;
-
-	va_start(args, fmt);
-	vfprintf(log, fmt, args);
-	va_end(args);
-
-	fclose(log);
-}
-

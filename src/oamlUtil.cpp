@@ -20,59 +20,37 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef __OAMLCOMMON_H__
-#define __OAMLCOMMON_H__
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
+#include <math.h>
+#include <time.h>
 
-#include <assert.h>
-
-//
-// Definitions
-//
-
-#ifdef _WIN32
-#define PATH_SEPARATOR "\\"
-#else
-#define PATH_SEPARATOR "/"
-#endif
+#include "oamlCommon.h"
 
 
-// Visual Studio specific stuff
-#ifdef _MSC_VER
+float __oamlInteger24ToFloat(int i) {
+	const float Q = 1.0 / (0x7fffff + 0.5);
+	if (i & 0x800000) i |= ~0xffffff;
+	return (i + 0.5) * Q;
+}
 
-#define snprintf	sprintf_s
+int __oamlFloatToInteger24(float f) {
+	return ((int)(f * 8388608) & 0x00ffffff);
+}
 
-#endif
+void __oamlLog(const char* fmt, ...) {
+	va_list args;
 
+	FILE *log = fopen("/tmp/log.txt", "a+");
+	if (log == NULL)
+		return;
 
-#ifdef DEBUG
+	va_start(args, fmt);
+	vfprintf(log, fmt, args);
+	va_end(args);
 
-#ifdef _MSC_VER
-#define ASSERT(e)
-#else
-#define ASSERT(e)  \
-    ((void) ((e) ? ((void)0) : __assert (#e, __FILE__, __LINE__)))
-#endif
+	fclose(log);
+}
 
-#else
-
-#define ASSERT(e)
-
-#endif
-
-#include "oaml.h"
-#include "gettime.h"
-#include "ByteBuffer.h"
-#include "audioFile.h"
-#include "aif.h"
-#include "ogg.h"
-#include "wav.h"
-#include "oamlAudio.h"
-#include "oamlTrack.h"
-#include "oamlMusicTrack.h"
-#include "oamlSfxTrack.h"
-#include "oamlCompressor.h"
-#include "oamlBase.h"
-#include "oamlUtil.h"
-
-
-#endif /* __OAMLCOMMON_H__ */

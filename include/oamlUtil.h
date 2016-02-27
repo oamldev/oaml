@@ -20,59 +20,12 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef __OAMLCOMMON_H__
-#define __OAMLCOMMON_H__
-
-#include <assert.h>
-
-//
-// Definitions
-//
-
-#ifdef _WIN32
-#define PATH_SEPARATOR "\\"
-#else
-#define PATH_SEPARATOR "/"
-#endif
+#ifndef __OAMLUTIL_H__
+#define __OAMLUTIL_H__
 
 
-// Visual Studio specific stuff
-#ifdef _MSC_VER
+float __oamlInteger24ToFloat(int i);
+int __oamlFloatToInteger24(float f);
+void __oamlLog(const char* fmt, ...);
 
-#define snprintf	sprintf_s
-
-#endif
-
-
-#ifdef DEBUG
-
-#ifdef _MSC_VER
-#define ASSERT(e)
-#else
-#define ASSERT(e)  \
-    ((void) ((e) ? ((void)0) : __assert (#e, __FILE__, __LINE__)))
-#endif
-
-#else
-
-#define ASSERT(e)
-
-#endif
-
-#include "oaml.h"
-#include "gettime.h"
-#include "ByteBuffer.h"
-#include "audioFile.h"
-#include "aif.h"
-#include "ogg.h"
-#include "wav.h"
-#include "oamlAudio.h"
-#include "oamlTrack.h"
-#include "oamlMusicTrack.h"
-#include "oamlSfxTrack.h"
-#include "oamlCompressor.h"
-#include "oamlBase.h"
-#include "oamlUtil.h"
-
-
-#endif /* __OAMLCOMMON_H__ */
+#endif /* __OAMLUTIL_H__ */
