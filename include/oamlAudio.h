@@ -41,6 +41,7 @@ private:
 	unsigned int samplesPerSec;
 	unsigned int samplesToEnd;
 	unsigned int totalSamples;
+	unsigned int channelCount;
 
 	float bpm;
 	int beatsPerBar;
@@ -98,6 +99,11 @@ public:
 	int Read();
 	int Read32();
 	int Read32(unsigned int pos);
+	float ReadFloat();
+	float ReadFloat(unsigned int pos);
+
+	void Mix(float *samples, int channels, bool debugClipping);
+	unsigned int Mix(float *samples, int channels, bool debugClipping, unsigned int pos);
 
 	void DoFadeIn(int msec);
 	void DoFadeOut(int msec);

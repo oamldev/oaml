@@ -55,10 +55,10 @@ int oamlSfxTrack::Play(const char *name) {
 	return -1;
 }
 
-int oamlSfxTrack::Mix32(int sample, oamlBase *oaml) {
+void oamlSfxTrack::Mix(float *samples, int channels, bool debugClipping) {
 	for (size_t i=0; i<playingAudios.size(); i++) {
 		sfxPlayInfo *info = &playingAudios[i];
-		sample = oaml->SafeAdd(sample, info->audio->Read32(info->pos++));
+		info->pos = info->audio->Mix(samples, channels, debugClipping, info->pos);
 	}
 
 	for (size_t i=0; i<playingAudios.size(); i++) {
@@ -67,8 +67,6 @@ int oamlSfxTrack::Mix32(int sample, oamlBase *oaml) {
 			playingAudios.erase(playingAudios.begin()+i);
 		}
 	}
-
-	return sample;
 }
 
 bool oamlSfxTrack::IsPlaying() {

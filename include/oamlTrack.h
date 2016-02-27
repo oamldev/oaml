@@ -69,7 +69,7 @@ public:
 	virtual void ShowInfo() { }
 	virtual std::string GetPlayingInfo() { return ""; }
 
-	virtual int Mix32(int sample, oamlBase *) { return sample; }
+	virtual void Mix(float *, int, bool) { }
 
 	virtual void SetCondition(int, int) { }
 

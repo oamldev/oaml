@@ -272,22 +272,24 @@ void oamlMusicTrack::XFadePlay() {
 	}
 }
 
-int oamlMusicTrack::Mix32(int sample, oamlBase *oaml) {
-	if (curAudio == NULL && tailAudio == NULL && fadeAudio == NULL)
-		return sample;
+void oamlMusicTrack::Mix(float *samples, int channels, bool debugClipping) {
+	if (curAudio == NULL && tailAudio == NULL && fadeAudio == NULL) {
+		// Nothing to mix
+		return;
+	}
 
 	if (curAudio) {
-		sample = oaml->SafeAdd(sample, curAudio->Read32());
+		curAudio->Mix(samples, channels, debugClipping);
 	}
 
 	if (tailAudio) {
-		sample = oaml->SafeAdd(sample, tailAudio->Read32(tailPos++));
+		tailPos = tailAudio->Mix(samples, channels, debugClipping, tailPos);
 		if (tailAudio->HasFinishedTail(tailPos))
 			tailAudio = NULL;
 	}
 
 	if (fadeAudio) {
-		sample = oaml->SafeAdd(sample, fadeAudio->Read32());
+		fadeAudio->Mix(samples, channels, debugClipping);
 	}
 
 	if (curAudio && curAudio->HasFinished()) {
@@ -307,8 +309,6 @@ int oamlMusicTrack::Mix32(int sample, oamlBase *oaml) {
 			PlayCond(playCondAudio);
 		}
 	}
-
-	return sample;
 }
 
 bool oamlMusicTrack::IsPlaying() {

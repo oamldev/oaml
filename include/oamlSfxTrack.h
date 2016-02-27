@@ -48,7 +48,7 @@ public:
 	void ShowInfo();
 	std::string GetPlayingInfo();
 
-	int Mix32(int sample, oamlBase *oaml);
+	void Mix(float *samples, int channels, bool debugClipping);
 
 	bool IsSfxTrack() const { return true; }
 };

@@ -142,6 +142,7 @@ int oamlAudio::Open() {
 		samplesPerSec = handle->GetSamplesPerSec() * handle->GetChannels();
 		bytesPerSample = handle->GetBytesPerSample();
 		totalSamples = handle->GetTotalSamples();
+		channelCount = handle->GetChannels();
 
 		samplesToEnd = GetBarsSamples(bars);
 		if (samplesToEnd == 0) {
@@ -273,6 +274,14 @@ int oamlAudio::Read32(unsigned int pos) {
 	return ret;
 }
 
+float oamlAudio::ReadFloat() {
+	return __oamlInteger24ToFloat(Read32() >> 8);
+}
+
+float oamlAudio::ReadFloat(unsigned int pos) {
+	return __oamlInteger24ToFloat(Read32(pos) >> 8);
+}
+
 void oamlAudio::SetFilename(std::string audioFilename) {
 	filename = audioFilename;
 	size_t pos = filename.find_last_of(PATH_SEPARATOR);
@@ -283,4 +292,48 @@ void oamlAudio::SetFilename(std::string audioFilename) {
 			name = name.substr(0, pos);
 		}
 	}
+}
+
+void oamlAudio::Mix(float *samples, int channels, bool debugClipping) {
+	if (channelCount == 1) {
+		float sample = ReadFloat();
+
+		for (int i=0; i<channels; i++) {
+			samples[i]+= sample;
+		}
+	} else if (channelCount == 2) {
+		if (channels == 1) {
+			float left = ReadFloat();
+			float right = ReadFloat();
+
+			samples[0]+= left * 0.5f + right + 0.5f;
+		} else if (channels == 2) {
+			for (int i=0; i<channels; i++) {
+				samples[i]+= ReadFloat();
+			}
+		}
+	}
+}
+
+unsigned int oamlAudio::Mix(float *samples, int channels, bool debugClipping, unsigned int pos) {
+	if (channelCount == 1) {
+		float sample = ReadFloat(pos++);
+
+		for (int i=0; i<channels; i++) {
+			samples[i]+= sample;
+		}
+	} else if (channelCount == 2) {
+		if (channels == 1) {
+			float left = ReadFloat(pos++);
+			float right = ReadFloat(pos++);
+
+			samples[0]+= left * 0.5f + right + 0.5f;
+		} else if (channels == 2) {
+			for (int i=0; i<channels; i++) {
+				samples[i]+= ReadFloat(pos++);
+			}
+		}
+	}
+
+	return pos;
 }

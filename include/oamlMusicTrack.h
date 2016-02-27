@@ -63,7 +63,7 @@ public:
 	void ShowInfo();
 	std::string GetPlayingInfo();
 
-	int Mix32(int sample, oamlBase *oaml);
+	void Mix(float *samples, int channels, bool debugClipping);
 
 	void SetCondition(int id, int value);
 

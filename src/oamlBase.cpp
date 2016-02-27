@@ -511,18 +511,12 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 	for (int i=0; i<size; i+= channels) {
 		float fsample[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-		// Mix all the tracks into a 32bit temp value
-		for (int c=0; c<channels; c++) {
-			int sample = 0;
+		for (size_t j=0; j<sfxTracks.size(); j++) {
+			sfxTracks[j]->Mix(fsample, channels, debugClipping);
+		}
 
-			for (size_t j=0; j<musicTracks.size(); j++) {
-				sample = musicTracks[j]->Mix32(sample, this);
-			}
-			for (size_t j=0; j<sfxTracks.size(); j++) {
-				sample = sfxTracks[j]->Mix32(sample, this);
-			}
-
-			fsample[c] = __oamlInteger24ToFloat(sample >> 8);
+		for (size_t j=0; j<musicTracks.size(); j++) {
+			musicTracks[j]->Mix(fsample, channels, debugClipping);
 		}
 
 		// Apply effects
