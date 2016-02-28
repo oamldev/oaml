@@ -60,3 +60,62 @@ void oamlTrack::ShowPlaying() {
 	info = GetPlayingInfo();
 	printf("%s\n", info.c_str());
 }
+
+void oamlTrack::ApplyVolPanTo(float *samples, int channels, float vol, float pan) {
+	if (channels == 2) {
+		// Stereo output, apply panning
+
+		if (pan < 0.f) {
+			samples[0] = samples[0];
+			samples[1] = samples[1] * (1.f + pan);
+		} else if (pan > 0.f) {
+			samples[0] = samples[0] * (1.f - pan);
+			samples[1] = samples[1];
+		}
+	}
+
+	// Apply volume
+	for (int i=0; i<channels; i++) {
+		samples[i] = samples[i] * vol;
+	}
+}
+
+float oamlTrack::SafeAdd(float a, float b, bool debug) {
+	float r = a + b;
+	bool clipping = false;
+
+	if (r > 1.0f) {
+		r = 1.0f - (r - 1.0f);
+		clipping = true;
+	} else if (r < -1.0f) {
+		r = -1.0f - (r + 1.0f);
+		clipping = true;
+	}
+
+	if (clipping && debug) {
+		fprintf(stderr, "oaml: Detected clipping!\n");
+		ShowPlaying();
+	}
+
+	return r;
+}
+
+void oamlTrack::MixAudio(oamlAudio *audio, float *samples, int channels, bool debug) {
+	float buf[8];
+
+	audio->ReadSamples(buf, channels);
+	for (int i=0; i<channels; i++) {
+		samples[i] = SafeAdd(samples[i], buf[i], debug);
+	}
+}
+
+unsigned int oamlTrack::MixAudio(oamlAudio *audio, float *samples, int channels, bool debug, unsigned int pos) {
+	float buf[8];
+
+	pos = audio->ReadSamples(buf, channels, pos);
+	for (int i=0; i<channels; i++) {
+		samples[i] = SafeAdd(samples[i], buf[i], debug);
+	}
+
+	return pos;
+}

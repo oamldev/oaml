@@ -54,6 +54,10 @@ int oamlPlaySfx(const char *name) {
 	return oaml.PlaySfx(name);
 }
 
+int oamlPlaySfxEx(const char *name, float vol, float pan) {
+	return oaml.PlaySfxEx(name, vol, pan);
+}
+
 bool oamlIsTrackPlaying(const char *name) {
 	return oaml.IsTrackPlaying(name);
 }

@@ -294,64 +294,46 @@ void oamlAudio::SetFilename(std::string audioFilename) {
 	}
 }
 
-float oamlAudio::SafeAdd(float a, float b, bool debug) {
-	float r = a + b;
-	bool clipping = false;
-
-	if (r > 1.0f) {
-		r = 1.0f - (r - 1.0f);
-		clipping = true;
-	} else if (r < -1.0f) {
-		r = -1.0f - (r + 1.0f);
-		clipping = true;
-	}
-
-	if (clipping && debug) {
-		fprintf(stderr, "oaml: Detected clipping!\n");
-	}
-
-	return r;
-}
-
-void oamlAudio::Mix(float *samples, int channels, bool debugClipping) {
+void oamlAudio::ReadSamples(float *samples, int channels) {
 	if (channelCount == 1) {
+		// Mono audio to mono/stereo output
 		float sample = ReadFloat();
 
 		for (int i=0; i<channels; i++) {
-			samples[i] = SafeAdd(samples[i], sample, debugClipping);
+			samples[i] = sample;
 		}
 	} else if (channelCount == 2) {
 		if (channels == 1) {
+			// Stereo audio to mono output
 			float left = ReadFloat();
 			float right = ReadFloat();
-			float sample = left * 0.5f + right + 0.5f;
 
-			samples[0] = SafeAdd(samples[0], sample, debugClipping);
+			samples[0] = left * 0.5f + right + 0.5f;
 		} else if (channels == 2) {
+			// Stereo audio to stereo output
 			for (int i=0; i<channels; i++) {
-				samples[i] = SafeAdd(samples[i], ReadFloat(), debugClipping);
+				samples[i] = ReadFloat();
 			}
 		}
 	}
 }
 
-unsigned int oamlAudio::Mix(float *samples, int channels, bool debugClipping, unsigned int pos) {
+unsigned int oamlAudio::ReadSamples(float *samples, int channels, unsigned int pos) {
 	if (channelCount == 1) {
 		float sample = ReadFloat(pos++);
 
 		for (int i=0; i<channels; i++) {
-			samples[i] = SafeAdd(samples[i], sample, debugClipping);
+			samples[i] = sample;
 		}
 	} else if (channelCount == 2) {
 		if (channels == 1) {
 			float left = ReadFloat(pos++);
 			float right = ReadFloat(pos++);
-			float sample = left * 0.5f + right + 0.5f;
 
-			samples[0] = SafeAdd(samples[0], sample, debugClipping);
+			samples[0] = left * 0.5f + right + 0.5f;
 		} else if (channels == 2) {
 			for (int i=0; i<channels; i++) {
-				samples[i] = SafeAdd(samples[i], ReadFloat(pos++), debugClipping);
+				samples[i] = ReadFloat(pos++);
 			}
 		}
 	}

@@ -93,6 +93,7 @@ public:
 	int PlayTrack(const char *name);
 	int PlayTrackWithStringRandom(const char *str);
 	int PlaySfx(const char *name);
+	int PlaySfxEx(const char *name, float vol, float pan);
 
 	void StopPlaying();
 	void Pause();

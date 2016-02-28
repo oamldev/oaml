@@ -38,6 +38,11 @@ protected:
 
 	int Random(int min, int max);
 
+	void ApplyVolPanTo(float *samlpes, int channels, float vol, float pan);
+	float SafeAdd(float a, float b, bool debug);
+	void MixAudio(oamlAudio *audio, float *samples, int channels, bool debug);
+	unsigned int MixAudio(oamlAudio *audio, float *samples, int channels, bool debug, unsigned int pos);
+
 	void ClearAudios(std::vector<oamlAudio*> *audios);
 
 public:
@@ -62,6 +67,7 @@ public:
 	virtual void AddAudio(oamlAudio *) { }
 	virtual void Play() { }
 	virtual int Play(const char *) { return -1; }
+	virtual int Play(const char *, float, float) { return -1; }
 	virtual void Stop() { }
 
 	virtual bool IsPlaying() { return false; }

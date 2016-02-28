@@ -71,6 +71,7 @@ void oamlSetAudioFormat(int sampleRate, int channels, int bytesPerSample, bool f
 int oamlPlayTrack(const char *name);
 int oamlPlayTrackWithStringRandom(const char *str);
 int oamlPlaySfx(const char *name);
+int oamlPlaySfxEx(const char *name, float vol, float pan);
 bool oamlIsTrackPlaying(const char *name);
 bool oamlIsPlaying();
 void oamlStopPlaying();
@@ -180,6 +181,7 @@ public:
 	 *  @return returns 0, or -1 on error
 	 */
 	int PlaySfx(const char *name);
+	int PlaySfxEx(const char *name, float vol, float pan);
 
 	/** Stop playing any track currently playing */
 	void StopPlaying();

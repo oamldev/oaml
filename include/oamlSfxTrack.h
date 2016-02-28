@@ -29,6 +29,8 @@ class oamlAudio;
 typedef struct {
 	oamlAudio *audio;
 	int pos;
+	float vol;
+	float pan;
 } sfxPlayInfo;
 
 class oamlSfxTrack : public oamlTrack {
@@ -41,7 +43,7 @@ public:
 	~oamlSfxTrack();
 
 	void AddAudio(oamlAudio *audio);
-	int Play(const char *name);
+	int Play(const char *name, float vol, float pan);
 	void Stop();
 
 	bool IsPlaying();

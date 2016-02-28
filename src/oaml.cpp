@@ -58,6 +58,10 @@ int oamlApi::PlaySfx(const char *name) {
 	return oaml->PlaySfx(name);
 }
 
+int oamlApi::PlaySfxEx(const char *name, float vol, float pan) {
+	return oaml->PlaySfxEx(name, vol, pan);
+}
+
 bool oamlApi::IsTrackPlaying(const char *name) {
 	return oaml->IsTrackPlaying(name);
 }

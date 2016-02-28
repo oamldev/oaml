@@ -40,13 +40,13 @@ void oamlSfxTrack::AddAudio(oamlAudio *audio) {
 	sfxAudios.push_back(audio);
 }
 
-int oamlSfxTrack::Play(const char *name) {
+int oamlSfxTrack::Play(const char *name, float vol, float pan) {
 	for (size_t i=0; i<sfxAudios.size(); i++) {
 		oamlAudio *audio = sfxAudios[i];
 		if (audio->GetName().compare(name) == 0) {
 			audio->Open();
 
-			sfxPlayInfo info = { audio, 0 };
+			sfxPlayInfo info = { audio, 0, vol, pan };
 			playingAudios.push_back(info);
 			return 0;
 		}
@@ -58,7 +58,14 @@ int oamlSfxTrack::Play(const char *name) {
 void oamlSfxTrack::Mix(float *samples, int channels, bool debugClipping) {
 	for (size_t i=0; i<playingAudios.size(); i++) {
 		sfxPlayInfo *info = &playingAudios[i];
-		info->pos = info->audio->Mix(samples, channels, debugClipping, info->pos);
+		float buf[8];
+
+		info->pos = info->audio->ReadSamples(buf, channels, info->pos);
+		ApplyVolPanTo(buf, channels, info->vol, info->pan);
+
+		for (int j=0; j<channels; j++) {
+			samples[j] = SafeAdd(samples[j], buf[j], debugClipping);
+		}
 	}
 
 	for (size_t i=0; i<playingAudios.size(); i++) {

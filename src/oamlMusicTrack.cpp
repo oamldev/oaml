@@ -279,17 +279,17 @@ void oamlMusicTrack::Mix(float *samples, int channels, bool debugClipping) {
 	}
 
 	if (curAudio) {
-		curAudio->Mix(samples, channels, debugClipping);
+		MixAudio(curAudio, samples, channels, debugClipping);
 	}
 
 	if (tailAudio) {
-		tailPos = tailAudio->Mix(samples, channels, debugClipping, tailPos);
+		tailPos = MixAudio(tailAudio, samples, channels, debugClipping, tailPos);
 		if (tailAudio->HasFinishedTail(tailPos))
 			tailAudio = NULL;
 	}
 
 	if (fadeAudio) {
-		fadeAudio->Mix(samples, channels, debugClipping);
+		MixAudio(fadeAudio, samples, channels, debugClipping);
 	}
 
 	if (curAudio && curAudio->HasFinished()) {

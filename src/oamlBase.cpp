@@ -303,12 +303,16 @@ int oamlBase::PlayTrack(const char *name) {
 }
 
 int oamlBase::PlaySfx(const char *name) {
+	return PlaySfxEx(name, 1.f, 0.f);
+}
+
+int oamlBase::PlaySfxEx(const char *name, float vol, float pan) {
 	ASSERT(name != NULL);
 
 //	__Log("%s %s\n", __FUNCTION__, name);
 
 	for (size_t i=0; i<sfxTracks.size(); i++) {
-		if (sfxTracks[i]->Play(name) == 0) {
+		if (sfxTracks[i]->Play(name, vol, pan) == 0) {
 			return 0;
 		}
 	}
