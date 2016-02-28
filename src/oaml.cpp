@@ -114,6 +114,14 @@ void oamlApi::Update() {
 	oaml->Update();
 }
 
+void oamlApi::SetDebugClipping(bool option) {
+	oaml->SetDebugClipping(option);
+}
+
+void oamlApi::SetWriteAudioAtShutdown(bool option) {
+	oaml->SetWriteAudioAtShutdown(option);
+}
+
 void oamlApi::SetFileCallbacks(oamlFileCallbacks *cbs) {
 	oaml->SetFileCallbacks(cbs);
 }

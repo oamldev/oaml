@@ -294,22 +294,42 @@ void oamlAudio::SetFilename(std::string audioFilename) {
 	}
 }
 
+float oamlAudio::SafeAdd(float a, float b, bool debug) {
+	float r = a + b;
+	bool clipping = false;
+
+	if (r > 1.0f) {
+		r = 1.0f - (r - 1.0f);
+		clipping = true;
+	} else if (r < -1.0f) {
+		r = -1.0f - (r + 1.0f);
+		clipping = true;
+	}
+
+	if (clipping && debug) {
+		fprintf(stderr, "oaml: Detected clipping!\n");
+	}
+
+	return r;
+}
+
 void oamlAudio::Mix(float *samples, int channels, bool debugClipping) {
 	if (channelCount == 1) {
 		float sample = ReadFloat();
 
 		for (int i=0; i<channels; i++) {
-			samples[i]+= sample;
+			samples[i] = SafeAdd(samples[i], sample, debugClipping);
 		}
 	} else if (channelCount == 2) {
 		if (channels == 1) {
 			float left = ReadFloat();
 			float right = ReadFloat();
+			float sample = left * 0.5f + right + 0.5f;
 
-			samples[0]+= left * 0.5f + right + 0.5f;
+			samples[0] = SafeAdd(samples[0], sample, debugClipping);
 		} else if (channels == 2) {
 			for (int i=0; i<channels; i++) {
-				samples[i]+= ReadFloat();
+				samples[i] = SafeAdd(samples[i], ReadFloat(), debugClipping);
 			}
 		}
 	}
@@ -320,17 +340,18 @@ unsigned int oamlAudio::Mix(float *samples, int channels, bool debugClipping, un
 		float sample = ReadFloat(pos++);
 
 		for (int i=0; i<channels; i++) {
-			samples[i]+= sample;
+			samples[i] = SafeAdd(samples[i], sample, debugClipping);
 		}
 	} else if (channelCount == 2) {
 		if (channels == 1) {
 			float left = ReadFloat(pos++);
 			float right = ReadFloat(pos++);
+			float sample = left * 0.5f + right + 0.5f;
 
-			samples[0]+= left * 0.5f + right + 0.5f;
+			samples[0] = SafeAdd(samples[0], sample, debugClipping);
 		} else if (channels == 2) {
 			for (int i=0; i<channels; i++) {
-				samples[i]+= ReadFloat(pos++);
+				samples[i] = SafeAdd(samples[i], ReadFloat(pos++), debugClipping);
 			}
 		}
 	}

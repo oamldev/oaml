@@ -102,6 +102,7 @@ public:
 	float ReadFloat();
 	float ReadFloat(unsigned int pos);
 
+	float SafeAdd(float a, float b, bool debug);
 	void Mix(float *samples, int channels, bool debugClipping);
 	unsigned int Mix(float *samples, int channels, bool debugClipping, unsigned int pos);
 

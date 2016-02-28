@@ -110,6 +110,14 @@ void oamlUpdate() {
 	oaml.Update();
 }
 
+void oamlSetDebugClipping(bool option) {
+	oaml.SetDebugClipping(option);
+}
+
+void oamlSetWriteAudioAtShutdown(bool option) {
+	oaml.SetWriteAudioAtShutdown(option);
+}
+
 void oamlSetFileCallbacks(oamlFileCallbacks *cbs) {
 	oaml.SetFileCallbacks(cbs);
 }

@@ -85,6 +85,8 @@ int oamlGetVolume();
 void oamlAddTension(int value);
 void oamlSetMainLoopCondition(int value);
 void oamlUpdate();
+void SetDebugClipping(bool option);
+void SetWriteAudioAtShutdown(bool option);
 void oamlSetFileCallbacks(oamlFileCallbacks *cbs);
 void oamlEnableDynamicCompressor(bool enable, double threshold, double ratio);
 const char* oamlGetDefsFile();
