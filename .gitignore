@@ -9,4 +9,3 @@ cmake_install.cmake
 /liboaml*
 /build*/liboaml*
 install_manifest.txt
-msnake
