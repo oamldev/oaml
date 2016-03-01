@@ -72,6 +72,7 @@ int oamlPlayTrack(const char *name);
 int oamlPlayTrackWithStringRandom(const char *str);
 int oamlPlaySfx(const char *name);
 int oamlPlaySfxEx(const char *name, float vol, float pan);
+int oamlPlaySfx2d(const char *name, int x, int y, int width, int height);
 bool oamlIsTrackPlaying(const char *name);
 bool oamlIsPlaying();
 void oamlStopPlaying();
@@ -182,6 +183,7 @@ public:
 	 */
 	int PlaySfx(const char *name);
 	int PlaySfxEx(const char *name, float vol, float pan);
+	int PlaySfx2d(const char *name, int x, int y, int width, int height);
 
 	/** Stop playing any track currently playing */
 	void StopPlaying();

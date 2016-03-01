@@ -14,7 +14,10 @@ void normal_effect(GAME *game) {
   grow_fruit(game);
   game->snake.grow++;
   game->highscore++;
-  oamlPlaySfx("eat");
+
+  int x, y;
+  getbegyx(game->snake.parts[0], y, x);
+  oamlPlaySfx2d("eat", x, y, game->columns, game->rows);
 }
 
 // ---- double grow ----

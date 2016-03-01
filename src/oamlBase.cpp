@@ -322,6 +322,28 @@ int oamlBase::PlaySfxEx(const char *name, float vol, float pan) {
 	return -1;
 }
 
+static double getDistance2d(int x1, int y1, int x2, int y2) {
+	int dx = (x2 - x1) * (x2 - x1);
+	int dy = (y2 - y1) * (y2 - y1);
+
+	return sqrt(dx + dy);
+}
+
+int oamlBase::PlaySfx2d(const char *name, int x, int y, int width, int height) {
+	double posx = double(x) / double(width);
+	if (posx > 1.0) posx = 1.0;
+	if (posx < 0.0) posx = 0.0;
+
+	double d1 = getDistance2d(0, 0, width + width / 2, height + height / 2);
+	double d2 = getDistance2d(x, y, width / 2, height / 2);
+	float vol = 1.f - float(d2 / d1);
+	if (vol < 0.f) vol = 0.f;
+	if (vol > 1.f) vol = 1.f;
+
+	float pan = float((posx * 2.0) - 1.0);
+	return PlaySfxEx(name, vol, pan);
+}
+
 int oamlBase::PlayTrackWithStringRandom(const char *str) {
 	std::vector<int> list;
 

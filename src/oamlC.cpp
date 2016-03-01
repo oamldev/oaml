@@ -24,9 +24,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <oaml.h>
+#include "oamlCommon.h"
 
-static oamlApi oaml;
+static oamlBase oaml;
 
 extern "C" {
 
@@ -56,6 +56,10 @@ int oamlPlaySfx(const char *name) {
 
 int oamlPlaySfxEx(const char *name, float vol, float pan) {
 	return oaml.PlaySfxEx(name, vol, pan);
+}
+
+int oamlPlaySfx2d(const char *name, int x, int y, int width, int height) {
+	return oaml.PlaySfx2d(name, x, y, width, height);
 }
 
 bool oamlIsTrackPlaying(const char *name) {
