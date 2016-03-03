@@ -94,9 +94,9 @@ oamlBase::~oamlBase() {
 
 int oamlBase::ReadDefs(const char *buf, int size) {
 	tinyxml2::XMLDocument doc;
-
-	if (doc.Parse(buf, size) != tinyxml2::XML_NO_ERROR) {
-		fprintf(stderr, "liboaml: Error parsing xml: %s\n", doc.ErrorName());
+	tinyxml2::XMLError err = doc.Parse(buf, size);
+	if (err != tinyxml2::XML_NO_ERROR) {
+		fprintf(stderr, "liboaml: Error parsing xml: %s (err=%d)\n", doc.ErrorName(), err);
 		return -1;
 	}
 
@@ -105,13 +105,10 @@ int oamlBase::ReadDefs(const char *buf, int size) {
 		oamlTrackInfo tinfo;
 		oamlTrack *track;
 
-		if (el->Attribute("type", "music")) {
-			track = new oamlMusicTrack();
-		} else if (el->Attribute("type", "sfx")) {
+		if (el->Attribute("type", "sfx")) {
 			track = new oamlSfxTrack();
 		} else {
-			fprintf(stderr, "liboaml: Error parsing xml: %s\n", doc.ErrorName());
-			return -1;
+			track = new oamlMusicTrack();
 		}
 
 		tinyxml2::XMLElement *trackEl = el->FirstChildElement();
