@@ -80,9 +80,12 @@
     <ClCompile Include="..\src\oaml.cpp" />
     <ClCompile Include="..\src\oamlAudio.cpp" />
     <ClCompile Include="..\src\oamlBase.cpp" />
+    <ClCompile Include="..\src\oamlC.cpp" />
     <ClCompile Include="..\src\oamlCompressor.cpp" />
+    <ClCompile Include="..\src\oamlMusicTrack.cpp" />
+    <ClCompile Include="..\src\oamlSfxTrack.cpp" />
     <ClCompile Include="..\src\oamlTrack.cpp" />
-    <ClCompile Include="..\src\oamlUnityPlugin.cpp" />
+    <ClCompile Include="..\src\oamlUtil.cpp" />
     <ClCompile Include="..\src\ogg.cpp" />
     <ClCompile Include="..\src\tinyxml2.cpp" />
     <ClCompile Include="..\src\wav.cpp" />

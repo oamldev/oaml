@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oaml", "oaml.vcxproj", "{4B
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oaml_shared", "oaml_shared.vcxproj", "{B60F9CFE-538D-6994-DA92-33175231B846}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AudioPluginOAML", "AudioPluginOAML.vcxproj", "{C71B2BDF-9AF7-1D1E-D420-CD93C02CF581}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +21,10 @@ Global
 		{B60F9CFE-538D-6994-DA92-33175231B846}.Debug|Win32.Build.0 = Debug|Win32
 		{B60F9CFE-538D-6994-DA92-33175231B846}.Release|Win32.ActiveCfg = Release|Win32
 		{B60F9CFE-538D-6994-DA92-33175231B846}.Release|Win32.Build.0 = Release|Win32
+		{C71B2BDF-9AF7-1D1E-D420-CD93C02CF581}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C71B2BDF-9AF7-1D1E-D420-CD93C02CF581}.Debug|Win32.Build.0 = Debug|Win32
+		{C71B2BDF-9AF7-1D1E-D420-CD93C02CF581}.Release|Win32.ActiveCfg = Release|Win32
+		{C71B2BDF-9AF7-1D1E-D420-CD93C02CF581}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

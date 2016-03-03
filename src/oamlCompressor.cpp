@@ -73,12 +73,12 @@ void oamlCompressor::ProcessData(float *data) {
 
 	float gain;
 	if (env > threshold) {
-		gain = threshold / (1.0 + ratio * ((env / threshold) - 1.0));
+		gain = float(threshold / (1.0 + ratio * ((env / threshold) - 1.0)));
 	} else {
-		gain = threshold;
+		gain = float(threshold);
 	}
 
-	gain = gain * 0.5 + 0.5;
+	gain = gain * 0.5f + 0.5f;
 	for (int i=0; i<chnum; i++) {
 		data[i]*= gain;
 	}

@@ -203,8 +203,8 @@ void oamlBase::ReadInternalDefs(const char *filename) {
 	while (el != NULL) {
 		tinyxml2::XMLElement *cel = el->FirstChildElement();
 		while (cel != NULL) {
-			if (strcmp(cel->Name(), "writeAudioAtShutdown") == 0) SetWriteAudioAtShutdown(strtol(cel->GetText(), NULL, 0));
-			else if (strcmp(cel->Name(), "debugClipping") == 0) SetDebugClipping(strtol(cel->GetText(), NULL, 0));
+			if (strcmp(cel->Name(), "writeAudioAtShutdown") == 0) SetWriteAudioAtShutdown(strtol(cel->GetText(), NULL, 0) == 1);
+			else if (strcmp(cel->Name(), "debugClipping") == 0) SetDebugClipping(strtol(cel->GetText(), NULL, 0) == 1);
 
 			cel = cel->NextSiblingElement();
 		}
@@ -326,7 +326,7 @@ static double getDistance2d(int x1, int y1, int x2, int y2) {
 	int dx = (x2 - x1) * (x2 - x1);
 	int dy = (y2 - y1) * (y2 - y1);
 
-	return sqrt(dx + dy);
+	return sqrt((double)dx + dy);
 }
 
 int oamlBase::PlaySfx2d(const char *name, int x, int y, int width, int height) {
@@ -430,12 +430,12 @@ int oamlBase::SafeAdd(int sample1, int sample2) {
 	if (sample1 > 0 && sample2 > INT_MAX - sample1) {
 		int64_t s64a = sample1;
 		int64_t s64b = sample2;
-		ret = (int)INT_MAX - ((s64a + s64b) - INT_MAX);
+		ret = int(INT_MAX - ((s64a + s64b) - INT_MAX));
 		clipping = true;
 	} else if (sample1 < 0 && sample2 < INT_MIN - sample1) {
 		int64_t s64a = sample1;
 		int64_t s64b = sample2;
-		ret = (int)INT_MIN - ((s64a + s64b) - INT_MIN);
+		ret = int(INT_MIN - ((s64a + s64b) - INT_MIN));
 		clipping = true;
 	} else {
 		ret = sample1 + sample2;

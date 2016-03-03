@@ -34,11 +34,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IntDir>$(Configuration)\oaml_shared\</IntDir>
+    <IntDir>$(Configuration)\AudioPluginOAML\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IntDir>$(Configuration)\oaml_shared\</IntDir>
+    <IntDir>$(Configuration)\AudioPluginOAML\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -81,11 +81,11 @@
     <ClCompile Include="..\src\oaml.cpp" />
     <ClCompile Include="..\src\oamlAudio.cpp" />
     <ClCompile Include="..\src\oamlBase.cpp" />
-    <ClCompile Include="..\src\oamlC.cpp" />
     <ClCompile Include="..\src\oamlCompressor.cpp" />
     <ClCompile Include="..\src\oamlMusicTrack.cpp" />
     <ClCompile Include="..\src\oamlSfxTrack.cpp" />
     <ClCompile Include="..\src\oamlTrack.cpp" />
+    <ClCompile Include="..\src\oamlUnityPlugin.cpp" />
     <ClCompile Include="..\src\oamlUtil.cpp" />
     <ClCompile Include="..\src\ogg.cpp" />
     <ClCompile Include="..\src\tinyxml2.cpp" />

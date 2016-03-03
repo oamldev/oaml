@@ -1,6 +1,6 @@
 #include "gettime.h"
 
-#ifdef _MSC_vER
+#ifdef _MSC_VER
 #include <Windows.h>
 #else
 #include <sys/time.h>

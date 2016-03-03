@@ -9,3 +9,17 @@ cmake_install.cmake
 /liboaml*
 /build*/liboaml*
 install_manifest.txt
+
+vs/*.userprefs
+vs/*.csproj
+vs/*.pidb
+vs/*.suo
+vs/*.sln*
+vs/*.user
+vs/*.unityproj
+vs/*.booproj
+vs/*.sdf
+vs/*.opensdf
+vs/ipch
+vs/Debug
+vs/Release

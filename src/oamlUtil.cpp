@@ -31,9 +31,9 @@
 
 
 float __oamlInteger24ToFloat(int i) {
-	const float Q = 1.0 / (0x7fffff + 0.5);
+	const float Q = 1.0f / (0x7fffff + 0.5f);
 	if (i & 0x800000) i |= ~0xffffff;
-	return (i + 0.5) * Q;
+	return (i + 0.5f) * Q;
 }
 
 int __oamlFloatToInteger24(float f) {
