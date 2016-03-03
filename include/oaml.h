@@ -23,6 +23,8 @@
 #ifndef __OAML_H__
 #define __OAML_H__
 
+#include <stddef.h>
+
 //
 // Definitions
 //
@@ -61,8 +63,6 @@ typedef struct {
 
 
 #ifndef __cplusplus
-
-#include <stddef.h>
 
 #ifdef _MSC_VER
 typedef int bool;
