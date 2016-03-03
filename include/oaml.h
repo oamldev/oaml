@@ -149,7 +149,11 @@ class oamlBase;
 // Main class
 //
 
+#ifdef OAML_EXPORT
 class DLLEXPORT oamlApi {
+#else
+class oamlApi {
+#endif
 private:
 	oamlBase *oaml;
 

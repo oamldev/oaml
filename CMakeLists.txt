@@ -74,6 +74,7 @@ if (ENABLE_STATIC)
 endif()
 
 if (ENABLE_SHARED)
+	add_definitions(-DOAML_EXPORT)
 	add_library(oaml_shared SHARED ${SRCS} src/oamlC.cpp)
 	target_link_libraries(oaml_shared ${OAML_LIBS})
 endif()
