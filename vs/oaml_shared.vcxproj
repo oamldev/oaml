@@ -103,7 +103,6 @@
     <ClInclude Include="..\include\oamlCommon.h" />
     <ClInclude Include="..\include\oamlCompressor.h" />
     <ClInclude Include="..\include\oamlTrack.h" />
-    <ClInclude Include="..\include\oamlUnityPlugin.h" />
     <ClInclude Include="..\include\ogg.h" />
     <ClInclude Include="..\include\tinyxml2.h" />
     <ClInclude Include="..\include\wav.h" />

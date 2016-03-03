@@ -23,12 +23,6 @@
 #ifndef __OAMLUNITYPLUGIN_H__
 #define __OAMLUNITYPLUGIN_H__
 
-#ifdef _MSC_VER
-#define DLLEXPORT __declspec(dllexport)
-#else
-#define DLLEXPORT
-#endif
-
 extern "C" {
 	DLLEXPORT int oamlInit(const char *defsFilename);
 	DLLEXPORT int oamlInitString(const char *defs);

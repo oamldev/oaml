@@ -90,9 +90,6 @@
     <ClInclude Include="..\include\ogg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\oamlUnityPlugin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\oamlTrack.h">
       <Filter>Header Files</Filter>
     </ClInclude>

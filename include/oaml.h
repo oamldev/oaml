@@ -149,7 +149,7 @@ class oamlBase;
 // Main class
 //
 
-class oamlApi {
+class DLLEXPORT oamlApi {
 private:
 	oamlBase *oaml;
 
