@@ -92,6 +92,7 @@ public:
 
 	int PlayTrack(const char *name);
 	int PlayTrackWithStringRandom(const char *str);
+	int PlayTrackByGroupRandom(const char *group);
 	int PlaySfx(const char *name);
 	int PlaySfxEx(const char *name, float vol, float pan);
 	int PlaySfx2d(const char *name, int x, int y, int width, int height);

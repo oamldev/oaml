@@ -54,6 +54,10 @@ int oamlApi::PlayTrackWithStringRandom(const char *str) {
 	return oaml->PlayTrackWithStringRandom(str);
 }
 
+int oamlApi::PlayTrackByGroupRandom(const char *group) {
+	return oaml->PlayTrackByGroupRandom(group);
+}
+
 int oamlApi::PlaySfx(const char *name) {
 	return oaml->PlaySfx(name);
 }

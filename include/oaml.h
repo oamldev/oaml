@@ -189,6 +189,11 @@ public:
 	 */
 	int PlayTrackWithStringRandom(const char *str);
 
+	/** Play a random music track that belongs to a certain group
+	 *  @return returns 0, or -1 on error
+	 */
+	int PlayTrackByGroupRandom(const char *group);
+
 	/** Play a sound fx
 	 *  @return returns 0, or -1 on error
 	 */

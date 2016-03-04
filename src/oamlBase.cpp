@@ -115,6 +115,7 @@ int oamlBase::ReadDefs(const char *buf, int size) {
 		while (trackEl != NULL) {
 			if (strcmp(trackEl->Name(), "name") == 0) track->SetName(trackEl->GetText());
 			else if (strcmp(trackEl->Name(), "type") == 0) track->SetType(strtol(trackEl->GetText(), NULL, 0));
+			else if (strcmp(trackEl->Name(), "group") == 0) track->SetGroup(trackEl->GetText());
 			else if (strcmp(trackEl->Name(), "fadeIn") == 0) track->SetFadeIn(strtol(trackEl->GetText(), NULL, 0));
 			else if (strcmp(trackEl->Name(), "fadeOut") == 0) track->SetFadeOut(strtol(trackEl->GetText(), NULL, 0));
 			else if (strcmp(trackEl->Name(), "xfadeIn") == 0) track->SetXFadeIn(strtol(trackEl->GetText(), NULL, 0));
@@ -359,7 +360,30 @@ int oamlBase::PlayTrackWithStringRandom(const char *str) {
 		return PlayTrackId(list[i]);
 	}
 
-	fprintf(stderr, "liboaml::%s: Unable to find track any track with '%s'\n", __FUNCTION__, str);
+	fprintf(stderr, "liboaml::%s: Unable to find any track with '%s'\n", __FUNCTION__, str);
+
+	return -1;
+}
+
+int oamlBase::PlayTrackByGroupRandom(const char *group) {
+	std::vector<int> list;
+
+	ASSERT(str != NULL);
+
+//	printf("%s %s\n", __FUNCTION__, name);
+
+	for (size_t i=0; i<musicTracks.size(); i++) {
+		if (musicTracks[i]->GetGroup().compare(group) == 0) {
+			list.push_back(i);
+		}
+	}
+
+	if (list.empty() == false) {
+		int i = rand() % list.size();
+		return PlayTrackId(list[i]);
+	}
+
+	fprintf(stderr, "liboaml::%s: Unable to find any track with group '%s'\n", __FUNCTION__, group);
 
 	return -1;
 }

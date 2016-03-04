@@ -18,16 +18,8 @@ set(LIBS ${LIBS} ${SDL_LIBRARY} SDLmain)
 #
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
-find_package(OggVorbis REQUIRED)
-find_package(VorbisFile REQUIRED)
-
-if (OGGVORBIS_FOUND AND VORBISFILE_FOUND)
-	include_directories(${VORBISFILE_INCLUDE_DIR})
-	set(LIBS ${LIBS} ${OGG_LIBRARY} ${VORBIS_LIBRARY} ${VORBISFILE_LIBRARIES})
-endif()
-
-find_package(OAMLshared REQUIRED)
-set(LIBS ${LIBS} ${OAML_LIBRARIES})
+find_package(OAML REQUIRED)
+set(LIBS ${LIBS} ${OAML_LIBRARIES_SHARED})
 
 include_directories(${CURSES_INCLUDE_DIRS})
 

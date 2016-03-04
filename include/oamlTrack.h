@@ -29,6 +29,7 @@ class oamlAudio;
 class oamlTrack {
 protected:
 	std::string name;
+	std::string group;
 	int type;
 
 	int fadeIn;
@@ -50,6 +51,7 @@ public:
 	virtual ~oamlTrack();
 
 	void SetName(std::string trackName) { name = trackName; }
+	void SetGroup(std::string trackGroup) { group = trackGroup; }
 	void SetType(int trackType) { type = trackType; }
 	void SetFadeIn(int trackFadeIn) { fadeIn = trackFadeIn; }
 	void SetFadeOut(int trackFadeOut) { fadeOut = trackFadeOut; }
@@ -58,6 +60,7 @@ public:
 
 	const char *GetNameStr() const { return name.c_str(); }
 	std::string GetName() const { return name; }
+	std::string GetGroup() const { return group; }
 	int GetType() const { return type; }
 	int GetFadeIn() const { return fadeIn; }
 	int GetFadeOut() const { return fadeOut; }
