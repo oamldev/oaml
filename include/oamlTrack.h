@@ -31,7 +31,6 @@ protected:
 	std::string name;
 	std::string group;
 	std::string subgroup;
-	int type;
 
 	int fadeIn;
 	int fadeOut;
@@ -54,7 +53,6 @@ public:
 	void SetName(std::string trackName) { name = trackName; }
 	void SetGroup(std::string trackGroup) { group = trackGroup; }
 	void SetSubgroup(std::string trackSubgroup) { subgroup = trackSubgroup; }
-	void SetType(int trackType) { type = trackType; }
 	void SetFadeIn(int trackFadeIn) { fadeIn = trackFadeIn; }
 	void SetFadeOut(int trackFadeOut) { fadeOut = trackFadeOut; }
 	void SetXFadeIn(int trackXFadeIn) { xfadeIn = trackXFadeIn; }
@@ -64,7 +62,6 @@ public:
 	std::string GetName() const { return name; }
 	std::string GetGroup() const { return group; }
 	std::string GetSubgroup() const { return subgroup; }
-	int GetType() const { return type; }
 	int GetFadeIn() const { return fadeIn; }
 	int GetFadeOut() const { return fadeOut; }
 	int GetXFadeIn() const { return xfadeIn; }

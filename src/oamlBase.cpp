@@ -114,7 +114,6 @@ int oamlBase::ReadDefs(const char *buf, int size) {
 		tinyxml2::XMLElement *trackEl = el->FirstChildElement();
 		while (trackEl != NULL) {
 			if (strcmp(trackEl->Name(), "name") == 0) track->SetName(trackEl->GetText());
-			else if (strcmp(trackEl->Name(), "type") == 0) track->SetType(strtol(trackEl->GetText(), NULL, 0));
 			else if (strcmp(trackEl->Name(), "group") == 0) track->SetGroup(trackEl->GetText());
 			else if (strcmp(trackEl->Name(), "subgroup") == 0) track->SetSubgroup(trackEl->GetText());
 			else if (strcmp(trackEl->Name(), "fadeIn") == 0) track->SetFadeIn(strtol(trackEl->GetText(), NULL, 0));
@@ -174,6 +173,8 @@ int oamlBase::ReadDefs(const char *buf, int size) {
 		}
 
 		tinfo.name = track->GetName();
+		tinfo.musicTrack = track->IsMusicTrack();
+		tinfo.sfxTrack = track->IsSfxTrack();
 		tinfo.group = track->GetGroup();
 		tinfo.subgroup = track->GetSubgroup();
 		tinfo.fadeIn = track->GetFadeIn();

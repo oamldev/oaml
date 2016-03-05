@@ -28,6 +28,7 @@
 
 
 oamlSfxTrack::oamlSfxTrack() {
+	name = "Sfx";
 }
 
 oamlSfxTrack::~oamlSfxTrack() {

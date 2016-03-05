@@ -48,11 +48,6 @@ enum {
 	CONDITION_USER			= 10
 };
 
-enum {
-	TRACK_TYPE_MUSIC		= 0,
-	TRACK_TYPE_SFX			= 1
-};
-
 typedef struct {
 	void*  (*open)  (const char *filename);
 	size_t (*read)  (void *ptr, size_t size, size_t nitems, void *fd);
@@ -129,6 +124,8 @@ typedef struct {
 	std::string name;
 	std::string group;
 	std::string subgroup;
+	bool musicTrack;
+	bool sfxTrack;
 	int fadeIn;
 	int fadeOut;
 	int xfadeIn;

@@ -29,7 +29,6 @@
 
 oamlMusicTrack::oamlMusicTrack() {
 	name = "Track";
-	type = 0;
 
 	playCondSamples = 0;
 	playCondAudio = NULL;
