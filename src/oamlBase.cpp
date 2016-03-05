@@ -116,6 +116,7 @@ int oamlBase::ReadDefs(const char *buf, int size) {
 			if (strcmp(trackEl->Name(), "name") == 0) track->SetName(trackEl->GetText());
 			else if (strcmp(trackEl->Name(), "type") == 0) track->SetType(strtol(trackEl->GetText(), NULL, 0));
 			else if (strcmp(trackEl->Name(), "group") == 0) track->SetGroup(trackEl->GetText());
+			else if (strcmp(trackEl->Name(), "subgroup") == 0) track->SetSubgroup(trackEl->GetText());
 			else if (strcmp(trackEl->Name(), "fadeIn") == 0) track->SetFadeIn(strtol(trackEl->GetText(), NULL, 0));
 			else if (strcmp(trackEl->Name(), "fadeOut") == 0) track->SetFadeOut(strtol(trackEl->GetText(), NULL, 0));
 			else if (strcmp(trackEl->Name(), "xfadeIn") == 0) track->SetXFadeIn(strtol(trackEl->GetText(), NULL, 0));
@@ -173,6 +174,8 @@ int oamlBase::ReadDefs(const char *buf, int size) {
 		}
 
 		tinfo.name = track->GetName();
+		tinfo.group = track->GetGroup();
+		tinfo.subgroup = track->GetSubgroup();
 		tinfo.fadeIn = track->GetFadeIn();
 		tinfo.fadeOut = track->GetFadeOut();
 		tinfo.xfadeIn = track->GetXFadeIn();
@@ -368,7 +371,7 @@ int oamlBase::PlayTrackWithStringRandom(const char *str) {
 int oamlBase::PlayTrackByGroupRandom(const char *group) {
 	std::vector<int> list;
 
-	ASSERT(str != NULL);
+	ASSERT(group != NULL);
 
 //	printf("%s %s\n", __FUNCTION__, name);
 
@@ -712,6 +715,8 @@ void oamlBase::Clear() {
 		tracksInfo.tracks[i].audios.clear();
 	}
 	tracksInfo.tracks.clear();
+
+	curTrack = NULL;
 }
 
 void oamlBase::Shutdown() {

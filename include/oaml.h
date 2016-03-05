@@ -127,6 +127,8 @@ typedef struct {
 
 typedef struct {
 	std::string name;
+	std::string group;
+	std::string subgroup;
 	int fadeIn;
 	int fadeOut;
 	int xfadeIn;
