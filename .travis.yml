@@ -21,3 +21,5 @@ compiler:
 os:
 - linux
 - osx
+notifications:
+  irc: "irc.freenode.org#oaml"

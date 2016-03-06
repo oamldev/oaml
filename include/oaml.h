@@ -72,6 +72,8 @@ int oamlInitString(const char *defs);
 void oamlSetAudioFormat(int sampleRate, int channels, int bytesPerSample, bool floatBuffer);
 int oamlPlayTrack(const char *name);
 int oamlPlayTrackWithStringRandom(const char *str);
+int oamlPlayTrackByGroupRandom(const char *group);
+int oamlPlayTrackByGroupAndSubgroupRandom(const char *group, const char *subgroup);
 int oamlPlaySfx(const char *name);
 int oamlPlaySfxEx(const char *name, float vol, float pan);
 int oamlPlaySfx2d(const char *name, int x, int y, int width, int height);
@@ -192,6 +194,11 @@ public:
 	 *  @return returns 0, or -1 on error
 	 */
 	int PlayTrackByGroupRandom(const char *group);
+
+	/** Play a random music track that belongs to a certain group and subgroup
+	 *  @return returns 0, or -1 on error
+	 */
+	int PlayTrackByGroupAndSubgroupRandom(const char *group, const char *subgroup);
 
 	/** Play a sound fx
 	 *  @return returns 0, or -1 on error

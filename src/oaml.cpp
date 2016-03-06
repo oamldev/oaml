@@ -58,6 +58,10 @@ int oamlApi::PlayTrackByGroupRandom(const char *group) {
 	return oaml->PlayTrackByGroupRandom(group);
 }
 
+int oamlApi::PlayTrackByGroupAndSubgroupRandom(const char *group, const char *subgroup) {
+	return oaml->PlayTrackByGroupAndSubgroupRandom(group, subgroup);
+}
+
 int oamlApi::PlaySfx(const char *name) {
 	return oaml->PlaySfx(name);
 }

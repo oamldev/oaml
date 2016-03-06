@@ -299,8 +299,6 @@ int oamlBase::PlayTrack(const char *name) {
 		}
 	}
 
-	fprintf(stderr, "liboaml: Unable to find track name '%s'\n", name);
-
 	return -1;
 }
 
@@ -318,8 +316,6 @@ int oamlBase::PlaySfxEx(const char *name, float vol, float pan) {
 			return 0;
 		}
 	}
-
-	fprintf(stderr, "liboaml: Unable to find sfx name '%s'\n", name);
 
 	return -1;
 }
@@ -364,8 +360,6 @@ int oamlBase::PlayTrackWithStringRandom(const char *str) {
 		return PlayTrackId(list[i]);
 	}
 
-	fprintf(stderr, "liboaml::%s: Unable to find any track with '%s'\n", __FUNCTION__, str);
-
 	return -1;
 }
 
@@ -387,7 +381,27 @@ int oamlBase::PlayTrackByGroupRandom(const char *group) {
 		return PlayTrackId(list[i]);
 	}
 
-	fprintf(stderr, "liboaml::%s: Unable to find any track with group '%s'\n", __FUNCTION__, group);
+	return -1;
+}
+
+int oamlBase::PlayTrackByGroupAndSubgroupRandom(const char *group, const char *subgroup) {
+	std::vector<int> list;
+
+	ASSERT(group != NULL);
+	ASSERT(subgroup != NULL);
+
+//	printf("%s %s\n", __FUNCTION__, name);
+
+	for (size_t i=0; i<musicTracks.size(); i++) {
+		if (musicTracks[i]->GetGroup().compare(group) == 0 && musicTracks[i]->GetSubgroup().compare(subgroup) == 0) {
+			list.push_back(i);
+		}
+	}
+
+	if (list.empty() == false) {
+		int i = rand() % list.size();
+		return PlayTrackId(list[i]);
+	}
 
 	return -1;
 }
