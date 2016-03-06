@@ -1,4 +1,4 @@
-### Open Adaptive Music Library
+### Open Adaptive Music Library [![Build Status](https://travis-ci.org/marcelofg55/oaml.svg)](https://travis-ci.org/marcelofg55/oaml.svg?branch=master)
 
 OAML is a library the makes it easy to implement adaptive music in games.
 
