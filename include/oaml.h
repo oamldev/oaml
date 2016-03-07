@@ -150,7 +150,7 @@ class oamlBase;
 // Main class
 //
 
-#ifdef OAML_EXPORT
+#if defined(oaml_shared_EXPORTS) || defined(OAML_EXPORTS)
 class DLLEXPORT oamlApi {
 #else
 class oamlApi {
