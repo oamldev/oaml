@@ -216,7 +216,7 @@ void oamlBase::ReadInternalDefs(const char *filename) {
 }
 
 int oamlBase::Init(const char *defsFilename) {
-	char buf[64*1024];
+	ByteBuffer buf;
 	void *fd;
 
 	ASSERT(defsFilename != NULL);
@@ -231,22 +231,24 @@ int oamlBase::Init(const char *defsFilename) {
 		return -1;
 	}
 
-	size_t size = 64*1024;
-	size_t bytes = fcbs->read(buf, 1, size, fd);
-	if (bytes <= 0) {
-		fprintf(stderr, "liboaml: Error reading xml '%s'\n", defsFilename);
-		fcbs->close(fd);
-		return -1;
-	}
-
+	uint8_t buffer[4096];
+	size_t bytes;
+	do {
+		bytes = fcbs->read(buffer, 1, 4096, fd);
+		buf.putBytes(buffer, bytes);
+	} while (bytes >= 4096);
 	fcbs->close(fd);
 
-	if (ReadDefs(buf, bytes) == -1)
-		return -1;
+	uint8_t *cbuf = new uint8_t[bytes];
+	buf.getBytes(cbuf, buf.size());
 
-	ReadInternalDefs("oamlInternal.defs");
+	int ret = ReadDefs((const char*)cbuf, buf.size());
+	if (ret == 0) {
+		ReadInternalDefs("oamlInternal.defs");
+	}
 
-	return 0;
+	delete cbuf;
+	return ret;
 }
 
 int oamlBase::InitString(const char *defs) {
