@@ -91,12 +91,13 @@ For now since resampling is not implemented in OAML you need to export the music
 ### Notes
 
 - If you're using OAML on your project or you're interested to do so and need some help contact me.
+- Got any question? Join #oaml at chat.freenode.org.
 
 
 ### TODO
 
 - Resampling music?
-- Playing SFX's.
+- Add a function for playing SFX's with a 3d position.
 - Add a loudness effect, and a reverb effect as well.
 - Implement OAML in more game engines, love2d, godot, etc.
 
