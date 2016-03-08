@@ -239,7 +239,7 @@ int oamlBase::Init(const char *defsFilename) {
 	} while (bytes >= 4096);
 	fcbs->close(fd);
 
-	uint8_t *cbuf = new uint8_t[bytes];
+	uint8_t *cbuf = new uint8_t[buf.size()];
 	buf.getBytes(cbuf, buf.size());
 
 	int ret = ReadDefs((const char*)cbuf, buf.size());
