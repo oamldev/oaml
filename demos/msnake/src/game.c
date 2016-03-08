@@ -1,3 +1,4 @@
+#include <SDL/SDL.h>
 #include <oaml.h>
 
 #include "game.h"
@@ -68,8 +69,10 @@ void run() {
   // get the current time
   current_utc_time(&last_time);
 
+  SDL_LockAudio();
   oamlPlayTrack("Theme");
   oamlSetMainLoopCondition(1);
+  SDL_UnlockAudio();
 
   // start the event loop
   while((ich = getch()) && success) {
@@ -115,7 +118,10 @@ void run() {
       // display the status bar (top-right)
       status_display(&game);
 
+      SDL_LockAudio();
       oamlSetMainLoopCondition(1 + game.snake.length / 10);
+      SDL_UnlockAudio();
+
       game.interval = default_interval - (default_interval * (game.snake.length / 200.0));
       if (game.interval < min_interval)
         game.interval = min_interval;

@@ -247,7 +247,7 @@ int oamlBase::Init(const char *defsFilename) {
 		ReadInternalDefs("oamlInternal.defs");
 	}
 
-	delete cbuf;
+	delete[] cbuf;
 	return ret;
 }
 
@@ -285,9 +285,7 @@ int oamlBase::PlayTrackId(int id) {
 	}
 
 	curTrack = musicTracks[id];
-	curTrack->Play();
-
-	return 0;
+	return curTrack->Play();
 }
 
 int oamlBase::PlayTrack(const char *name) {

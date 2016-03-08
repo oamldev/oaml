@@ -29,6 +29,7 @@
 
 oamlTrack::oamlTrack() {
 	name = "Track";
+	lock = 0;
 
 	fadeIn = 0;
 	fadeOut = 0;

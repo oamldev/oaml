@@ -42,9 +42,15 @@ void oamlSfxTrack::AddAudio(oamlAudio *audio) {
 }
 
 int oamlSfxTrack::Play(const char *name, float vol, float pan) {
+	if (lock > 0) {
+		// Play function can't be called while Mix is being run
+		return -1;
+	}
+
 	for (size_t i=0; i<sfxAudios.size(); i++) {
 		oamlAudio *audio = sfxAudios[i];
 		if (audio->GetName().compare(name) == 0) {
+			// We found our match, open and push it to playingAudios
 			audio->Open();
 
 			sfxPlayInfo info = { audio, 0, vol, pan };
@@ -57,24 +63,34 @@ int oamlSfxTrack::Play(const char *name, float vol, float pan) {
 }
 
 void oamlSfxTrack::Mix(float *samples, int channels, bool debugClipping) {
-	for (size_t i=0; i<playingAudios.size(); i++) {
-		sfxPlayInfo *info = &playingAudios[i];
+	// Prevent Play being called while this function is running
+	lock++;
+
+	for (std::vector<sfxPlayInfo>::iterator it=playingAudios.begin(); it!=playingAudios.end(); ++it) {
 		float buf[8];
 
-		info->pos = info->audio->ReadSamples(buf, channels, info->pos);
-		ApplyVolPanTo(buf, channels, info->vol, info->pan);
+		// Read samples from our sfx to buf
+		it->pos = it->audio->ReadSamples(buf, channels, it->pos);
 
+		// Apply the desired volume/panning
+		ApplyVolPanTo(buf, channels, it->vol, it->pan);
+
+		// Now finally mix the buf samples into the output samples array
 		for (int j=0; j<channels; j++) {
 			samples[j] = SafeAdd(samples[j], buf[j], debugClipping);
 		}
 	}
 
-	for (size_t i=0; i<playingAudios.size(); i++) {
-		sfxPlayInfo *info = &playingAudios[i];
-		if (info->audio->HasFinishedTail(info->pos)) {
-			playingAudios.erase(playingAudios.begin()+i);
+	for (std::vector<sfxPlayInfo>::iterator it=playingAudios.begin(); it!=playingAudios.end();) {
+		// Check if the sfx has finished playing and remove it if so
+		if (it->audio->HasFinishedTail(it->pos)) {
+			it = playingAudios.erase(it);
+		} else {
+			++it;
 		}
 	}
+
+	lock--;
 }
 
 bool oamlSfxTrack::IsPlaying() {

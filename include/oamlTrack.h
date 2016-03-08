@@ -32,6 +32,7 @@ protected:
 	std::string group;
 	std::string subgroup;
 
+	int lock;
 	int fadeIn;
 	int fadeOut;
 	int xfadeIn;
@@ -68,7 +69,7 @@ public:
 	int GetXFadeOut() const { return xfadeOut; }
 
 	virtual void AddAudio(oamlAudio *) { }
-	virtual void Play() { }
+	virtual int Play() { return -1; }
 	virtual int Play(const char *) { return -1; }
 	virtual int Play(const char *, float, float) { return -1; }
 	virtual void Stop() { }

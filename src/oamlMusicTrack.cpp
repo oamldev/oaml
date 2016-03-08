@@ -147,8 +147,12 @@ void oamlMusicTrack::PlayCond(oamlAudio *audio) {
 	}
 }
 
-void oamlMusicTrack::Play() {
+int oamlMusicTrack::Play() {
 	int doFade = 0;
+
+	if (lock > 0) {
+		return -1;
+	}
 
 //	__Log("%s %s\n", __FUNCTION__, GetNameStr());
 	fadeAudio = NULL;
@@ -174,6 +178,8 @@ void oamlMusicTrack::Play() {
 			curAudio->DoFadeIn(fadeIn);
 		}
 	}
+
+	return 0;
 }
 
 void oamlMusicTrack::ShowInfo() {
@@ -241,7 +247,7 @@ void oamlMusicTrack::PlayNext() {
 
 	if (fadeAudio != curAudio) {
 		XFadePlay();
-	}else {
+	} else {
 		fadeAudio = NULL;
 	}
 }
@@ -272,10 +278,7 @@ void oamlMusicTrack::XFadePlay() {
 }
 
 void oamlMusicTrack::Mix(float *samples, int channels, bool debugClipping) {
-	if (curAudio == NULL && tailAudio == NULL && fadeAudio == NULL) {
-		// Nothing to mix
-		return;
-	}
+	lock++;
 
 	if (curAudio) {
 		MixAudio(curAudio, samples, channels, debugClipping);
@@ -308,6 +311,8 @@ void oamlMusicTrack::Mix(float *samples, int channels, bool debugClipping) {
 			PlayCond(playCondAudio);
 		}
 	}
+
+	lock--;
 }
 
 bool oamlMusicTrack::IsPlaying() {
