@@ -120,6 +120,7 @@ int oamlBase::ReadDefs(const char *buf, int size) {
 			else if (strcmp(trackEl->Name(), "fadeOut") == 0) track->SetFadeOut(strtol(trackEl->GetText(), NULL, 0));
 			else if (strcmp(trackEl->Name(), "xfadeIn") == 0) track->SetXFadeIn(strtol(trackEl->GetText(), NULL, 0));
 			else if (strcmp(trackEl->Name(), "xfadeOut") == 0) track->SetXFadeOut(strtol(trackEl->GetText(), NULL, 0));
+			else if (strcmp(trackEl->Name(), "volume") == 0) track->SetVolume(strtof(trackEl->GetText(), NULL));
 			else if (strcmp(trackEl->Name(), "audio") == 0) {
 				oamlAudioInfo ainfo;
 				oamlAudio *audio = new oamlAudio(fcbs);

@@ -37,6 +37,7 @@ protected:
 	int fadeOut;
 	int xfadeIn;
 	int xfadeOut;
+	float volume;
 
 	int Random(int min, int max);
 
@@ -58,6 +59,7 @@ public:
 	void SetFadeOut(int trackFadeOut) { fadeOut = trackFadeOut; }
 	void SetXFadeIn(int trackXFadeIn) { xfadeIn = trackXFadeIn; }
 	void SetXFadeOut(int trackXFadeOut) { xfadeOut = trackXFadeOut; }
+	void SetVolume(float trackVolume) { volume = trackVolume; }
 
 	const char *GetNameStr() const { return name.c_str(); }
 	std::string GetName() const { return name; }
@@ -67,6 +69,7 @@ public:
 	int GetFadeOut() const { return fadeOut; }
 	int GetXFadeIn() const { return xfadeIn; }
 	int GetXFadeOut() const { return xfadeOut; }
+	float GetVolume() const { return volume; }
 
 	virtual void AddAudio(oamlAudio *) { }
 	virtual int Play() { return -1; }

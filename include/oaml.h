@@ -132,6 +132,7 @@ typedef struct {
 	int fadeOut;
 	int xfadeIn;
 	int xfadeOut;
+	float volume;
 	std::vector<oamlAudioInfo> audios;
 } oamlTrackInfo;
 

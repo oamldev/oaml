@@ -30,6 +30,7 @@
 oamlTrack::oamlTrack() {
 	name = "Track";
 	lock = 0;
+	volume = 1.f;
 
 	fadeIn = 0;
 	fadeOut = 0;
@@ -105,7 +106,7 @@ void oamlTrack::MixAudio(oamlAudio *audio, float *samples, int channels, bool de
 
 	audio->ReadSamples(buf, channels);
 	for (int i=0; i<channels; i++) {
-		samples[i] = SafeAdd(samples[i], buf[i], debug);
+		samples[i] = SafeAdd(samples[i], buf[i] * volume, debug);
 	}
 }
 
@@ -114,7 +115,7 @@ unsigned int oamlTrack::MixAudio(oamlAudio *audio, float *samples, int channels,
 
 	pos = audio->ReadSamples(buf, channels, pos);
 	for (int i=0; i<channels; i++) {
-		samples[i] = SafeAdd(samples[i], buf[i], debug);
+		samples[i] = SafeAdd(samples[i], buf[i] * volume, debug);
 	}
 
 	return pos;
