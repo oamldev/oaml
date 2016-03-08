@@ -120,7 +120,7 @@ int oamlBase::ReadDefs(const char *buf, int size) {
 			else if (strcmp(trackEl->Name(), "fadeOut") == 0) track->SetFadeOut(strtol(trackEl->GetText(), NULL, 0));
 			else if (strcmp(trackEl->Name(), "xfadeIn") == 0) track->SetXFadeIn(strtol(trackEl->GetText(), NULL, 0));
 			else if (strcmp(trackEl->Name(), "xfadeOut") == 0) track->SetXFadeOut(strtol(trackEl->GetText(), NULL, 0));
-			else if (strcmp(trackEl->Name(), "volume") == 0) track->SetVolume(strtof(trackEl->GetText(), NULL));
+			else if (strcmp(trackEl->Name(), "volume") == 0) track->SetVolume(float(atof(trackEl->GetText())));
 			else if (strcmp(trackEl->Name(), "audio") == 0) {
 				oamlAudioInfo ainfo;
 				oamlAudio *audio = new oamlAudio(fcbs);
@@ -130,7 +130,7 @@ int oamlBase::ReadDefs(const char *buf, int size) {
 					if (strcmp(audioEl->Name(), "filename") == 0) audio->SetFilename(audioEl->GetText());
 					else if (strcmp(audioEl->Name(), "type") == 0) audio->SetType(strtol(audioEl->GetText(), NULL, 0));
 					else if (strcmp(audioEl->Name(), "bars") == 0) audio->SetBars(strtol(audioEl->GetText(), NULL, 0));
-					else if (strcmp(audioEl->Name(), "bpm") == 0) audio->SetBPM((float)atof(audioEl->GetText()));
+					else if (strcmp(audioEl->Name(), "bpm") == 0) audio->SetBPM(float(atof(audioEl->GetText())));
 					else if (strcmp(audioEl->Name(), "beatsPerBar") == 0) audio->SetBeatsPerBar(strtol(audioEl->GetText(), NULL, 0));
 					else if (strcmp(audioEl->Name(), "minMovementBars") == 0) audio->SetMinMovementBars(strtol(audioEl->GetText(), NULL, 0));
 					else if (strcmp(audioEl->Name(), "randomChance") == 0) audio->SetRandomChance(strtol(audioEl->GetText(), NULL, 0));
