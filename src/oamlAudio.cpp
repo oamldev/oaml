@@ -85,22 +85,22 @@ bool oamlAudio::TestCondition(int id, int value) {
 		return false;
 
 	switch (condType) {
-		case COND_TYPE_EQUAL:
+		case OAML_CONDTYPE_EQUAL:
 			if (value == condValue)
 				return true;
 			break;
 
-		case COND_TYPE_GREATER:
+		case OAML_CONDTYPE_GREATER:
 			if (value > condValue)
 				return true;
 			break;
 
-		case COND_TYPE_LESS:
+		case OAML_CONDTYPE_LESS:
 			if (value < condValue)
 				return true;
 			break;
 
-		case COND_TYPE_RANGE:
+		case OAML_CONDTYPE_RANGE:
 			if (value >= condValue && value <= condValue2)
 				return true;
 			break;

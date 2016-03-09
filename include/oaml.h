@@ -34,18 +34,19 @@
 
 #define OAML_VOLUME_DEFAULT	0.5f
 
+//
 enum {
-	COND_TYPE_EQUAL		= 0,
-	COND_TYPE_GREATER	= 1,
-	COND_TYPE_LESS		= 2,
-	COND_TYPE_RANGE		= 3
+	OAML_CONDTYPE_EQUAL	= 0, // x == value
+	OAML_CONDTYPE_GREATER	= 1, // x > value
+	OAML_CONDTYPE_LESS	= 2, // x < value
+	OAML_CONDTYPE_RANGE	= 3  // x >= value AND x <= value2
 };
 
-// Condition id's 1-9 are reserved
+// Condition id's 1-9 are reserved for oaml core
 enum {
-	CONDITION_TENSION		= 1,
-	CONDITION_MAIN_LOOP		= 2,
-	CONDITION_USER			= 10
+	OAML_CONDID_TENSION	= 1,
+	OAML_CONDID_MAIN_LOOP	= 2,
+	OAML_CONDID_USER	= 10
 };
 
 typedef struct {

@@ -77,7 +77,7 @@ void oamlMusicTrack::SetCondition(int id, int value) {
 	if (playCondSamples > 0)
 		return;
 
-	if (id == CONDITION_MAIN_LOOP) {
+	if (id == OAML_CONDID_MAIN_LOOP) {
 		for (size_t i=0; i<loopAudios.size(); i++) {
 			oamlAudio *audio = loopAudios[i];
 			if (audio->HasCondition(id)) {
@@ -161,7 +161,7 @@ int oamlMusicTrack::Play() {
 		doFade = 1;
 	}
 
-	SetCondition(CONDITION_MAIN_LOOP, 0);
+	SetCondition(OAML_CONDID_MAIN_LOOP, 0);
 
 	if (introAudio) {
 		curAudio = introAudio;
