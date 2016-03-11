@@ -59,7 +59,9 @@ void oamlTrack::ShowPlaying() {
 	std::string info;
 
 	info = GetPlayingInfo();
-	printf("%s\n", info.c_str());
+	if (info.length() > 0) {
+		__oamlLog("%s\n", info.c_str());
+	}
 }
 
 void oamlTrack::ApplyVolPanTo(float *samples, int channels, float vol, float pan) {

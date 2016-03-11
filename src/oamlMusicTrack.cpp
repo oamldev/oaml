@@ -29,6 +29,7 @@
 
 oamlMusicTrack::oamlMusicTrack() {
 	name = "Track";
+	playing = false;
 
 	playCondSamples = 0;
 	playCondAudio = NULL;
@@ -85,7 +86,8 @@ void oamlMusicTrack::SetCondition(int id, int value) {
 			}
 		}
 
-		if (curAudio == NULL) {
+		if (playing == true && curAudio == NULL) {
+			// If track is currently playing but no audio is actually playing this to play one
 			PlayNext();
 		}
 		return;
@@ -154,7 +156,7 @@ int oamlMusicTrack::Play() {
 		return -1;
 	}
 
-//	__Log("%s %s\n", __FUNCTION__, GetNameStr());
+//	__oamlLog("%s %s\n", __FUNCTION__, GetNameStr());
 	fadeAudio = NULL;
 
 	if (curAudio == NULL) {
@@ -178,6 +180,8 @@ int oamlMusicTrack::Play() {
 			curAudio->DoFadeIn(fadeIn);
 		}
 	}
+
+	playing = true;
 
 	return 0;
 }
@@ -316,7 +320,7 @@ void oamlMusicTrack::Mix(float *samples, int channels, bool debugClipping) {
 }
 
 bool oamlMusicTrack::IsPlaying() {
-	return (curAudio != NULL || tailAudio != NULL);
+	return playing;
 }
 
 std::string oamlMusicTrack::GetPlayingInfo() {
@@ -356,5 +360,6 @@ void oamlMusicTrack::Stop() {
 	}
 
 	tailAudio = NULL;
+	playing = false;
 }
 

@@ -43,7 +43,7 @@ int __oamlFloatToInteger24(float f) {
 void __oamlLog(const char* fmt, ...) {
 	va_list args;
 
-	FILE *log = fopen("/tmp/log.txt", "a+");
+	FILE *log = fopen("oaml.log", "a+");
 	if (log == NULL)
 		return;
 

@@ -32,6 +32,7 @@ private:
 	std::string defsFile;
 	std::string playingInfo;
 
+	bool verbose;
 	bool debugClipping;
 	bool writeAudioAtShutdown;
 	bool useCompressor;
@@ -83,6 +84,7 @@ public:
 	int InitString(const char *defs);
 	void Shutdown();
 
+	void SetVerbose(bool option) { verbose = option; }
 	void SetDebugClipping(bool option) { debugClipping = option; }
 	void SetWriteAudioAtShutdown(bool option) { writeAudioAtShutdown = option; }
 

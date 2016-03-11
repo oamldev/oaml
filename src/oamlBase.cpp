@@ -63,6 +63,7 @@ static oamlFileCallbacks defCbs = {
 oamlBase::oamlBase() {
 	defsFile = "";
 
+	verbose = false;
 	debugClipping = false;
 	writeAudioAtShutdown = false;
 	useCompressor = false;
@@ -208,6 +209,7 @@ void oamlBase::ReadInternalDefs(const char *filename) {
 		while (cel != NULL) {
 			if (strcmp(cel->Name(), "writeAudioAtShutdown") == 0) SetWriteAudioAtShutdown(strtol(cel->GetText(), NULL, 0) == 1);
 			else if (strcmp(cel->Name(), "debugClipping") == 0) SetDebugClipping(strtol(cel->GetText(), NULL, 0) == 1);
+			else if (strcmp(cel->Name(), "verbose") == 0) SetVerbose(strtol(cel->GetText(), NULL, 0) == 1);
 
 			cel = cel->NextSiblingElement();
 		}
@@ -292,7 +294,7 @@ int oamlBase::PlayTrackId(int id) {
 int oamlBase::PlayTrack(const char *name) {
 	ASSERT(name != NULL);
 
-//	printf("%s %s\n", __FUNCTION__, name);
+	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, name);
 
 	for (size_t i=0; i<musicTracks.size(); i++) {
 		if (musicTracks[i]->GetName().compare(name) == 0) {
@@ -310,7 +312,7 @@ int oamlBase::PlaySfx(const char *name) {
 int oamlBase::PlaySfxEx(const char *name, float vol, float pan) {
 	ASSERT(name != NULL);
 
-//	__Log("%s %s\n", __FUNCTION__, name);
+	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, name);
 
 	for (size_t i=0; i<sfxTracks.size(); i++) {
 		if (sfxTracks[i]->Play(name, vol, pan) == 0) {
@@ -348,7 +350,7 @@ int oamlBase::PlayTrackWithStringRandom(const char *str) {
 
 	ASSERT(str != NULL);
 
-//	printf("%s %s\n", __FUNCTION__, name);
+	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, str);
 
 	for (size_t i=0; i<musicTracks.size(); i++) {
 		if (musicTracks[i]->GetName().find(str) == std::string::npos) {
@@ -369,7 +371,7 @@ int oamlBase::PlayTrackByGroupRandom(const char *group) {
 
 	ASSERT(group != NULL);
 
-//	printf("%s %s\n", __FUNCTION__, name);
+	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, group);
 
 	for (size_t i=0; i<musicTracks.size(); i++) {
 		if (musicTracks[i]->GetGroup().compare(group) == 0) {
@@ -391,7 +393,7 @@ int oamlBase::PlayTrackByGroupAndSubgroupRandom(const char *group, const char *s
 	ASSERT(group != NULL);
 	ASSERT(subgroup != NULL);
 
-//	printf("%s %s\n", __FUNCTION__, name);
+	if (verbose) __oamlLog("%s %s %s\n", __FUNCTION__, group, subgroup);
 
 	for (size_t i=0; i<musicTracks.size(); i++) {
 		if (musicTracks[i]->GetGroup().compare(group) == 0 && musicTracks[i]->GetSubgroup().compare(subgroup) == 0) {
@@ -436,6 +438,7 @@ bool oamlBase::IsPlaying() {
 }
 
 void oamlBase::StopPlaying() {
+	if (verbose) __oamlLog("%s\n", __FUNCTION__);
 	for (size_t i=0; i<musicTracks.size(); i++) {
 		if (musicTracks[i]->IsPlaying()) {
 			musicTracks[i]->Stop();
@@ -651,7 +654,7 @@ void oamlBase::Update() {
 
 	// Update each second
 	if (ms >= (timeMs + 1000)) {
-//		ShowPlayingTracks();
+		if (verbose) ShowPlayingTracks();
 
 //		printf("%s %d %lld %d\n", __FUNCTION__, tension, tensionMs - ms, ms >= (tensionMs + 5000));
 		// Don't allow sudden changes of tension after it changed back to 0
