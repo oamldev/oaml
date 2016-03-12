@@ -30,11 +30,11 @@ static oamlBase oaml;
 
 extern "C" {
 
-int oamlInit(const char *defsFilename) {
+oamlRC oamlInit(const char *defsFilename) {
 	return oaml.Init(defsFilename);
 }
 
-int oamlInitString(const char *defs) {
+oamlRC oamlInitString(const char *defs) {
 	return oaml.InitString(defs);
 }
 
@@ -42,23 +42,23 @@ void oamlSetAudioFormat(int sampleRate, int channels, int bytesPerSample, bool f
 	oaml.SetAudioFormat(sampleRate, channels, bytesPerSample, floatBuffer);
 }
 
-int oamlPlayTrack(const char *name) {
+oamlRC oamlPlayTrack(const char *name) {
 	return oaml.PlayTrack(name);
 }
 
-int oamlPlayTrackWithStringRandom(const char *str) {
+oamlRC oamlPlayTrackWithStringRandom(const char *str) {
 	return oaml.PlayTrackWithStringRandom(str);
 }
 
-int oamlPlaySfx(const char *name) {
+oamlRC oamlPlaySfx(const char *name) {
 	return oaml.PlaySfx(name);
 }
 
-int oamlPlaySfxEx(const char *name, float vol, float pan) {
+oamlRC oamlPlaySfxEx(const char *name, float vol, float pan) {
 	return oaml.PlaySfxEx(name, vol, pan);
 }
 
-int oamlPlaySfx2d(const char *name, int x, int y, int width, int height) {
+oamlRC oamlPlaySfx2d(const char *name, int x, int y, int width, int height) {
 	return oaml.PlaySfx2d(name, x, y, width, height);
 }
 

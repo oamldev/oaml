@@ -72,9 +72,9 @@ public:
 	float GetVolume() const { return volume; }
 
 	virtual void AddAudio(oamlAudio *) { }
-	virtual int Play() { return -1; }
-	virtual int Play(const char *) { return -1; }
-	virtual int Play(const char *, float, float) { return -1; }
+	virtual oamlRC Play() { return OAML_NOT_FOUND; }
+	virtual oamlRC Play(const char *) { return OAML_NOT_FOUND; }
+	virtual oamlRC Play(const char *, float, float) { return OAML_NOT_FOUND; }
 	virtual void Stop() { }
 
 	virtual bool IsPlaying() { return false; }

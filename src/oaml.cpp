@@ -34,11 +34,11 @@ oamlApi::~oamlApi() {
 	delete oaml;
 }
 
-int oamlApi::Init(const char *defsFilename) {
+oamlRC oamlApi::Init(const char *defsFilename) {
 	return oaml->Init(defsFilename);
 }
 
-int oamlApi::InitString(const char *defs) {
+oamlRC oamlApi::InitString(const char *defs) {
 	return oaml->InitString(defs);
 }
 
@@ -46,31 +46,31 @@ void oamlApi::SetAudioFormat(int sampleRate, int channels, int bytesPerSample, b
 	oaml->SetAudioFormat(sampleRate, channels, bytesPerSample, floatBuffer);
 }
 
-int oamlApi::PlayTrack(const char *name) {
+oamlRC oamlApi::PlayTrack(const char *name) {
 	return oaml->PlayTrack(name);
 }
 
-int oamlApi::PlayTrackWithStringRandom(const char *str) {
+oamlRC oamlApi::PlayTrackWithStringRandom(const char *str) {
 	return oaml->PlayTrackWithStringRandom(str);
 }
 
-int oamlApi::PlayTrackByGroupRandom(const char *group) {
+oamlRC oamlApi::PlayTrackByGroupRandom(const char *group) {
 	return oaml->PlayTrackByGroupRandom(group);
 }
 
-int oamlApi::PlayTrackByGroupAndSubgroupRandom(const char *group, const char *subgroup) {
+oamlRC oamlApi::PlayTrackByGroupAndSubgroupRandom(const char *group, const char *subgroup) {
 	return oaml->PlayTrackByGroupAndSubgroupRandom(group, subgroup);
 }
 
-int oamlApi::PlaySfx(const char *name) {
+oamlRC oamlApi::PlaySfx(const char *name) {
 	return oaml->PlaySfx(name);
 }
 
-int oamlApi::PlaySfxEx(const char *name, float vol, float pan) {
+oamlRC oamlApi::PlaySfxEx(const char *name, float vol, float pan) {
 	return oaml->PlaySfxEx(name, vol, pan);
 }
 
-int oamlApi::PlaySfx2d(const char *name, int x, int y, int width, int height) {
+oamlRC oamlApi::PlaySfx2d(const char *name, int x, int y, int width, int height) {
 	return oaml->PlaySfx2d(name, x, y, width, height);
 }
 

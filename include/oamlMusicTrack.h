@@ -56,7 +56,7 @@ public:
 	~oamlMusicTrack();
 
 	void AddAudio(oamlAudio *audio);
-	int Play();
+	oamlRC Play();
 	void Stop();
 
 	bool IsPlaying();

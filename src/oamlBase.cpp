@@ -93,12 +93,12 @@ oamlBase::~oamlBase() {
 	}
 }
 
-int oamlBase::ReadDefs(const char *buf, int size) {
+oamlRC oamlBase::ReadDefs(const char *buf, int size) {
 	tinyxml2::XMLDocument doc;
 	tinyxml2::XMLError err = doc.Parse(buf, size);
 	if (err != tinyxml2::XML_NO_ERROR) {
 		fprintf(stderr, "liboaml: Error parsing xml: %s (err=%d)\n", doc.ErrorName(), err);
-		return -1;
+		return OAML_ERROR;
 	}
 
 	tinyxml2::XMLElement *el = doc.FirstChildElement("track");
@@ -194,7 +194,7 @@ int oamlBase::ReadDefs(const char *buf, int size) {
 		el = el->NextSiblingElement();
 	}
 
-	return 0;
+	return OAML_OK;
 }
 
 void oamlBase::ReadInternalDefs(const char *filename) {
@@ -218,7 +218,7 @@ void oamlBase::ReadInternalDefs(const char *filename) {
 	}
 }
 
-int oamlBase::Init(const char *defsFilename) {
+oamlRC oamlBase::Init(const char *defsFilename) {
 	ByteBuffer buf;
 	void *fd;
 
@@ -231,7 +231,7 @@ int oamlBase::Init(const char *defsFilename) {
 	fd = fcbs->open(defsFilename);
 	if (fd == NULL) {
 		fprintf(stderr, "liboaml: Error loading definitions '%s'\n", defsFilename);
-		return -1;
+		return OAML_ERROR;
 	}
 
 	uint8_t buffer[4096];
@@ -245,8 +245,8 @@ int oamlBase::Init(const char *defsFilename) {
 	uint8_t *cbuf = new uint8_t[buf.size()];
 	buf.getBytes(cbuf, buf.size());
 
-	int ret = ReadDefs((const char*)cbuf, buf.size());
-	if (ret == 0) {
+	oamlRC ret = ReadDefs((const char*)cbuf, buf.size());
+	if (ret == OAML_OK) {
 		ReadInternalDefs("oamlInternal.defs");
 	}
 
@@ -254,18 +254,18 @@ int oamlBase::Init(const char *defsFilename) {
 	return ret;
 }
 
-int oamlBase::InitString(const char *defs) {
+oamlRC oamlBase::InitString(const char *defs) {
 	ASSERT(defs != NULL);
 
 	// In case we're being re-initialized clear previous tracks
 	Clear();
 
 	if (ReadDefs(defs, strlen(defs)) == -1)
-		return -1;
+		return OAML_ERROR;
 
 	ReadInternalDefs("oamlInternal.defs");
 
-	return 0;
+	return OAML_OK;
 }
 
 void oamlBase::SetAudioFormat(int audioSampleRate, int audioChannels, int audioBytesPerSample, bool audioFloatBuffer) {
@@ -279,9 +279,9 @@ void oamlBase::SetAudioFormat(int audioSampleRate, int audioChannels, int audioB
 	}
 }
 
-int oamlBase::PlayTrackId(int id) {
+oamlRC oamlBase::PlayTrackId(int id) {
 	if (id >= (int)musicTracks.size())
-		return -1;
+		return OAML_ERROR;
 
 	if (curTrack) {
 		curTrack->Stop();
@@ -291,7 +291,7 @@ int oamlBase::PlayTrackId(int id) {
 	return curTrack->Play();
 }
 
-int oamlBase::PlayTrack(const char *name) {
+oamlRC oamlBase::PlayTrack(const char *name) {
 	ASSERT(name != NULL);
 
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, name);
@@ -302,25 +302,25 @@ int oamlBase::PlayTrack(const char *name) {
 		}
 	}
 
-	return -1;
+	return OAML_ERROR;
 }
 
-int oamlBase::PlaySfx(const char *name) {
+oamlRC oamlBase::PlaySfx(const char *name) {
 	return PlaySfxEx(name, 1.f, 0.f);
 }
 
-int oamlBase::PlaySfxEx(const char *name, float vol, float pan) {
+oamlRC oamlBase::PlaySfxEx(const char *name, float vol, float pan) {
 	ASSERT(name != NULL);
 
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, name);
 
 	for (size_t i=0; i<sfxTracks.size(); i++) {
 		if (sfxTracks[i]->Play(name, vol, pan) == 0) {
-			return 0;
+			return OAML_OK;
 		}
 	}
 
-	return -1;
+	return OAML_ERROR;
 }
 
 static double getDistance2d(int x1, int y1, int x2, int y2) {
@@ -330,7 +330,7 @@ static double getDistance2d(int x1, int y1, int x2, int y2) {
 	return sqrt((double)dx + dy);
 }
 
-int oamlBase::PlaySfx2d(const char *name, int x, int y, int width, int height) {
+oamlRC oamlBase::PlaySfx2d(const char *name, int x, int y, int width, int height) {
 	double posx = double(x) / double(width);
 	if (posx > 1.0) posx = 1.0;
 	if (posx < 0.0) posx = 0.0;
@@ -345,7 +345,7 @@ int oamlBase::PlaySfx2d(const char *name, int x, int y, int width, int height) {
 	return PlaySfxEx(name, vol, pan);
 }
 
-int oamlBase::PlayTrackWithStringRandom(const char *str) {
+oamlRC oamlBase::PlayTrackWithStringRandom(const char *str) {
 	std::vector<int> list;
 
 	ASSERT(str != NULL);
@@ -363,10 +363,10 @@ int oamlBase::PlayTrackWithStringRandom(const char *str) {
 		return PlayTrackId(list[i]);
 	}
 
-	return -1;
+	return OAML_ERROR;
 }
 
-int oamlBase::PlayTrackByGroupRandom(const char *group) {
+oamlRC oamlBase::PlayTrackByGroupRandom(const char *group) {
 	std::vector<int> list;
 
 	ASSERT(group != NULL);
@@ -384,10 +384,10 @@ int oamlBase::PlayTrackByGroupRandom(const char *group) {
 		return PlayTrackId(list[i]);
 	}
 
-	return -1;
+	return OAML_ERROR;
 }
 
-int oamlBase::PlayTrackByGroupAndSubgroupRandom(const char *group, const char *subgroup) {
+oamlRC oamlBase::PlayTrackByGroupAndSubgroupRandom(const char *group, const char *subgroup) {
 	std::vector<int> list;
 
 	ASSERT(group != NULL);
@@ -406,7 +406,7 @@ int oamlBase::PlayTrackByGroupAndSubgroupRandom(const char *group, const char *s
 		return PlayTrackId(list[i]);
 	}
 
-	return -1;
+	return OAML_ERROR;
 }
 
 bool oamlBase::IsTrackPlaying(const char *name) {

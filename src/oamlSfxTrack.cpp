@@ -41,10 +41,10 @@ void oamlSfxTrack::AddAudio(oamlAudio *audio) {
 	sfxAudios.push_back(audio);
 }
 
-int oamlSfxTrack::Play(const char *name, float vol, float pan) {
+oamlRC oamlSfxTrack::Play(const char *name, float vol, float pan) {
 	if (lock > 0) {
 		// Play function can't be called while Mix is being run
-		return -1;
+		return OAML_ERROR;
 	}
 
 	for (size_t i=0; i<sfxAudios.size(); i++) {
@@ -55,11 +55,11 @@ int oamlSfxTrack::Play(const char *name, float vol, float pan) {
 
 			sfxPlayInfo info = { audio, 0, vol, pan };
 			playingAudios.push_back(info);
-			return 0;
+			return OAML_OK;
 		}
 	}
 
-	return -1;
+	return OAML_NOT_FOUND;
 }
 
 void oamlSfxTrack::Mix(float *samples, int channels, bool debugClipping) {

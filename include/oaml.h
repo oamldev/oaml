@@ -35,7 +35,7 @@
 #define OAML_VOLUME_DEFAULT	0.5f
 
 //
-enum {
+enum oamlCondType {
 	OAML_CONDTYPE_EQUAL	= 0, // x == value
 	OAML_CONDTYPE_GREATER	= 1, // x > value
 	OAML_CONDTYPE_LESS	= 2, // x < value
@@ -43,10 +43,17 @@ enum {
 };
 
 // Condition id's 1-9 are reserved for oaml core
-enum {
+enum oamlCondId {
 	OAML_CONDID_TENSION	= 1,
 	OAML_CONDID_MAIN_LOOP	= 2,
 	OAML_CONDID_USER	= 10
+};
+
+// Return codes
+enum oamlRC {
+	OAML_OK			= 0,
+	OAML_ERROR		= -1,
+	OAML_NOT_FOUND		= -2
 };
 
 typedef struct {
@@ -68,16 +75,16 @@ typedef int bool;
 #include <stdbool.h>
 #endif
 
-int oamlInit(const char *defsFilename);
-int oamlInitString(const char *defs);
+oamlRC oamlInit(const char *defsFilename);
+oamlRC oamlInitString(const char *defs);
 void oamlSetAudioFormat(int sampleRate, int channels, int bytesPerSample, bool floatBuffer);
-int oamlPlayTrack(const char *name);
-int oamlPlayTrackWithStringRandom(const char *str);
-int oamlPlayTrackByGroupRandom(const char *group);
-int oamlPlayTrackByGroupAndSubgroupRandom(const char *group, const char *subgroup);
-int oamlPlaySfx(const char *name);
-int oamlPlaySfxEx(const char *name, float vol, float pan);
-int oamlPlaySfx2d(const char *name, int x, int y, int width, int height);
+oamlRC oamlPlayTrack(const char *name);
+oamlRC oamlPlayTrackWithStringRandom(const char *str);
+oamlRC oamlPlayTrackByGroupRandom(const char *group);
+oamlRC oamlPlayTrackByGroupAndSubgroupRandom(const char *group, const char *subgroup);
+oamlRC oamlPlaySfx(const char *name);
+oamlRC oamlPlaySfxEx(const char *name, float vol, float pan);
+oamlRC oamlPlaySfx2d(const char *name, int x, int y, int width, int height);
 bool oamlIsTrackPlaying(const char *name);
 bool oamlIsPlaying();
 void oamlStopPlaying();
@@ -88,7 +95,7 @@ bool oamlIsPaused();
 void oamlMixToBuffer(void *buffer, int size);
 void oamlSetCondition(int id, int value);
 void oamlSetVolume(float vol);
-int oamlGetVolume();
+float oamlGetVolume();
 void oamlAddTension(int value);
 void oamlSetMainLoopCondition(int value);
 void oamlUpdate();
@@ -167,12 +174,12 @@ public:
 	/** Initilize the Open Adaptive Music Library with the path to 'oaml.defs'
 	 *  @return returns 0, or -1 on error
 	 */
-	int Init(const char *defsFilename);
+	oamlRC Init(const char *defsFilename);
 
 	/** Initilize the Open Adaptive Music Library with xml definitions on value defs
 	 *  @return returns 0, or -1 on error
 	 */
-	int InitString(const char *defs);
+	oamlRC InitString(const char *defs);
 
 	/** Shutdown the library */
 	void Shutdown();
@@ -185,29 +192,29 @@ public:
 	/** Play a music track by name (recommended) or id
 	 *  @return returns 0, or -1 on error
 	 */
-	int PlayTrack(const char *name);
+	oamlRC PlayTrack(const char *name);
 
 	/** Play a random music track that contains str in the name
 	 *  @return returns 0, or -1 on error
 	 */
-	int PlayTrackWithStringRandom(const char *str);
+	oamlRC PlayTrackWithStringRandom(const char *str);
 
 	/** Play a random music track that belongs to a certain group
 	 *  @return returns 0, or -1 on error
 	 */
-	int PlayTrackByGroupRandom(const char *group);
+	oamlRC PlayTrackByGroupRandom(const char *group);
 
 	/** Play a random music track that belongs to a certain group and subgroup
 	 *  @return returns 0, or -1 on error
 	 */
-	int PlayTrackByGroupAndSubgroupRandom(const char *group, const char *subgroup);
+	oamlRC PlayTrackByGroupAndSubgroupRandom(const char *group, const char *subgroup);
 
 	/** Play a sound fx
 	 *  @return returns 0, or -1 on error
 	 */
-	int PlaySfx(const char *name);
-	int PlaySfxEx(const char *name, float vol, float pan);
-	int PlaySfx2d(const char *name, int x, int y, int width, int height);
+	oamlRC PlaySfx(const char *name);
+	oamlRC PlaySfxEx(const char *name, float vol, float pan);
+	oamlRC PlaySfx2d(const char *name, int x, int y, int width, int height);
 
 	/** Stop playing any track currently playing */
 	void StopPlaying();

@@ -43,7 +43,7 @@ public:
 	~oamlSfxTrack();
 
 	void AddAudio(oamlAudio *audio);
-	int Play(const char *name, float vol, float pan);
+	oamlRC Play(const char *name, float vol, float pan);
 	void Stop();
 
 	bool IsPlaying();

@@ -64,11 +64,11 @@ private:
 
 	void Clear();
 
-	int PlayTrackId(int id);
+	oamlRC PlayTrackId(int id);
 	bool IsTrackPlayingId(int id);
 
 	void ShowPlayingTracks();
-	int ReadDefs(const char *buf, int size);
+	oamlRC ReadDefs(const char *buf, int size);
 	void ReadInternalDefs(const char *filaname);
 
 	int ReadSample(void *buffer, int index);
@@ -80,8 +80,8 @@ public:
 	oamlBase();
 	~oamlBase();
 
-	int Init(const char *defsFilename);
-	int InitString(const char *defs);
+	oamlRC Init(const char *defsFilename);
+	oamlRC InitString(const char *defs);
 	void Shutdown();
 
 	void SetVerbose(bool option) { verbose = option; }
@@ -92,13 +92,13 @@ public:
 	void SetVolume(float vol);
 	float GetVolume() const { return volume; }
 
-	int PlayTrack(const char *name);
-	int PlayTrackWithStringRandom(const char *str);
-	int PlayTrackByGroupRandom(const char *group);
-	int PlayTrackByGroupAndSubgroupRandom(const char *group, const char *subgroup);
-	int PlaySfx(const char *name);
-	int PlaySfxEx(const char *name, float vol, float pan);
-	int PlaySfx2d(const char *name, int x, int y, int width, int height);
+	oamlRC PlayTrack(const char *name);
+	oamlRC PlayTrackWithStringRandom(const char *str);
+	oamlRC PlayTrackByGroupRandom(const char *group);
+	oamlRC PlayTrackByGroupAndSubgroupRandom(const char *group, const char *subgroup);
+	oamlRC PlaySfx(const char *name);
+	oamlRC PlaySfxEx(const char *name, float vol, float pan);
+	oamlRC PlaySfx2d(const char *name, int x, int y, int width, int height);
 
 	void StopPlaying();
 	void Pause();

@@ -149,11 +149,11 @@ void oamlMusicTrack::PlayCond(oamlAudio *audio) {
 	}
 }
 
-int oamlMusicTrack::Play() {
+oamlRC oamlMusicTrack::Play() {
 	int doFade = 0;
 
 	if (lock > 0) {
-		return -1;
+		return OAML_ERROR;
 	}
 
 //	__oamlLog("%s %s\n", __FUNCTION__, GetNameStr());
@@ -188,7 +188,7 @@ int oamlMusicTrack::Play() {
 
 	playing = true;
 
-	return 0;
+	return OAML_OK;
 }
 
 void oamlMusicTrack::ShowInfo() {
