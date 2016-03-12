@@ -36,7 +36,7 @@ private:
 	std::vector<oamlAudio*> loopAudios;
 	std::vector<oamlAudio*> randAudios;
 	std::vector<oamlAudio*> condAudios;
-	oamlAudio *introAudio;
+	std::vector<oamlAudio*> introAudios;
 	oamlAudio *endAudio;
 	oamlAudio *playCondAudio;
 

@@ -2,6 +2,8 @@ CMakeCache.txt
 CMakeFiles/
 Makefile
 cmake_install.cmake
+oaml.log
+oamlInternal.defs
 /AudioPluginOAML*
 /build*/AudioPluginOAML*
 /libAudioPluginOAML*

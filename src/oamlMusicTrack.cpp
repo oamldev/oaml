@@ -41,7 +41,6 @@ oamlMusicTrack::oamlMusicTrack() {
 
 	tailPos = 0;
 
-	introAudio = NULL;
 	endAudio = NULL;
 
 	curAudio = NULL;
@@ -50,6 +49,7 @@ oamlMusicTrack::oamlMusicTrack() {
 }
 
 oamlMusicTrack::~oamlMusicTrack() {
+	ClearAudios(&introAudios);
 	ClearAudios(&loopAudios);
 	ClearAudios(&randAudios);
 	ClearAudios(&condAudios);
@@ -59,7 +59,7 @@ void oamlMusicTrack::AddAudio(oamlAudio *audio) {
 	ASSERT(audio != NULL);
 
 	if (audio->GetType() == 1) {
-		introAudio = audio;
+		introAudios.push_back(audio);
 	} else if (audio->GetType() == 3) {
 		endAudio = audio;
 	} else if (audio->GetType() == 4) {
@@ -165,8 +165,13 @@ int oamlMusicTrack::Play() {
 
 	SetCondition(OAML_CONDID_MAIN_LOOP, 0);
 
-	if (introAudio) {
-		curAudio = introAudio;
+	if (introAudios.size() >= 1) {
+		if (introAudios.size() == 1) {
+			curAudio = introAudios[0];
+		} else {
+			int i = Random(0, introAudios.size()-1);
+			curAudio = introAudios[i];
+		}
 		curAudio->Open();
 	} else {
 		PlayNext();
