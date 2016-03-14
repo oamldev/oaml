@@ -28,6 +28,8 @@ class oamlAudio;
 
 class oamlTrack {
 protected:
+	bool verbose;
+
 	std::string name;
 	std::string group;
 	std::string subgroup;

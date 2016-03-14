@@ -27,7 +27,8 @@
 #include "oamlCommon.h"
 
 
-oamlMusicTrack::oamlMusicTrack() {
+oamlMusicTrack::oamlMusicTrack(bool _verbose) {
+	verbose = _verbose;
 	name = "Track";
 	playing = false;
 
@@ -156,7 +157,7 @@ oamlRC oamlMusicTrack::Play() {
 		return OAML_ERROR;
 	}
 
-//	__oamlLog("%s %s\n", __FUNCTION__, GetNameStr());
+	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, GetNameStr());
 	fadeAudio = NULL;
 
 	if (curAudio == NULL) {
@@ -196,6 +197,8 @@ void oamlMusicTrack::ShowInfo() {
 }
 
 oamlAudio* oamlMusicTrack::PickNextAudio() {
+	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, GetNameStr());
+
 	if (randAudios.size() > 0 && (curAudio == NULL || curAudio->GetRandomChance() == 0)) {
 		for (size_t i=0; i<randAudios.size(); i++) {
 			int chance = randAudios[i]->GetRandomChance();
@@ -237,6 +240,7 @@ oamlAudio* oamlMusicTrack::PickNextAudio() {
 }
 
 void oamlMusicTrack::PlayNext() {
+	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, GetNameStr());
 	if (curAudio) {
 		if (curAudio->GetType() == 4) {
 			tailAudio = curAudio;

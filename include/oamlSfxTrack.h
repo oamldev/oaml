@@ -39,7 +39,7 @@ private:
 	std::vector<sfxPlayInfo> playingAudios;
 
 public:
-	oamlSfxTrack();
+	oamlSfxTrack(bool _verbose);
 	~oamlSfxTrack();
 
 	void AddAudio(oamlAudio *audio);

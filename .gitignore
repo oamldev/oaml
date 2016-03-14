@@ -5,10 +5,11 @@ cmake_install.cmake
 oaml.log
 oamlInternal.defs
 /AudioPluginOAML*
-/build*/AudioPluginOAML*
 /libAudioPluginOAML*
-/build*/libAudioPluginOAML*
 /liboaml*
+/build*/AudioPluginOAML*
+/build*/include
+/build*/libAudioPluginOAML*
 /build*/liboaml*
 install_manifest.txt
 

@@ -52,7 +52,7 @@ private:
 	void XFadePlay();
 
 public:
-	oamlMusicTrack();
+	oamlMusicTrack(bool _verbose);
 	~oamlMusicTrack();
 
 	void AddAudio(oamlAudio *audio);

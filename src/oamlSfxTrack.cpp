@@ -27,8 +27,9 @@
 #include "oamlCommon.h"
 
 
-oamlSfxTrack::oamlSfxTrack() {
+oamlSfxTrack::oamlSfxTrack(bool _verbose) {
 	name = "Sfx";
+	verbose = _verbose;
 }
 
 oamlSfxTrack::~oamlSfxTrack() {

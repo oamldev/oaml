@@ -31,7 +31,8 @@
 #include "oamlCommon.h"
 
 
-oamlAudio::oamlAudio(oamlFileCallbacks *cbs) {
+oamlAudio::oamlAudio(oamlFileCallbacks *cbs, bool _verbose) {
+	verbose = _verbose;
 	fcbs = cbs;
 
 	buffer = new ByteBuffer();
@@ -118,7 +119,7 @@ unsigned int oamlAudio::GetBarsSamples(int bars) {
 }
 
 int oamlAudio::Open() {
-//	printf("%s %s\n", __FUNCTION__, GetFilenameStr());
+	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, GetFilenameStr());
 
 	if (buffer->size() > 0) {
 		buffer->setReadPos(0);
@@ -150,6 +151,8 @@ int oamlAudio::Open() {
 		if (samplesToEnd == 0) {
 			samplesToEnd = handle->GetTotalSamples();
 		}
+
+		if (verbose) __oamlLog("%s %s samplesToEnd=%d totalSamples=%d\n", __FUNCTION__, GetFilenameStr(), samplesToEnd, totalSamples);
 	}
 
 	fadeInSamples = 0;

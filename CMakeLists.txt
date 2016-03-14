@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 2.8)
 
 project (oaml)
 
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
+
+include(GetGitRevisionDescription)
+get_git_head_revision(GIT_REFSPEC GIT_SHA1)
+
 
 # Configuration types
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
@@ -12,7 +17,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 else()
 	message("Debug mode: No (Enable by param -DCMAKE_BUILD_TYPE=Debug)")
 endif()
-
 
 ##
 # Options
@@ -53,8 +57,6 @@ endif()
 ##
 # Find VorbisFile lib
 #
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
-
 find_package(OggVorbis REQUIRED)
 find_package(VorbisFile REQUIRED)
 
@@ -68,13 +70,17 @@ endif()
 # Build static and shared libraries
 #
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-set(SRCS src/audioFile.cpp src/ByteBuffer.cpp src/oaml.cpp src/oamlAudio.cpp src/oamlBase.cpp src/oamlCompressor.cpp src/oamlMusicTrack.cpp src/oamlSfxTrack.cpp src/oamlTrack.cpp src/oamlUtil.cpp src/aif.cpp src/ogg.cpp src/wav.cpp src/gettime.cpp src/tinyxml2.cpp)
+
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/GitSHA1.h.in" "${CMAKE_CURRENT_BINARY_DIR}/include/GitSHA1.h" @ONLY)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
+
+set(SOURCES src/audioFile.cpp src/ByteBuffer.cpp src/oaml.cpp src/oamlAudio.cpp src/oamlBase.cpp src/oamlCompressor.cpp src/oamlMusicTrack.cpp src/oamlSfxTrack.cpp src/oamlTrack.cpp src/oamlUtil.cpp src/aif.cpp src/ogg.cpp src/wav.cpp src/gettime.cpp src/tinyxml2.cpp)
 if (ENABLE_STATIC)
-	add_library(oaml STATIC ${SRCS} src/oamlC.cpp)
+	add_library(oaml STATIC ${SOURCES} src/oamlC.cpp)
 endif()
 
 if (ENABLE_SHARED)
-	add_library(oaml_shared SHARED ${SRCS} src/oamlC.cpp)
+	add_library(oaml_shared SHARED ${SOURCES} src/oamlC.cpp)
 	target_link_libraries(oaml_shared ${OAML_LIBS})
 endif()
 
@@ -84,12 +90,12 @@ endif()
 #
 if (ENABLE_UNITYPLUGIN)
 	if (APPLE)
-		add_library(AudioPluginOAML MODULE ${SRCS} src/oamlUnityPlugin.cpp)
+		add_library(AudioPluginOAML MODULE ${SOURCES} src/oamlUnityPlugin.cpp)
 		set_target_properties(AudioPluginOAML PROPERTIES
 			BUNDLE_EXTENSION bundle
 			BUNDLE TRUE)
 	else()
-		add_library(AudioPluginOAML MODULE ${SRCS} src/oamlUnityPlugin.cpp)
+		add_library(AudioPluginOAML MODULE ${SOURCES} src/oamlUnityPlugin.cpp)
 	endif()
 	target_link_libraries(AudioPluginOAML ${OAML_LIBS})
 endif()

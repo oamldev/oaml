@@ -27,6 +27,7 @@ class ByteBuffer;
 
 class oamlAudio {
 private:
+	bool verbose;
 	oamlFileCallbacks *fcbs;
 
 	ByteBuffer *buffer;
@@ -66,7 +67,7 @@ private:
 	bool pickable;
 
 public:
-	oamlAudio(oamlFileCallbacks *cbs);
+	oamlAudio(oamlFileCallbacks *cbs, bool _verbose);
 	~oamlAudio();
 
 	void SetFilename(std::string audioFilename);

@@ -29,6 +29,7 @@
 
 #include "tinyxml2.h"
 #include "oamlCommon.h"
+#include "GitSHA1.h"
 
 
 static void* oamlOpen(const char *filename) {
@@ -107,9 +108,9 @@ oamlRC oamlBase::ReadDefs(const char *buf, int size) {
 		oamlTrack *track;
 
 		if (el->Attribute("type", "sfx")) {
-			track = new oamlSfxTrack();
+			track = new oamlSfxTrack(verbose);
 		} else {
-			track = new oamlMusicTrack();
+			track = new oamlMusicTrack(verbose);
 		}
 
 		tinyxml2::XMLElement *trackEl = el->FirstChildElement();
@@ -124,7 +125,7 @@ oamlRC oamlBase::ReadDefs(const char *buf, int size) {
 			else if (strcmp(trackEl->Name(), "volume") == 0) track->SetVolume(float(atof(trackEl->GetText())));
 			else if (strcmp(trackEl->Name(), "audio") == 0) {
 				oamlAudioInfo ainfo;
-				oamlAudio *audio = new oamlAudio(fcbs);
+				oamlAudio *audio = new oamlAudio(fcbs, verbose);
 
 				tinyxml2::XMLElement *audioEl = trackEl->FirstChildElement();
 				while (audioEl != NULL) {
@@ -216,6 +217,10 @@ void oamlBase::ReadInternalDefs(const char *filename) {
 
 		el = el->NextSiblingElement();
 	}
+
+	if (verbose) {
+		__oamlLog("OAML git sha1: %s\n", GIT_SHA1);
+	}
 }
 
 oamlRC oamlBase::Init(const char *defsFilename) {
@@ -226,6 +231,10 @@ oamlRC oamlBase::Init(const char *defsFilename) {
 
 	// In case we're being re-initialized clear previous tracks
 	Clear();
+
+	ReadInternalDefs("oamlInternal.defs");
+
+	if (verbose) __oamlLog("%s: %s\n", __FUNCTION__, defsFilename);
 
 	defsFile = defsFilename;
 	fd = fcbs->open(defsFilename);
@@ -246,10 +255,6 @@ oamlRC oamlBase::Init(const char *defsFilename) {
 	buf.getBytes(cbuf, buf.size());
 
 	oamlRC ret = ReadDefs((const char*)cbuf, buf.size());
-	if (ret == OAML_OK) {
-		ReadInternalDefs("oamlInternal.defs");
-	}
-
 	delete[] cbuf;
 	return ret;
 }
@@ -260,12 +265,9 @@ oamlRC oamlBase::InitString(const char *defs) {
 	// In case we're being re-initialized clear previous tracks
 	Clear();
 
-	if (ReadDefs(defs, strlen(defs)) == -1)
-		return OAML_ERROR;
-
 	ReadInternalDefs("oamlInternal.defs");
 
-	return OAML_OK;
+	return ReadDefs(defs, strlen(defs));
 }
 
 void oamlBase::SetAudioFormat(int audioSampleRate, int audioChannels, int audioBytesPerSample, bool audioFloatBuffer) {
