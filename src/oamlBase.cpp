@@ -129,8 +129,19 @@ oamlRC oamlBase::ReadDefs(const char *buf, int size) {
 
 				tinyxml2::XMLElement *audioEl = trackEl->FirstChildElement();
 				while (audioEl != NULL) {
-					if (strcmp(audioEl->Name(), "filename") == 0) audio->SetFilename(audioEl->GetText());
-					else if (strcmp(audioEl->Name(), "type") == 0) audio->SetType(strtol(audioEl->GetText(), NULL, 0));
+					if (strcmp(audioEl->Name(), "filename") == 0) {
+						const char *layer = audioEl->Attribute("layer");
+						if (layer) {
+							if (GetLayerId(layer) == -1) AddLayer(layer);
+							const char *randomChance = audioEl->Attribute("randomChance");
+							if (randomChance) {
+								SetLayerRandomChance(layer, strtol(randomChance, NULL, 0));
+							}
+							audio->SetFilename(audioEl->GetText(), layer, GetLayer(layer));
+						} else {
+							audio->SetFilename(audioEl->GetText(), "", NULL);
+						}
+					} else if (strcmp(audioEl->Name(), "type") == 0) audio->SetType(strtol(audioEl->GetText(), NULL, 0));
 					else if (strcmp(audioEl->Name(), "bars") == 0) audio->SetBars(strtol(audioEl->GetText(), NULL, 0));
 					else if (strcmp(audioEl->Name(), "bpm") == 0) audio->SetBPM(float(atof(audioEl->GetText())));
 					else if (strcmp(audioEl->Name(), "beatsPerBar") == 0) audio->SetBeatsPerBar(strtol(audioEl->GetText(), NULL, 0));
@@ -151,7 +162,7 @@ oamlRC oamlBase::ReadDefs(const char *buf, int size) {
 					audioEl = audioEl->NextSiblingElement();
 				}
 
-				ainfo.filename = audio->GetFilename();
+//				ainfo.filename = audio->GetFilename();
 				ainfo.type = audio->GetType();
 				ainfo.bars = audio->GetBars();
 				ainfo.bpm = audio->GetBPM();
@@ -649,6 +660,55 @@ void oamlBase::AddTension(int value) {
 
 void oamlBase::SetMainLoopCondition(int value) {
 	SetCondition(OAML_CONDID_MAIN_LOOP, value);
+}
+
+void oamlBase::AddLayer(const char *layer) {
+	if (GetLayerId(layer) == -1) {
+		oamlLayerInfo *info = new oamlLayerInfo();
+		info->id = layers.size();
+		info->name = layer;
+		info->randomChance = 100;
+		info->gain = 1.f;
+		layers.push_back(info);
+	}
+}
+
+int oamlBase::GetLayerId(const char *layer) {
+	for (std::vector<oamlLayerInfo*>::iterator it=layers.begin(); it<layers.end(); ++it) {
+		oamlLayerInfo *info = *it;
+		if (info->name.compare(layer) == 0) {
+			return info->id;
+		}
+	}
+
+	return -1;
+}
+
+oamlLayerInfo* oamlBase::GetLayer(const char *layer) {
+	for (std::vector<oamlLayerInfo*>::iterator it=layers.begin(); it<layers.end(); ++it) {
+		oamlLayerInfo *info = *it;
+		if (info->name.compare(layer) == 0) {
+			return info;
+		}
+	}
+
+	return NULL;
+}
+
+void oamlBase::SetLayerGain(const char *layer, float gain) {
+	oamlLayerInfo *info = GetLayer(layer);
+	if (info == NULL)
+		return;
+
+	info->gain = gain;
+}
+
+void oamlBase::SetLayerRandomChance(const char *layer, int randomChance) {
+	oamlLayerInfo *info = GetLayer(layer);
+	if (info == NULL)
+		return;
+
+	info->randomChance = randomChance;
 }
 
 void oamlBase::Update() {

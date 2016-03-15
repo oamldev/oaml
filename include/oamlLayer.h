@@ -20,13 +20,56 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef __OAMLUTIL_H__
-#define __OAMLUTIL_H__
+#ifndef __OAMLLAYER_H__
+#define __OAMLLAYER_H__
 
+class ByteBuffer;
 
-float __oamlInteger24ToFloat(int i);
-int __oamlFloatToInteger24(float f);
-int __oamlRandom(int min, int max);
-void __oamlLog(const char* fmt, ...);
+typedef struct {
+	int id;
+	std::string name;
+	int randomChance;
+	float gain;
+} oamlLayerInfo;
 
-#endif /* __OAMLUTIL_H__ */
+class oamlLayer {
+private:
+	oamlFileCallbacks *fcbs;
+
+	ByteBuffer buffer;
+	audioFile *handle;
+	oamlLayerInfo *info;
+	std::string filename;
+	std::string layer;
+
+	unsigned int bytesPerSample;
+	unsigned int samplesPerSec;
+	unsigned int totalSamples;
+	unsigned int channelCount;
+
+	bool chance;
+	bool lastChance;
+
+	oamlRC OpenFile();
+
+	int Read();
+	int Read32(unsigned int pos);
+
+public:
+	oamlLayer(std::string _filename, std::string _layer, oamlLayerInfo *_info, oamlFileCallbacks *cbs);
+	~oamlLayer();
+
+	void SetFilename(std::string layerFilename) { filename = layerFilename; }
+
+	std::string GetFilename() const { return filename; }
+	const char *GetFilenameStr() const { return filename.c_str(); }
+
+	oamlRC Open();
+	float ReadFloat(unsigned int pos, bool isTail = false);
+
+	unsigned int GetChannels() const { return channelCount; }
+	unsigned int GetTotalSamples() const { return totalSamples; }
+	unsigned int GetSamplesPerSec() const { return samplesPerSec; }
+};
+
+#endif

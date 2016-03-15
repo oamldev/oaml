@@ -72,6 +72,7 @@
 #include "aif.h"
 #include "ogg.h"
 #include "wav.h"
+#include "oamlLayer.h"
 #include "oamlAudio.h"
 #include "oamlTrack.h"
 #include "oamlMusicTrack.h"

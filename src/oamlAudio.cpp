@@ -35,13 +35,9 @@ oamlAudio::oamlAudio(oamlFileCallbacks *cbs, bool _verbose) {
 	verbose = _verbose;
 	fcbs = cbs;
 
-	buffer = new ByteBuffer();
-	handle = NULL;
-	filename = "";
 	type = 0;
 	bars = 0;
 
-	bytesPerSample = 0;
 	samplesCount = 0;
 	samplesPerSec = 0;
 	samplesToEnd = 0;
@@ -71,7 +67,6 @@ oamlAudio::oamlAudio(oamlFileCallbacks *cbs, bool _verbose) {
 }
 
 oamlAudio::~oamlAudio() {
-	delete buffer;
 }
 
 void oamlAudio::SetCondition(int id, int type, int value, int value2) {
@@ -118,43 +113,27 @@ unsigned int oamlAudio::GetBarsSamples(int bars) {
 	return (unsigned int)(secs * samplesPerSec);
 }
 
-int oamlAudio::Open() {
+oamlRC oamlAudio::Open() {
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, GetFilenameStr());
 
-	if (buffer->size() > 0) {
-		buffer->setReadPos(0);
-		samplesCount = 0;
-	} else {
-		std::string ext = filename.substr(filename.find_last_of(".") + 1);
-		if (ext == "ogg") {
-			handle = (audioFile*)new oggFile(fcbs);
-		} else if (ext == "aif" || ext == "aiff") {
-			handle = (audioFile*)new aifFile(fcbs);
-		} else if (ext == "wav" || ext == "wave") {
-			handle = new wavFile(fcbs);
-		} else {
-			fprintf(stderr, "liboaml: Unknown audio format: '%s'\n", GetFilenameStr());
-			return -1;
+	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
+		oamlRC ret = layer->Open();
+		if (ret != OAML_OK)
+			return ret;
+
+		if (totalSamples == 0) {
+			channelCount = layer->GetChannels();
+			samplesPerSec = layer->GetSamplesPerSec();
+			totalSamples = layer->GetTotalSamples();
 		}
-
-		if (handle->Open(GetFilenameStr()) == -1) {
-			fprintf(stderr, "liboaml: Error opening: '%s'\n", GetFilenameStr());
-			return -1;
-		}
-
-		samplesPerSec = handle->GetSamplesPerSec() * handle->GetChannels();
-		bytesPerSample = handle->GetBytesPerSample();
-		totalSamples = handle->GetTotalSamples();
-		channelCount = handle->GetChannels();
-
-		samplesToEnd = GetBarsSamples(bars);
-		if (samplesToEnd == 0) {
-			samplesToEnd = handle->GetTotalSamples();
-		}
-
-		if (verbose) __oamlLog("%s %s samplesToEnd=%d totalSamples=%d\n", __FUNCTION__, GetFilenameStr(), samplesToEnd, totalSamples);
 	}
 
+	samplesToEnd = GetBarsSamples(bars);
+	if (samplesToEnd == 0) {
+		samplesToEnd = totalSamples;
+	}
+
+	samplesCount = 0;
 	fadeInSamples = 0;
 
 	if (fadeOut) {
@@ -165,7 +144,7 @@ int oamlAudio::Open() {
 		fadeOutStart = 0;
 	}
 
-	return 0;
+	return OAML_OK;
 }
 
 void oamlAudio::DoFadeIn(int msec) {
@@ -195,43 +174,17 @@ bool oamlAudio::HasFinishedTail(unsigned int pos) {
 	return pos >= totalSamples;
 }
 
-int oamlAudio::Read() {
-	if (handle == NULL)
-		return -1;
+float oamlAudio::ReadFloat() {
+	float sample = 0.f;
 
-	int readSize = 4096*bytesPerSample;
-	int ret = handle->Read(buffer, readSize);
-	if (ret < readSize) {
-		handle->Close();
-	}
-
-	return ret;
-}
-
-int oamlAudio::Read32() {
-	int ret = 0;
-
-	if (buffer->bytesRemaining() < (unsigned int)bytesPerSample) {
-		if (Read() == -1)
-			return 0;
-	}
-
-	if (bytesPerSample == 3) {
-		ret|= ((unsigned int)buffer->get())<<8;
-		ret|= ((unsigned int)buffer->get())<<16;
-		ret|= ((unsigned int)buffer->get())<<24;
-	} else if (bytesPerSample == 2) {
-		ret|= ((unsigned int)buffer->get())<<16;
-		ret|= ((unsigned int)buffer->get())<<24;
-	} else if (bytesPerSample == 1) {
-		ret|= ((unsigned int)buffer->get())<<23;
+	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
+		sample+= layer->ReadFloat(samplesCount);
 	}
 
 	if (fadeInSamples) {
 		if (samplesCount < fadeInSamples) {
 			float gain = 1.f - float(fadeInSamples - samplesCount) / float(fadeInSamples);
-//			gain = log10(1.f + 9.f * gain);
-			ret = (int)(ret * gain);
+			sample*= gain;
 		} else {
 			fadeInSamples = 0;
 		}
@@ -241,53 +194,33 @@ int oamlAudio::Read32() {
 		unsigned int fadeOutFinish = fadeOutStart + fadeOutSamples;
 		if (samplesCount < fadeOutFinish) {
 			float gain = float(fadeOutFinish - samplesCount) / float(fadeOutSamples);
-//			gain = log10(1.f + 9.f * gain);
-			ret = (int)(ret * gain);
+			sample*= gain;
 		} else {
-			ret = 0;
+			sample = 0.f;
 		}
 	}
 
 	samplesCount++;
 
-	return ret;
+	return sample;
 }
 
-int oamlAudio::Read32(unsigned int pos) {
-	int ret = 0;
+float oamlAudio::ReadFloat(unsigned int pos) {
+	float sample = 0.f;
 
 	if (pos > totalSamples)
 		return 0;
 
-	pos*= bytesPerSample;
-	while ((pos+bytesPerSample) > buffer->size()) {
-		if (Read() == -1)
-			return 0;
+	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
+		sample+= layer->ReadFloat(pos, true);
 	}
 
-	if (bytesPerSample == 3) {
-		ret|= ((unsigned int)buffer->get(pos))<<8;
-		ret|= ((unsigned int)buffer->get(pos+1))<<16;
-		ret|= ((unsigned int)buffer->get(pos+2))<<24;
-	} else if (bytesPerSample == 2) {
-		ret|= ((unsigned int)buffer->get(pos))<<16;
-		ret|= ((unsigned int)buffer->get(pos+1))<<24;
-	} else if (bytesPerSample == 1) {
-		ret|= ((unsigned int)buffer->get(pos))<<23;
-	}
-
-	return ret;
+	return sample;
 }
 
-float oamlAudio::ReadFloat() {
-	return __oamlInteger24ToFloat(Read32() >> 8);
-}
+void oamlAudio::SetFilename(std::string audioFilename, std::string layer, oamlLayerInfo *info) {
+	layers.push_back(oamlLayer(audioFilename, layer, info, fcbs));
 
-float oamlAudio::ReadFloat(unsigned int pos) {
-	return __oamlInteger24ToFloat(Read32(pos) >> 8);
-}
-
-void oamlAudio::SetFilename(std::string audioFilename) {
 	filename = audioFilename;
 	size_t pos = filename.find_last_of(PATH_SEPARATOR);
 	if (pos != std::string::npos) {

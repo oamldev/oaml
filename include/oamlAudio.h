@@ -30,14 +30,12 @@ private:
 	bool verbose;
 	oamlFileCallbacks *fcbs;
 
-	ByteBuffer *buffer;
-	audioFile *handle;
+	std::vector<oamlLayer> layers;
 	std::string filename;
 	std::string name;
 	int type;
 	int bars;
 
-	unsigned int bytesPerSample;
 	unsigned int samplesCount;
 	unsigned int samplesPerSec;
 	unsigned int samplesToEnd;
@@ -70,7 +68,6 @@ public:
 	oamlAudio(oamlFileCallbacks *cbs, bool _verbose);
 	~oamlAudio();
 
-	void SetFilename(std::string audioFilename);
 	void SetType(int audioType) { type = audioType; }
 	void SetBPM(float audioBpm) { bpm = audioBpm; }
 	void SetBeatsPerBar(int audioBeatsPerBar) { beatsPerBar = audioBeatsPerBar; }
@@ -96,10 +93,7 @@ public:
 	bool HasFinished();
 	bool HasFinishedTail(unsigned int pos);
 
-	int Open();
-	int Read();
-	int Read32();
-	int Read32(unsigned int pos);
+	oamlRC Open();
 	float ReadFloat();
 	float ReadFloat(unsigned int pos);
 
@@ -109,6 +103,7 @@ public:
 	void DoFadeIn(int msec);
 	void DoFadeOut(int msec);
 
+	void SetFilename(std::string audioFilename, std::string layer, oamlLayerInfo *info);
 	std::string GetFilename() const { return filename; }
 	const char *GetFilenameStr() const { return filename.c_str(); }
 	std::string GetName() const { return name; }

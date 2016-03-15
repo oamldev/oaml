@@ -126,6 +126,14 @@ void oamlApi::SetMainLoopCondition(int value) {
 	oaml->SetMainLoopCondition(value);
 }
 
+void oamlApi::SetLayerGain(const char *layer, float gain) {
+	oaml->SetLayerGain(layer, gain);
+}
+
+void oamlApi::SetLayerRandomChance(const char *layer, int randomChance) {
+	oaml->SetLayerRandomChance(layer, randomChance);
+}
+
 void oamlApi::Update() {
 	oaml->Update();
 }

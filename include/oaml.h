@@ -35,26 +35,26 @@
 #define OAML_VOLUME_DEFAULT	0.5f
 
 //
-enum oamlCondType {
+typedef enum {
 	OAML_CONDTYPE_EQUAL	= 0, // x == value
 	OAML_CONDTYPE_GREATER	= 1, // x > value
 	OAML_CONDTYPE_LESS	= 2, // x < value
 	OAML_CONDTYPE_RANGE	= 3  // x >= value AND x <= value2
-};
+} oamlCondType;
 
 // Condition id's 1-9 are reserved for oaml core
-enum oamlCondId {
+typedef enum {
 	OAML_CONDID_TENSION	= 1,
 	OAML_CONDID_MAIN_LOOP	= 2,
 	OAML_CONDID_USER	= 10
-};
+} oamlCondId;
 
 // Return codes
-enum oamlRC {
+typedef enum {
 	OAML_OK			= 0,
 	OAML_ERROR		= -1,
 	OAML_NOT_FOUND		= -2
-};
+} oamlRC;
 
 typedef struct {
 	void*  (*open)  (const char *filename);
@@ -248,6 +248,12 @@ public:
 
 	/** Set a condition */
 	void SetCondition(int id, int value);
+
+	/** Set gain (0.f - 1.f) of a layer */
+	void SetLayerGain(const char *layer, float gain);
+
+	/** Set random chance (0 - 100) of a layer */
+	void SetLayerRandomChance(const char *layer, int rhandomChance);
 
 	/** Main function to call form the internal game audio manager */
 	void MixToBuffer(void *buffer, int size);

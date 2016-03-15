@@ -39,6 +39,7 @@ private:
 
 	std::vector<oamlTrack*> musicTracks;
 	std::vector<oamlTrack*> sfxTracks;
+	std::vector<oamlLayerInfo*> layers;
 
 	oamlTrack *curTrack;
 
@@ -75,6 +76,10 @@ private:
 	void WriteSample(void *buffer, int index, int sample);
 
 	bool IsAudioFormatSupported();
+
+	void AddLayer(const char *layer);
+	int GetLayerId(const char *layer);
+	oamlLayerInfo *GetLayer(const char *layer);
 
 public:
 	oamlBase();
@@ -115,6 +120,9 @@ public:
 	void SetMainLoopCondition(int value);
 
 	void SetCondition(int id, int value);
+
+	void SetLayerGain(const char *layer, float gain);
+	void SetLayerRandomChance(const char *layer, int randomChance);
 
 	void MixToBuffer(void *buffer, int size);
 

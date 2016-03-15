@@ -371,4 +371,3 @@ void oamlMusicTrack::Stop() {
 	tailAudio = NULL;
 	playing = false;
 }
-

@@ -40,6 +40,11 @@ int __oamlFloatToInteger24(float f) {
 	return ((int)(f * 8388608) & 0x00ffffff);
 }
 
+int __oamlRandom(int min, int max) {
+	int range = max - min + 1;
+	return rand() % range + min;
+}
+
 void __oamlLog(const char* fmt, ...) {
 	va_list args;
 
