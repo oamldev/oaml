@@ -29,8 +29,9 @@
 
 #include "tinyxml2.h"
 #include "oamlCommon.h"
+#ifndef _MSC_VER
 #include "GitSHA1.h"
-
+#endif
 
 static void* oamlOpen(const char *filename) {
 	return fopen(filename, "rb");
@@ -229,9 +230,11 @@ void oamlBase::ReadInternalDefs(const char *filename) {
 		el = el->NextSiblingElement();
 	}
 
+#ifndef _MSC_VER
 	if (verbose) {
 		__oamlLog("OAML git sha1: %s\n", GIT_SHA1);
 	}
+#endif
 }
 
 oamlRC oamlBase::Init(const char *defsFilename) {
