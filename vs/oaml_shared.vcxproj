@@ -83,6 +83,7 @@
     <ClCompile Include="..\src\oamlBase.cpp" />
     <ClCompile Include="..\src\oamlC.cpp" />
     <ClCompile Include="..\src\oamlCompressor.cpp" />
+    <ClCompile Include="..\src\oamlLayer.cpp" />
     <ClCompile Include="..\src\oamlMusicTrack.cpp" />
     <ClCompile Include="..\src\oamlSfxTrack.cpp" />
     <ClCompile Include="..\src\oamlTrack.cpp" />
