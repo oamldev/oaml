@@ -425,6 +425,21 @@ oamlRC oamlBase::PlayTrackByGroupAndSubgroupRandom(const char *group, const char
 	return OAML_ERROR;
 }
 
+oamlRC oamlBase::LoadTrack(const char *name) {
+	ASSERT(name != NULL);
+
+	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, name);
+
+	for (std::vector<oamlTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
+		oamlTrack *track = *it;
+		if (track->GetName().compare(name) == 0) {
+			track->Load();
+		}
+	}
+
+	return OAML_ERROR;
+}
+
 bool oamlBase::IsTrackPlaying(const char *name) {
 	ASSERT(name != NULL);
 

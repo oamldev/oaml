@@ -94,6 +94,7 @@ public:
 	bool HasFinishedTail(unsigned int pos);
 
 	oamlRC Open();
+	oamlRC Load();
 	float ReadFloat();
 	float ReadFloat(unsigned int pos);
 

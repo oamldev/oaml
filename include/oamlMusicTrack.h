@@ -57,6 +57,7 @@ public:
 
 	void AddAudio(oamlAudio *audio);
 	oamlRC Play();
+	oamlRC Load();
 	void Stop();
 
 	bool IsPlaying();

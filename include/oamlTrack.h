@@ -77,6 +77,7 @@ public:
 	virtual oamlRC Play() { return OAML_NOT_FOUND; }
 	virtual oamlRC Play(const char *) { return OAML_NOT_FOUND; }
 	virtual oamlRC Play(const char *, float, float) { return OAML_NOT_FOUND; }
+	virtual oamlRC Load() { return OAML_NOT_FOUND; }
 	virtual void Stop() { }
 
 	virtual bool IsPlaying() { return false; }

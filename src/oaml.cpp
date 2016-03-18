@@ -74,6 +74,10 @@ oamlRC oamlApi::PlaySfx2d(const char *name, int x, int y, int width, int height)
 	return oaml->PlaySfx2d(name, x, y, width, height);
 }
 
+oamlRC oamlApi::LoadTrack(const char *name) {
+	return oaml->LoadTrack(name);
+}
+
 bool oamlApi::IsTrackPlaying(const char *name) {
 	return oaml->IsTrackPlaying(name);
 }

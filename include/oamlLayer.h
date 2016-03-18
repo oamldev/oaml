@@ -47,6 +47,7 @@ private:
 	unsigned int samplesPerSec;
 	unsigned int totalSamples;
 	unsigned int channelCount;
+	unsigned int samplesToEnd;
 
 	bool chance;
 	bool lastChance;
@@ -66,11 +67,13 @@ public:
 	const char *GetFilenameStr() const { return filename.c_str(); }
 
 	oamlRC Open();
+	oamlRC Load();
 	float ReadFloat(unsigned int pos, bool isTail = false);
 
 	unsigned int GetChannels() const { return channelCount; }
 	unsigned int GetTotalSamples() const { return totalSamples; }
 	unsigned int GetSamplesPerSec() const { return samplesPerSec; }
+	void SetSamplesToEnd(unsigned int samples) { samplesToEnd = samples; }
 };
 
 #endif

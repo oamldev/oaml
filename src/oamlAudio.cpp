@@ -113,6 +113,19 @@ unsigned int oamlAudio::GetBarsSamples(int bars) {
 	return (unsigned int)(secs * samplesPerSec);
 }
 
+oamlRC oamlAudio::Load() {
+	oamlRC ret = Open();
+	if (ret != OAML_OK) return ret;
+
+	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
+		ret = layer->Load();
+		if (ret != OAML_OK)
+			return ret;
+	}
+
+	return OAML_OK;
+}
+
 oamlRC oamlAudio::Open() {
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, GetFilenameStr());
 
@@ -131,6 +144,10 @@ oamlRC oamlAudio::Open() {
 	samplesToEnd = GetBarsSamples(bars);
 	if (samplesToEnd == 0) {
 		samplesToEnd = totalSamples;
+	}
+
+	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
+		layer->SetSamplesToEnd(samplesToEnd);
 	}
 
 	samplesCount = 0;

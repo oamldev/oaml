@@ -41,9 +41,8 @@ oamlLayer::oamlLayer(std::string _filename, std::string _layer, oamlLayerInfo *_
 	totalSamples = 0;
 	channelCount = 0;
 
-	chance = true;
-	lastChance = true;
-	
+	chance = false;
+	lastChance = false;
 }
 
 oamlLayer::~oamlLayer() {
@@ -82,13 +81,22 @@ oamlRC oamlLayer::Open() {
 		if (rc != OAML_OK) return rc;
 	}
 
-	lastChance = chance;
 	if (info && info->randomChance != 100) {
 		chance = __oamlRandom(0, 100) > info->randomChance;
 	} else {
 		chance = true;
 	}
 
+	return OAML_OK;
+}
+
+oamlRC oamlLayer::Load() {
+	int ret;
+	do {
+		ret = Read();
+	} while (ret > 0);
+
+	if (ret == -1) return OAML_ERROR;
 	return OAML_OK;
 }
 
@@ -136,6 +144,10 @@ float oamlLayer::ReadFloat(unsigned int pos, bool isTail) {
 		if (lastChance == false)
 			return 0.f;
 	} else {
+		if (pos == (samplesToEnd-1)) {
+			lastChance = chance;
+		}
+
 		if (chance == false)
 			return 0.f;
 	}

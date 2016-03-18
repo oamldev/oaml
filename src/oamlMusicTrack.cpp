@@ -371,3 +371,14 @@ void oamlMusicTrack::Stop() {
 	tailAudio = NULL;
 	playing = false;
 }
+
+oamlRC oamlMusicTrack::Load() {
+	for (std::vector<oamlAudio*>::iterator it=loopAudios.begin(); it<loopAudios.end(); ++it) {
+		oamlAudio *audio = *it;
+		oamlRC ret = audio->Load();
+		if (ret != OAML_OK) return ret;
+	}
+
+	return OAML_OK;
+}
+

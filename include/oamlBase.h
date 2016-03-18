@@ -105,6 +105,8 @@ public:
 	oamlRC PlaySfxEx(const char *name, float vol, float pan);
 	oamlRC PlaySfx2d(const char *name, int x, int y, int width, int height);
 
+	oamlRC LoadTrack(const char *name);
+
 	void StopPlaying();
 	void Pause();
 	void Resume();
