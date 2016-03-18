@@ -38,6 +38,10 @@ int oamlInit(const char *defsFilename) {
 	return oaml.Init(defsFilename);
 }
 
+int oamlReadDefsFile(const char *defsFilename) {
+	return oaml.ReadDefsFile(defsFilename);
+}
+
 int oamlInitString(const char *defs) {
 	return oaml.InitString(defs);
 }
