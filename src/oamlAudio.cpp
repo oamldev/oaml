@@ -219,7 +219,7 @@ float oamlAudio::ReadFloat(unsigned int pos) {
 }
 
 void oamlAudio::SetFilename(std::string audioFilename, std::string layer, oamlLayerInfo *info) {
-	layers.push_back(oamlLayer(audioFilename, layer, info, fcbs));
+	layers.push_back(oamlLayer(audioFilename, layer, info, fcbs, verbose));
 
 	filename = audioFilename;
 	size_t pos = filename.find_last_of(PATH_SEPARATOR);

@@ -34,6 +34,7 @@ typedef struct {
 
 class oamlLayer {
 private:
+	bool verbose;
 	oamlFileCallbacks *fcbs;
 
 	ByteBuffer buffer;
@@ -56,7 +57,7 @@ private:
 	int Read32(unsigned int pos);
 
 public:
-	oamlLayer(std::string _filename, std::string _layer, oamlLayerInfo *_info, oamlFileCallbacks *cbs);
+	oamlLayer(std::string _filename, std::string _layer, oamlLayerInfo *_info, oamlFileCallbacks *cbs, bool _verbose);
 	~oamlLayer();
 
 	void SetFilename(std::string layerFilename) { filename = layerFilename; }

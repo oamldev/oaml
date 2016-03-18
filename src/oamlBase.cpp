@@ -456,10 +456,7 @@ bool oamlBase::IsPlaying() {
 void oamlBase::StopPlaying() {
 	if (verbose) __oamlLog("%s\n", __FUNCTION__);
 	for (size_t i=0; i<musicTracks.size(); i++) {
-		if (musicTracks[i]->IsPlaying()) {
-			musicTracks[i]->Stop();
-			break;
-		}
+		musicTracks[i]->Stop();
 	}
 }
 

@@ -27,11 +27,12 @@
 #include "oamlCommon.h"
 
 
-oamlLayer::oamlLayer(std::string _filename, std::string _layer, oamlLayerInfo *_info, oamlFileCallbacks *cbs) {
+oamlLayer::oamlLayer(std::string _filename, std::string _layer, oamlLayerInfo *_info, oamlFileCallbacks *cbs, bool _verbose) {
 	filename = _filename;
 	layer = _layer;
 	info = _info;
 	fcbs = cbs;
+	verbose = _verbose;
 
 	handle = NULL;
 
@@ -75,7 +76,7 @@ oamlRC oamlLayer::OpenFile() {
 }
 
 oamlRC oamlLayer::Open() {
-	__oamlLog("%s %s\n", __FUNCTION__, GetFilenameStr());
+	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, GetFilenameStr());
 	if (buffer.size() == 0) {
 		oamlRC rc = OpenFile();
 		if (rc != OAML_OK) return rc;
