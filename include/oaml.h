@@ -76,6 +76,7 @@ typedef int bool;
 #endif
 
 oamlRC oamlInit(const char *defsFilename);
+oamlRC oamlReadDefsFile(const char *defsFilename);
 oamlRC oamlInitString(const char *defs);
 void oamlSetAudioFormat(int sampleRate, int channels, int bytesPerSample, bool floatBuffer);
 oamlRC oamlPlayTrack(const char *name);
@@ -175,6 +176,11 @@ public:
 	 *  @return returns 0, or -1 on error
 	 */
 	oamlRC Init(const char *defsFilename);
+
+	/** Read Open Adaptive Music Library definition file
+	 *  @return returns 0, or -1 on error
+	 */
+	oamlRC ReadDefsFile(const char *defsFilename);
 
 	/** Initilize the Open Adaptive Music Library with xml definitions on value defs
 	 *  @return returns 0, or -1 on error

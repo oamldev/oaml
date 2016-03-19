@@ -238,15 +238,24 @@ void oamlBase::ReadInternalDefs(const char *filename) {
 }
 
 oamlRC oamlBase::Init(const char *defsFilename) {
-	ByteBuffer buf;
-	void *fd;
-
 	ASSERT(defsFilename != NULL);
 
 	// In case we're being re-initialized clear previous tracks
 	Clear();
 
 	ReadInternalDefs("oamlInternal.defs");
+
+	
+	oamlRC ret = ReadDefsFile(defsFilename);
+
+	return ret;
+}
+
+oamlRC oamlBase::ReadDefsFile(const char *defsFilename) {
+	ByteBuffer buf;
+	void *fd;
+
+	ASSERT(defsFilename != NULL);
 
 	if (verbose) __oamlLog("%s: %s\n", __FUNCTION__, defsFilename);
 

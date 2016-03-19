@@ -86,6 +86,7 @@ public:
 	~oamlBase();
 
 	oamlRC Init(const char *defsFilename);
+	oamlRC ReadDefsFile(const char *defsFilename);
 	oamlRC InitString(const char *defs);
 	void Shutdown();
 
