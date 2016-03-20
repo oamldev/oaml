@@ -38,6 +38,10 @@ oamlRC oamlApi::Init(const char *defsFilename) {
 	return oaml->Init(defsFilename);
 }
 
+oamlRC oamlApi::ReadDefsFile(const char *defsFilename) {
+	return oaml->ReadDefsFile(defsFilename);
+}
+
 oamlRC oamlApi::InitString(const char *defs) {
 	return oaml->InitString(defs);
 }

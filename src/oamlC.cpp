@@ -34,6 +34,10 @@ oamlRC oamlInit(const char *defsFilename) {
 	return oaml.Init(defsFilename);
 }
 
+oamlRC oamlReadDefsFile(const char *defsFilename) {
+	return oaml.ReadDefsFile(defsFilename);
+}
+
 oamlRC oamlInitString(const char *defs) {
 	return oaml.InitString(defs);
 }

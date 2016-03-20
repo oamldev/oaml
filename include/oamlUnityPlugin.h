@@ -25,6 +25,7 @@
 
 extern "C" {
 	DLLEXPORT int oamlInit(const char *defsFilename);
+	DLLEXPORT int oamlReadDefsFile(const char *defsFilename);
 	DLLEXPORT int oamlInitString(const char *defs);
 	DLLEXPORT void oamlShutdown();
 	DLLEXPORT void oamlSetAudioFormat(int freq, int channels, int bytesPerSample);
