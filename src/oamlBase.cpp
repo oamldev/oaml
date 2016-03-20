@@ -117,8 +117,8 @@ oamlRC oamlBase::ReadDefs(const char *buf, int size) {
 		tinyxml2::XMLElement *trackEl = el->FirstChildElement();
 		while (trackEl != NULL) {
 			if (strcmp(trackEl->Name(), "name") == 0) track->SetName(trackEl->GetText());
-			else if (strcmp(trackEl->Name(), "group") == 0) track->SetGroup(trackEl->GetText());
-			else if (strcmp(trackEl->Name(), "subgroup") == 0) track->SetSubgroup(trackEl->GetText());
+			else if (strcmp(trackEl->Name(), "group") == 0) track->AddGroup(trackEl->GetText());
+			else if (strcmp(trackEl->Name(), "subgroup") == 0) track->AddSubgroup(trackEl->GetText());
 			else if (strcmp(trackEl->Name(), "fadeIn") == 0) track->SetFadeIn(strtol(trackEl->GetText(), NULL, 0));
 			else if (strcmp(trackEl->Name(), "fadeOut") == 0) track->SetFadeOut(strtol(trackEl->GetText(), NULL, 0));
 			else if (strcmp(trackEl->Name(), "xfadeIn") == 0) track->SetXFadeIn(strtol(trackEl->GetText(), NULL, 0));
@@ -190,8 +190,8 @@ oamlRC oamlBase::ReadDefs(const char *buf, int size) {
 		tinfo.name = track->GetName();
 		tinfo.musicTrack = track->IsMusicTrack();
 		tinfo.sfxTrack = track->IsSfxTrack();
-		tinfo.group = track->GetGroup();
-		tinfo.subgroup = track->GetSubgroup();
+		tinfo.groups = track->GetGroups();
+		tinfo.subgroups = track->GetSubgroups();
 		tinfo.fadeIn = track->GetFadeIn();
 		tinfo.fadeOut = track->GetFadeOut();
 		tinfo.xfadeIn = track->GetXFadeIn();
@@ -399,7 +399,7 @@ oamlRC oamlBase::PlayTrackByGroupRandom(const char *group) {
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, group);
 
 	for (size_t i=0; i<musicTracks.size(); i++) {
-		if (musicTracks[i]->GetGroup().compare(group) == 0) {
+		if (musicTracks[i]->HasGroup(std::string(group))) {
 			list.push_back(i);
 		}
 	}
@@ -421,7 +421,7 @@ oamlRC oamlBase::PlayTrackByGroupAndSubgroupRandom(const char *group, const char
 	if (verbose) __oamlLog("%s %s %s\n", __FUNCTION__, group, subgroup);
 
 	for (size_t i=0; i<musicTracks.size(); i++) {
-		if (musicTracks[i]->GetGroup().compare(group) == 0 && musicTracks[i]->GetSubgroup().compare(subgroup) == 0) {
+		if (musicTracks[i]->HasGroup(std::string(group)) && musicTracks[i]->HasSubgroup(std::string(subgroup))) {
 			list.push_back(i);
 		}
 	}

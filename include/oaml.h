@@ -24,6 +24,7 @@
 #define __OAML_H__
 
 #include <stddef.h>
+#include <algorithm>
 
 //
 // Definitions
@@ -133,8 +134,8 @@ typedef struct {
 
 typedef struct {
 	std::string name;
-	std::string group;
-	std::string subgroup;
+	std::vector<std::string> groups;
+	std::vector<std::string> subgroups;
 	bool musicTrack;
 	bool sfxTrack;
 	int fadeIn;
