@@ -12,6 +12,7 @@ oamlInternal.defs
 /build*/libAudioPluginOAML*
 /build*/liboaml*
 install_manifest.txt
+include/GitSHA1.h
 
 vs/*.userprefs
 vs/*.csproj
