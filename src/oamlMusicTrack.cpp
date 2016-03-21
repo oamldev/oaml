@@ -192,10 +192,6 @@ oamlRC oamlMusicTrack::Play() {
 	return OAML_OK;
 }
 
-void oamlMusicTrack::ShowInfo() {
-	printf("%s %lu %lu %lu\n", GetNameStr(), loopAudios.size(), randAudios.size(), condAudios.size());
-}
-
 oamlAudio* oamlMusicTrack::PickNextAudio() {
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, GetNameStr());
 

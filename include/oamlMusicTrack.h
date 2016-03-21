@@ -62,7 +62,6 @@ public:
 
 	bool IsPlaying();
 	void ShowPlaying();
-	void ShowInfo();
 	std::string GetPlayingInfo();
 
 	void Mix(float *samples, int channels, bool debugClipping);

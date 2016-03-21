@@ -84,7 +84,6 @@ public:
 
 	virtual bool IsPlaying() { return false; }
 	void ShowPlaying();
-	virtual void ShowInfo() { }
 	virtual std::string GetPlayingInfo() { return ""; }
 
 	virtual void Mix(float *, int, bool) { }

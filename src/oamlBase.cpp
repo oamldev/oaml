@@ -202,7 +202,6 @@ oamlRC oamlBase::ReadDefs(const char *buf, int size) {
 		} else {
 			sfxTracks.push_back(track);
 		}
-//		track->ShowInfo();
 
 		el = el->NextSiblingElement();
 	}
@@ -240,15 +239,14 @@ void oamlBase::ReadInternalDefs(const char *filename) {
 oamlRC oamlBase::Init(const char *defsFilename) {
 	ASSERT(defsFilename != NULL);
 
+	if (verbose) __oamlLog("%s: %s\n", __FUNCTION__, defsFilename);
+
 	// In case we're being re-initialized clear previous tracks
 	Clear();
 
 	ReadInternalDefs("oamlInternal.defs");
 
-	
-	oamlRC ret = ReadDefsFile(defsFilename);
-
-	return ret;
+	return ReadDefsFile(defsFilename);
 }
 
 oamlRC oamlBase::ReadDefsFile(const char *defsFilename) {
@@ -284,6 +282,8 @@ oamlRC oamlBase::ReadDefsFile(const char *defsFilename) {
 
 oamlRC oamlBase::InitString(const char *defs) {
 	ASSERT(defs != NULL);
+
+	if (verbose) __oamlLog("%s\n", __FUNCTION__);
 
 	// In case we're being re-initialized clear previous tracks
 	Clear();

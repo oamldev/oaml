@@ -98,9 +98,6 @@ bool oamlSfxTrack::IsPlaying() {
 	return false;
 }
 
-void oamlSfxTrack::ShowInfo() {
-}
-
 std::string oamlSfxTrack::GetPlayingInfo() {
 	std::string info = "";
 
