@@ -31,8 +31,8 @@ protected:
 	bool verbose;
 
 	std::string name;
-	std::string group;
-	std::string subgroup;
+	std::vector<std::string> groups;
+	std::vector<std::string> subgroups;
 
 	int lock;
 	int fadeIn;
@@ -55,8 +55,8 @@ public:
 	virtual ~oamlTrack();
 
 	void SetName(std::string trackName) { name = trackName; }
-	void SetGroup(std::string trackGroup) { group = trackGroup; }
-	void SetSubgroup(std::string trackSubgroup) { subgroup = trackSubgroup; }
+	void AddGroup(std::string trackGroup) { groups.push_back(trackGroup); }
+	void AddSubgroup(std::string trackSubgroup) { subgroups.push_back(trackSubgroup); }
 	void SetFadeIn(int trackFadeIn) { fadeIn = trackFadeIn; }
 	void SetFadeOut(int trackFadeOut) { fadeOut = trackFadeOut; }
 	void SetXFadeIn(int trackXFadeIn) { xfadeIn = trackXFadeIn; }
@@ -65,8 +65,10 @@ public:
 
 	const char *GetNameStr() const { return name.c_str(); }
 	std::string GetName() const { return name; }
-	std::string GetGroup() const { return group; }
-	std::string GetSubgroup() const { return subgroup; }
+	std::vector<std::string> GetGroups() const { return groups; }
+	std::vector<std::string> GetSubgroups() const { return subgroups; }
+	bool HasGroup(std::string trackGroup) const { return std::find(groups.begin(), groups.end(), trackGroup) != groups.end(); }
+	bool HasSubgroup(std::string trackSubgroup) const { return std::find(subgroups.begin(), subgroups.end(), trackSubgroup) != subgroups.end(); }
 	int GetFadeIn() const { return fadeIn; }
 	int GetFadeOut() const { return fadeOut; }
 	int GetXFadeIn() const { return xfadeIn; }
