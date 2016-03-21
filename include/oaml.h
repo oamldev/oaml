@@ -24,7 +24,6 @@
 #define __OAML_H__
 
 #include <stddef.h>
-#include <algorithm>
 
 //
 // Definitions
@@ -111,11 +110,17 @@ void oamlShutdown();
 
 #else
 
+#include <algorithm>
 #include <string>
 #include <vector>
 
 typedef struct {
 	std::string filename;
+	std::string name;
+	int randomChance;
+} oamlLayerInfo;
+
+typedef struct {
 	int type;
 	float bpm;
 	int beatsPerBar;
@@ -130,6 +135,7 @@ typedef struct {
 	int condType;
 	int condValue;
 	int condValue2;
+	std::vector<oamlLayerInfo> layers;
 } oamlAudioInfo;
 
 typedef struct {
@@ -247,9 +253,6 @@ public:
 	/** Check if any track is playing */
 	bool IsPlaying();
 
-	/** Returns a pointer to the tracks information */
-	oamlTracksInfo *GetTracksInfo();
-
 	/** Add tension that triggers different aspects of the music */
 	void AddTension(int value);
 
@@ -286,6 +289,12 @@ public:
 
 	/** Returns a simple text showing the track and audios being played */
 	const char* GetPlayingInfo();
+
+	/** TracksInfo must be enabled before loading definitions file to store oamlTracksInfo data */
+	void EnableTracksInfo(bool option);
+
+	/** Returns a pointer to the tracks information */
+	oamlTracksInfo *GetTracksInfo();
 };
 
 #endif

@@ -30,7 +30,7 @@ typedef struct {
 	std::string name;
 	int randomChance;
 	float gain;
-} oamlLayerInfo;
+} oamlLayerData;
 
 class oamlLayer {
 private:
@@ -39,7 +39,7 @@ private:
 
 	ByteBuffer buffer;
 	audioFile *handle;
-	oamlLayerInfo *info;
+	oamlLayerData *info;
 	std::string filename;
 	std::string layer;
 
@@ -58,7 +58,7 @@ private:
 	int Read32(unsigned int pos);
 
 public:
-	oamlLayer(std::string _filename, std::string _layer, oamlLayerInfo *_info, oamlFileCallbacks *cbs, bool _verbose);
+	oamlLayer(std::string _filename, std::string _layer, oamlLayerData *_info, oamlFileCallbacks *cbs, bool _verbose);
 	~oamlLayer();
 
 	void SetFilename(std::string layerFilename) { filename = layerFilename; }

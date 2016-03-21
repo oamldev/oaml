@@ -24,7 +24,7 @@
 #define __OAMLBASE_H__
 
 
-void __Log(const char* fmt, ...);
+#include "tinyxml2.h"
 
 
 class oamlBase {
@@ -32,6 +32,7 @@ private:
 	std::string defsFile;
 	std::string playingInfo;
 
+	bool enableTracksInfo;
 	bool verbose;
 	bool debugClipping;
 	bool writeAudioAtShutdown;
@@ -39,7 +40,7 @@ private:
 
 	std::vector<oamlTrack*> musicTracks;
 	std::vector<oamlTrack*> sfxTracks;
-	std::vector<oamlLayerInfo*> layers;
+	std::vector<oamlLayerData*> layers;
 
 	oamlTrack *curTrack;
 
@@ -69,6 +70,8 @@ private:
 	bool IsTrackPlayingId(int id);
 
 	void ShowPlayingTracks();
+	oamlRC ReadAudioDefs(tinyxml2::XMLElement *el, oamlTrack *track, oamlTrackInfo *tinfo);
+	oamlRC ReadTrackDefs(tinyxml2::XMLElement *el);
 	oamlRC ReadDefs(const char *buf, int size);
 	void ReadInternalDefs(const char *filaname);
 
@@ -79,7 +82,7 @@ private:
 
 	void AddLayer(const char *layer);
 	int GetLayerId(const char *layer);
-	oamlLayerInfo *GetLayer(const char *layer);
+	oamlLayerData *GetLayer(const char *layer);
 
 public:
 	oamlBase();
@@ -137,6 +140,7 @@ public:
 
 	void EnableDynamicCompressor(bool enable, double thresholdDb, double ratio);
 
+	void EnableTracksInfo(bool option);
 	oamlTracksInfo *GetTracksInfo();
 
 	const char* GetDefsFile();

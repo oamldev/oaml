@@ -27,7 +27,7 @@
 #include "oamlCommon.h"
 
 
-oamlLayer::oamlLayer(std::string _filename, std::string _layer, oamlLayerInfo *_info, oamlFileCallbacks *cbs, bool _verbose) {
+oamlLayer::oamlLayer(std::string _filename, std::string _layer, oamlLayerData *_info, oamlFileCallbacks *cbs, bool _verbose) {
 	filename = _filename;
 	layer = _layer;
 	info = _info;

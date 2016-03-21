@@ -235,7 +235,7 @@ float oamlAudio::ReadFloat(unsigned int pos) {
 	return sample;
 }
 
-void oamlAudio::SetFilename(std::string audioFilename, std::string layer, oamlLayerInfo *info) {
+void oamlAudio::SetFilename(std::string audioFilename, std::string layer, oamlLayerData *info) {
 	layers.push_back(oamlLayer(audioFilename, layer, info, fcbs, verbose));
 
 	filename = audioFilename;
