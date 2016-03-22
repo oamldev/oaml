@@ -3,6 +3,15 @@ project(msnake)
 
 set(CMAKE_C_FLAGS "-Wall")
 
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+	add_definitions(-DDEBUG)
+	message("Debug mode: Yes (Disable by param -DCMAKE_BUILD_TYPE=Release)")
+else()
+	message("Debug mode: No (Enable by param -DCMAKE_BUILD_TYPE=Debug)")
+endif()
+
 set(CURSES_NEED_NCURSES TRUE)
 find_package(Curses)
 

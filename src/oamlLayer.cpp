@@ -46,6 +46,10 @@ oamlLayer::oamlLayer(std::string _filename, std::string _layer, oamlLayerData *_
 }
 
 oamlLayer::~oamlLayer() {
+	if (handle) {
+		delete handle;
+		handle = NULL;
+	}
 }
 
 oamlRC oamlLayer::OpenFile() {

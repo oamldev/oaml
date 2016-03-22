@@ -853,6 +853,13 @@ void oamlBase::Clear() {
 		delete track;
 	}
 
+	while (sfxTracks.empty() == false) {
+		oamlTrack *track = sfxTracks.back();
+		sfxTracks.pop_back();
+
+		delete track;
+	}
+
 	for (size_t i=0; i<tracksInfo.tracks.size(); i++) {
 		tracksInfo.tracks[i].audios.clear();
 	}

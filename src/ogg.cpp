@@ -141,6 +141,7 @@ void oggFile::WriteToFile(const char *, ByteBuffer *, int, unsigned int, int) {
 void oggFile::Close() {
 	if (vf != NULL) {
 		OggVorbis_File *ovf = (OggVorbis_File *)vf;
+		ov_clear(ovf);
 		delete ovf;
 		vf = NULL;
 	}
