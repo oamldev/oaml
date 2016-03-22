@@ -802,10 +802,6 @@ void oamlBase::Update() {
 
 		timeMs = ms;
 	}
-
-/*	if (buffer <= 4096) {
-		track->Read(buffer);
-	}*/
 }
 
 void oamlBase::SetFileCallbacks(oamlFileCallbacks *cbs) {
@@ -866,7 +862,8 @@ void oamlBase::Clear() {
 }
 
 void oamlBase::Shutdown() {
-//	printf("%s\n", __FUNCTION__);
+	if (verbose) __oamlLog("%s\n", __FUNCTION__);
+
 	Clear();
 
 	if (writeAudioAtShutdown && fullBuffer) {

@@ -84,6 +84,7 @@ oamlRC oamlLayer::Open() {
 	if (info && info->randomChance != 100) {
 		chance = __oamlRandom(0, 100) > info->randomChance;
 	} else {
+		lastChance = true;
 		chance = true;
 	}
 
