@@ -52,6 +52,8 @@ public:
 	void Mix(float *samples, int channels, bool debugClipping);
 
 	bool IsSfxTrack() const { return true; }
+
+	void FreeMemory();
 };
 
 #endif

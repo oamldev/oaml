@@ -163,3 +163,17 @@ float oamlLayer::ReadFloat(unsigned int pos, bool isTail) {
 	}
 	return sample;
 }
+
+void oamlLayer::FreeMemory() {
+	if (buffer.size() > 0 || handle != NULL) {
+		if (verbose) __oamlLog("%s %s\n", __FUNCTION__, GetFilenameStr());
+	}
+
+	buffer.clear();
+	buffer.free();
+
+	if (handle) {
+		delete handle;
+		handle = NULL;
+	}
+}

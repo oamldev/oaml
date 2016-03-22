@@ -287,6 +287,9 @@ void oamlMusicTrack::XFadePlay() {
 }
 
 void oamlMusicTrack::Mix(float *samples, int channels, bool debugClipping) {
+	if (curAudio == NULL && tailAudio == NULL && fadeAudio == NULL)
+		return;
+
 	lock++;
 
 	if (curAudio) {
@@ -319,6 +322,10 @@ void oamlMusicTrack::Mix(float *samples, int channels, bool debugClipping) {
 		if (playCondSamples == 0) {
 			PlayCond(playCondAudio);
 		}
+	}
+
+	if (curAudio == NULL && tailAudio == NULL && fadeAudio == NULL) {
+		FreeMemory();
 	}
 
 	lock--;
@@ -366,6 +373,10 @@ void oamlMusicTrack::Stop() {
 
 	tailAudio = NULL;
 	playing = false;
+
+	if (curAudio == NULL && tailAudio == NULL && fadeAudio == NULL) {
+		FreeMemory();
+	}
 }
 
 oamlRC oamlMusicTrack::Load() {
@@ -378,3 +389,9 @@ oamlRC oamlMusicTrack::Load() {
 	return OAML_OK;
 }
 
+void oamlMusicTrack::FreeMemory() {
+	FreeAudiosMemory(&introAudios);
+	FreeAudiosMemory(&loopAudios);
+	FreeAudiosMemory(&randAudios);
+	FreeAudiosMemory(&condAudios);
+}

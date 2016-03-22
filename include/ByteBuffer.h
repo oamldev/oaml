@@ -68,6 +68,7 @@ public:
 
 	uint32_t bytesRemaining(); // Number of uint8_ts from the current read position till the end of the buffer
 	void clear(); // Clear our the vector and reset read and write positions
+	void free();
 	ByteBuffer* clone(); // Return a new instance of a ByteBuffer with the exact same contents and the same state (rpos, wpos)
 	bool equals(ByteBuffer* other); // Compare if the contents are equivalent
 	void resize(uint32_t newSize);

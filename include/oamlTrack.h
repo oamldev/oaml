@@ -49,6 +49,7 @@ protected:
 	unsigned int MixAudio(oamlAudio *audio, float *samples, int channels, bool debug, unsigned int pos);
 
 	void ClearAudios(std::vector<oamlAudio*> *audios);
+	void FreeAudiosMemory(std::vector<oamlAudio*> *audios);
 
 public:
 	oamlTrack();
@@ -92,6 +93,8 @@ public:
 
 	virtual bool IsMusicTrack() const { return false; }
 	virtual bool IsSfxTrack() const { return false; }
+
+	virtual void FreeMemory() { }
 };
 
 #endif

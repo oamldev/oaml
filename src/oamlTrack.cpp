@@ -50,6 +50,13 @@ void oamlTrack::ClearAudios(std::vector<oamlAudio*> *audios) {
 	}
 }
 
+void oamlTrack::FreeAudiosMemory(std::vector<oamlAudio*> *audios) {
+	for (std::vector<oamlAudio*>::iterator it=audios->begin(); it<audios->end(); ++it) {
+		oamlAudio *audio = *it;
+		audio->FreeMemory();
+	}
+}
+
 int oamlTrack::Random(int min, int max) {
 	int range = max - min + 1;
 	return rand() % range + min;

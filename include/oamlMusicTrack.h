@@ -69,6 +69,8 @@ public:
 	void SetCondition(int id, int value);
 
 	bool IsMusicTrack() const { return true; }
+
+	void FreeMemory();
 };
 
 #endif

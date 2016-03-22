@@ -295,3 +295,9 @@ unsigned int oamlAudio::ReadSamples(float *samples, int channels, unsigned int p
 
 	return pos;
 }
+
+void oamlAudio::FreeMemory() {
+	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
+		layer->FreeMemory();
+	}
+}

@@ -74,6 +74,8 @@ public:
 	unsigned int GetTotalSamples() const { return totalSamples; }
 	unsigned int GetSamplesPerSec() const { return samplesPerSec; }
 	void SetSamplesToEnd(unsigned int samples) { samplesToEnd = samples; }
+
+	void FreeMemory();
 };
 
 #endif

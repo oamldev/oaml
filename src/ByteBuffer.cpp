@@ -76,6 +76,15 @@ void ByteBuffer::clear() {
 }
 
 /**
+ * Free
+ * Force vector to free memory
+ */
+void ByteBuffer::free() {
+	std::vector<uint8_t> tmp;
+	buf.swap(tmp);
+}
+
+/**
  * Clone
  * Allocate an exact copy of the ByteBuffer on the heap and return a pointer
  *

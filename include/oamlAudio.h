@@ -127,6 +127,8 @@ public:
 
 	void SetPickable(bool value) { pickable = value; }
 	bool IsPickable() const { return pickable; }
+
+	void FreeMemory();
 };
 
 #endif

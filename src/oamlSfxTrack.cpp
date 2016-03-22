@@ -64,6 +64,9 @@ oamlRC oamlSfxTrack::Play(const char *name, float vol, float pan) {
 }
 
 void oamlSfxTrack::Mix(float *samples, int channels, bool debugClipping) {
+	if (playingAudios.size() == 0)
+		return;
+
 	// Prevent Play being called while this function is running
 	lock++;
 
@@ -105,4 +108,8 @@ std::string oamlSfxTrack::GetPlayingInfo() {
 }
 
 void oamlSfxTrack::Stop() {
+}
+
+void oamlSfxTrack::FreeMemory() {
+	FreeAudiosMemory(&sfxAudios);
 }
