@@ -122,6 +122,7 @@ typedef struct {
 
 typedef struct {
 	int type;
+	float volume;
 	float bpm;
 	int beatsPerBar;
 	int bars;

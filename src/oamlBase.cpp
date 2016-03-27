@@ -153,6 +153,7 @@ oamlRC oamlBase::ReadAudioDefs(tinyxml2::XMLElement *el, oamlTrack *track, oamlT
 
 	if (enableTracksInfo) {
 		ainfo.type = audio->GetType();
+		ainfo.volume = audio->GetVolume();
 		ainfo.bars = audio->GetBars();
 		ainfo.bpm = audio->GetBPM();
 		ainfo.beatsPerBar = audio->GetBeatsPerBar();
@@ -206,6 +207,7 @@ oamlRC oamlBase::ReadTrackDefs(tinyxml2::XMLElement *el) {
 
 	if (enableTracksInfo) {
 		tinfo.name = track->GetName();
+		tinfo.volume = track->GetVolume();
 		tinfo.musicTrack = track->IsMusicTrack();
 		tinfo.sfxTrack = track->IsSfxTrack();
 		tinfo.groups = track->GetGroups();
