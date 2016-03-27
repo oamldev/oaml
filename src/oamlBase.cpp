@@ -738,6 +738,9 @@ void oamlBase::AddLayer(const char *layer) {
 }
 
 int oamlBase::GetLayerId(const char *layer) {
+	if (layer == NULL)
+		return -1;
+
 	for (std::vector<oamlLayerData*>::iterator it=layers.begin(); it<layers.end(); ++it) {
 		oamlLayerData *info = *it;
 		if (info->name.compare(layer) == 0) {
@@ -749,6 +752,9 @@ int oamlBase::GetLayerId(const char *layer) {
 }
 
 oamlLayerData* oamlBase::GetLayer(const char *layer) {
+	if (layer == NULL)
+		return NULL;
+
 	for (std::vector<oamlLayerData*>::iterator it=layers.begin(); it<layers.end(); ++it) {
 		oamlLayerData *info = *it;
 		if (info->name.compare(layer) == 0) {

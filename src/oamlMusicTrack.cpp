@@ -339,8 +339,13 @@ std::string oamlMusicTrack::GetPlayingInfo() {
 	char str[1024];
 	std::string info = "";
 
-	if (curAudio == NULL && tailAudio == NULL && fadeAudio == NULL)
+	if (curAudio == NULL && tailAudio == NULL && fadeAudio == NULL) {
+		if (playing == true) {
+			return "Playing track but no available audio, missing condition?";
+		}
+
 		return info;
+	}
 
 	info+= GetName() + ":";
 
