@@ -35,6 +35,7 @@ private:
 	std::string name;
 	int type;
 	int bars;
+	float volume;
 
 	unsigned int samplesCount;
 	unsigned int samplesPerSec;
@@ -69,6 +70,7 @@ public:
 	~oamlAudio();
 
 	void SetType(int audioType) { type = audioType; }
+	void SetVolume(float audioVolume) { volume = audioVolume; }
 	void SetBPM(float audioBpm) { bpm = audioBpm; }
 	void SetBeatsPerBar(int audioBeatsPerBar) { beatsPerBar = audioBeatsPerBar; }
 	void SetMinMovementBars(int audioMinMovementBars) { minMovementBars = audioMinMovementBars; }
@@ -108,6 +110,7 @@ public:
 	std::string GetFilename() const { return filename; }
 	const char *GetFilenameStr() const { return filename.c_str(); }
 	std::string GetName() const { return name; }
+	float GetVolume() const { return volume; }
 	float GetBPM() const { return bpm; }
 	int GetBeatsPerBar() const { return beatsPerBar; }
 	int GetBars() const { return bars; }

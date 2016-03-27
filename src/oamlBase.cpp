@@ -131,6 +131,7 @@ oamlRC oamlBase::ReadAudioDefs(tinyxml2::XMLElement *el, oamlTrack *track, oamlT
 			}
 		} else if (strcmp(audioEl->Name(), "type") == 0) audio->SetType(strtol(audioEl->GetText(), NULL, 0));
 		else if (strcmp(audioEl->Name(), "bars") == 0) audio->SetBars(strtol(audioEl->GetText(), NULL, 0));
+		else if (strcmp(audioEl->Name(), "volume") == 0) audio->SetVolume(float(atof(audioEl->GetText())));
 		else if (strcmp(audioEl->Name(), "bpm") == 0) audio->SetBPM(float(atof(audioEl->GetText())));
 		else if (strcmp(audioEl->Name(), "beatsPerBar") == 0) audio->SetBeatsPerBar(strtol(audioEl->GetText(), NULL, 0));
 		else if (strcmp(audioEl->Name(), "minMovementBars") == 0) audio->SetMinMovementBars(strtol(audioEl->GetText(), NULL, 0));
@@ -356,9 +357,12 @@ oamlRC oamlBase::PlayTrack(const char *name) {
 
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, name);
 
-	for (size_t i=0; i<musicTracks.size(); i++) {
-		if (musicTracks[i]->GetName().compare(name) == 0) {
-			return PlayTrackId(i);
+	for (std::vector<oamlTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
+		oamlTrack *track = *it;
+		if (track->GetName().compare(name) == 0) {
+			if (curTrack) curTrack->Stop();
+			curTrack = track;
+			return curTrack->Play();
 		}
 	}
 
@@ -374,8 +378,9 @@ oamlRC oamlBase::PlaySfxEx(const char *name, float vol, float pan) {
 
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, name);
 
-	for (size_t i=0; i<sfxTracks.size(); i++) {
-		if (sfxTracks[i]->Play(name, vol, pan) == 0) {
+	for (std::vector<oamlTrack*>::iterator it=sfxTracks.begin(); it<sfxTracks.end(); ++it) {
+		oamlTrack *track = *it;
+		if (track->Play(name, vol, pan) == 0) {
 			return OAML_OK;
 		}
 	}
@@ -477,7 +482,7 @@ oamlRC oamlBase::LoadTrack(const char *name) {
 	for (std::vector<oamlTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
 		oamlTrack *track = *it;
 		if (track->GetName().compare(name) == 0) {
-			track->Load();
+			return track->Load();
 		}
 	}
 

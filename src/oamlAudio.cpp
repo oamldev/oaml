@@ -37,6 +37,7 @@ oamlAudio::oamlAudio(oamlFileCallbacks *cbs, bool _verbose) {
 
 	type = 0;
 	bars = 0;
+	volume = 1.f;
 
 	samplesCount = 0;
 	samplesPerSec = 0;
@@ -219,7 +220,7 @@ float oamlAudio::ReadFloat() {
 
 	samplesCount++;
 
-	return sample;
+	return sample * volume;
 }
 
 float oamlAudio::ReadFloat(unsigned int pos) {
@@ -232,7 +233,7 @@ float oamlAudio::ReadFloat(unsigned int pos) {
 		sample+= layer->ReadFloat(pos, true);
 	}
 
-	return sample;
+	return sample * volume;
 }
 
 void oamlAudio::SetFilename(std::string audioFilename, std::string layer, oamlLayerData *info) {
