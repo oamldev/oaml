@@ -104,4 +104,4 @@ For now since resampling is not implemented in OAML you need to export the music
 
 ### About
 
-Copyright (c) 2015-2016 Marcelo Fernandez <marcelofg55@gmail.com>
+Copyright (c) 2015-2016 Marcelo Fernandez <marcelo@marcelofernandezmusic.com>
