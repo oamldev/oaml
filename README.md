@@ -8,11 +8,10 @@ OAML is a library the makes it easy to implement adaptive music in games.
 OAML uses short music loops to make music less linear and more interactive with the player.
 It's usual in games that music is only used as a background and that it doesn't react to what is happening in the game, with OAML this changes and music can react based on what's going on in the game.
 
-In OAML there are four basic types of short loops:
+In OAML there are three basic types of short loops:
 - Intro loops, played when the track starts.
 - Main loops, this is what OAML will keep playing when there is no condition triggered.
 - Conditional loops, these loops are defined by a condition, based on the data provided for the condition (id, type and values) OAML will play them when these conditions meet, for example, when enemies are engaged a condition can be triggered and music will play loops that get more intense.
-- Ending loops, played when the track ends.
 
 Note that a track is only required to have one main loop at least, all the other loops are optional.
 
