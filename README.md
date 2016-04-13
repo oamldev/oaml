@@ -91,7 +91,7 @@ For now since resampling is not implemented in OAML you need to export the music
 ### Notes
 
 - If you're using OAML on your project or you're interested to do so and need some help contact me.
-- Got any question? Join #oaml at chat.freenode.org.
+- Got any question? Write me an email to <marcelo@marcelofernandezmusic.com>.
 
 
 ### TODO
