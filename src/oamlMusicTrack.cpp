@@ -42,8 +42,6 @@ oamlMusicTrack::oamlMusicTrack(bool _verbose) {
 
 	tailPos = 0;
 
-	endAudio = NULL;
-
 	curAudio = NULL;
 	tailAudio = NULL;
 	fadeAudio = NULL;
@@ -61,8 +59,6 @@ void oamlMusicTrack::AddAudio(oamlAudio *audio) {
 
 	if (audio->GetType() == 1) {
 		introAudios.push_back(audio);
-	} else if (audio->GetType() == 3) {
-		endAudio = audio;
 	} else if (audio->GetType() == 4) {
 		condAudios.push_back(audio);
 	} else if (audio->GetRandomChance() > 0) {
