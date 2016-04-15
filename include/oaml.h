@@ -98,6 +98,7 @@ void oamlSetCondition(int id, int value);
 void oamlSetVolume(float vol);
 float oamlGetVolume();
 void oamlAddTension(int value);
+void oamlSetTension(int value);
 void oamlSetMainLoopCondition(int value);
 void oamlUpdate();
 void SetDebugClipping(bool option);
@@ -256,6 +257,9 @@ public:
 
 	/** Add tension that triggers different aspects of the music */
 	void AddTension(int value);
+
+	/** Set tension that triggers different aspects of the music */
+	void SetTension(int value);
 
 	/** Sets a condition that affects the main loop */
 	void SetMainLoopCondition(int value);

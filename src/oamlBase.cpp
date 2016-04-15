@@ -70,6 +70,7 @@ oamlBase::oamlBase() {
 	debugClipping = false;
 	writeAudioAtShutdown = false;
 	useCompressor = false;
+	updateTension = false;
 
 	curTrack = NULL;
 
@@ -722,6 +723,14 @@ void oamlBase::AddTension(int value) {
 	if (tension >= 100) {
 		tension = 100;
 	}
+
+	updateTension = true;
+}
+
+void oamlBase::SetTension(int value) {
+	tension = value;
+
+	updateTension = false;
 }
 
 void oamlBase::SetMainLoopCondition(int value) {
@@ -783,6 +792,31 @@ void oamlBase::SetLayerRandomChance(const char *layer, int randomChance) {
 	info->randomChance = randomChance;
 }
 
+void oamlBase::UpdateTension(uint64_t ms) {
+//	printf("%s %d %lld %d\n", __FUNCTION__, tension, tensionMs - ms, ms >= (tensionMs + 5000));
+	// Don't allow sudden changes of tension after it changed back to 0
+	if (tension > 0) {
+		SetCondition(OAML_CONDID_TENSION, tension);
+		tensionMs = ms;
+	} else {
+		if (ms >= (tensionMs + 5000)) {
+			SetCondition(OAML_CONDID_TENSION, tension);
+			tensionMs = ms;
+		}
+	}
+
+	// Lower tension
+	if (tension >= 1) {
+		if (tension >= 2) {
+			tension-= (tension+20)/10;
+			if (tension < 0)
+				tension = 0;
+		} else {
+			tension--;
+		}
+	}
+}
+
 void oamlBase::Update() {
 	uint64_t ms = GetTimeMs64();
 
@@ -790,27 +824,8 @@ void oamlBase::Update() {
 	if (ms >= (timeMs + 1000)) {
 		if (verbose) ShowPlayingTracks();
 
-//		printf("%s %d %lld %d\n", __FUNCTION__, tension, tensionMs - ms, ms >= (tensionMs + 5000));
-		// Don't allow sudden changes of tension after it changed back to 0
-		if (tension > 0) {
-			SetCondition(OAML_CONDID_TENSION, tension);
-			tensionMs = ms;
-		} else {
-			if (ms >= (tensionMs + 5000)) {
-				SetCondition(OAML_CONDID_TENSION, tension);
-				tensionMs = ms;
-			}
-		}
-
-		// Lower tension
-		if (tension >= 1) {
-			if (tension >= 2) {
-				tension-= (tension+20)/10;
-				if (tension < 0)
-					tension = 0;
-			} else {
-				tension--;
-			}
+		if (updateTension) {
+			UpdateTension(ms);
 		}
 
 		timeMs = ms;

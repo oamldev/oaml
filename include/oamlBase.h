@@ -37,6 +37,7 @@ private:
 	bool debugClipping;
 	bool writeAudioAtShutdown;
 	bool useCompressor;
+	bool updateTension;
 
 	std::vector<oamlTrack*> musicTracks;
 	std::vector<oamlTrack*> sfxTracks;
@@ -84,6 +85,8 @@ private:
 	int GetLayerId(const char *layer);
 	oamlLayerData *GetLayer(const char *layer);
 
+	void UpdateTension(uint64_t ms);
+
 public:
 	oamlBase();
 	~oamlBase();
@@ -122,6 +125,7 @@ public:
 	bool IsPlaying();
 
 	void AddTension(int value);
+	void SetTension(int value);
 
 	void SetMainLoopCondition(int value);
 
