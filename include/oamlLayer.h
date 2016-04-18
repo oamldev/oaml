@@ -65,6 +65,8 @@ public:
 
 	std::string GetFilename() const { return filename; }
 	const char *GetFilenameStr() const { return filename.c_str(); }
+	std::string GetName() const { return layer; }
+	int GetRandomChance() { if (info) { return info->randomChance; } else { return 100; } }
 
 	oamlRC Open();
 	oamlRC Load();

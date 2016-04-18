@@ -129,3 +129,26 @@ unsigned int oamlTrack::MixAudio(oamlAudio *audio, float *samples, int channels,
 
 	return pos;
 }
+
+void oamlTrack::ReadInfo(oamlTrackInfo *info) {
+	info->name = GetName();
+	info->volume = GetVolume();
+	info->musicTrack = IsMusicTrack();
+	info->sfxTrack = IsSfxTrack();
+	info->groups = GetGroups();
+	info->subgroups = GetSubgroups();
+	info->fadeIn = GetFadeIn();
+	info->fadeOut = GetFadeOut();
+	info->xfadeIn = GetXFadeIn();
+	info->xfadeOut = GetXFadeOut();
+}
+
+void oamlTrack::ReadAudiosInfo(std::vector<oamlAudio*> *audios, oamlTrackInfo *info) {
+	for (std::vector<oamlAudio*>::iterator it=audios->begin(); it<audios->end(); ++it) {
+		oamlAudio *audio = *it;
+
+		oamlAudioInfo ainfo;
+		audio->ReadInfo(&ainfo);
+		info->audios.push_back(ainfo);
+	}
+}

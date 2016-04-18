@@ -390,6 +390,15 @@ oamlRC oamlMusicTrack::Load() {
 	return OAML_OK;
 }
 
+void oamlMusicTrack::ReadInfo(oamlTrackInfo *info) {
+	oamlTrack::ReadInfo(info);
+
+	ReadAudiosInfo(&introAudios, info);
+	ReadAudiosInfo(&loopAudios, info);
+	ReadAudiosInfo(&randAudios, info);
+	ReadAudiosInfo(&condAudios, info);
+}
+
 void oamlMusicTrack::FreeMemory() {
 	FreeAudiosMemory(&introAudios);
 	FreeAudiosMemory(&loopAudios);

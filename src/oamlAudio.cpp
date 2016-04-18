@@ -302,3 +302,33 @@ void oamlAudio::FreeMemory() {
 		layer->FreeMemory();
 	}
 }
+
+void oamlAudio::ReadInfo(oamlAudioInfo *info) {
+	info->type = GetType();
+	info->volume = GetVolume();
+	info->bars = GetBars();
+	info->bpm = GetBPM();
+	info->beatsPerBar = GetBeatsPerBar();
+	info->minMovementBars = GetMinMovementBars();
+	info->randomChance = GetRandomChance();
+	info->fadeIn = GetFadeIn();
+	info->fadeOut = GetFadeOut();
+	info->xfadeIn = GetXFadeIn();
+	info->xfadeOut = GetXFadeOut();
+	info->condId = GetCondId();
+	info->condType = GetCondType();
+	info->condValue = GetCondValue();
+	info->condValue2 = GetCondValue2();
+
+	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
+		oamlLayerInfo linfo;
+
+		linfo.filename = layer->GetFilename();
+		linfo.name = layer->GetName();
+		linfo.randomChance = layer->GetRandomChance();
+
+		info->layers.push_back(linfo);
+	}
+}
+
+

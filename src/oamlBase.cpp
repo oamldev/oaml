@@ -65,7 +65,6 @@ static oamlFileCallbacks defCbs = {
 oamlBase::oamlBase() {
 	defsFile = "";
 
-	enableTracksInfo = false;
 	verbose = false;
 	debugClipping = false;
 	writeAudioAtShutdown = false;
@@ -97,8 +96,7 @@ oamlBase::~oamlBase() {
 	}
 }
 
-oamlRC oamlBase::ReadAudioDefs(tinyxml2::XMLElement *el, oamlTrack *track, oamlTrackInfo *tinfo) {
-	oamlAudioInfo ainfo;
+oamlRC oamlBase::ReadAudioDefs(tinyxml2::XMLElement *el, oamlTrack *track) {
 	oamlAudio *audio = new oamlAudio(fcbs, verbose);
 
 	tinyxml2::XMLElement *audioEl = el->FirstChildElement();
@@ -114,21 +112,6 @@ oamlRC oamlBase::ReadAudioDefs(tinyxml2::XMLElement *el, oamlTrack *track, oamlT
 				audio->SetFilename(audioEl->GetText(), layer, GetLayer(layer));
 			} else {
 				audio->SetFilename(audioEl->GetText(), "", NULL);
-			}
-
-			if (enableTracksInfo) {
-				oamlLayerInfo linfo;
-
-				linfo.filename = audioEl->GetText();
-				oamlLayerData *data = GetLayer(layer);
-				if (data) {
-					linfo.name = data->name;
-					linfo.randomChance = data->randomChance;
-				} else {
-					linfo.name = "";
-				}
-
-				ainfo.layers.push_back(linfo);
 			}
 		} else if (strcmp(audioEl->Name(), "type") == 0) audio->SetType(strtol(audioEl->GetText(), NULL, 0));
 		else if (strcmp(audioEl->Name(), "bars") == 0) audio->SetBars(strtol(audioEl->GetText(), NULL, 0));
@@ -152,31 +135,11 @@ oamlRC oamlBase::ReadAudioDefs(tinyxml2::XMLElement *el, oamlTrack *track, oamlT
 		audioEl = audioEl->NextSiblingElement();
 	}
 
-	if (enableTracksInfo) {
-		ainfo.type = audio->GetType();
-		ainfo.volume = audio->GetVolume();
-		ainfo.bars = audio->GetBars();
-		ainfo.bpm = audio->GetBPM();
-		ainfo.beatsPerBar = audio->GetBeatsPerBar();
-		ainfo.minMovementBars = audio->GetMinMovementBars();
-		ainfo.randomChance = audio->GetRandomChance();
-		ainfo.fadeIn = audio->GetFadeIn();
-		ainfo.fadeOut = audio->GetFadeOut();
-		ainfo.xfadeIn = audio->GetXFadeIn();
-		ainfo.xfadeOut = audio->GetXFadeOut();
-		ainfo.condId = audio->GetCondId();
-		ainfo.condType = audio->GetCondType();
-		ainfo.condValue = audio->GetCondValue();
-		ainfo.condValue2 = audio->GetCondValue2();
-		tinfo->audios.push_back(ainfo);
-	}
-
 	track->AddAudio(audio);
 	return OAML_OK;
 }
 
 oamlRC oamlBase::ReadTrackDefs(tinyxml2::XMLElement *el) {
-	oamlTrackInfo tinfo;
 	oamlTrack *track;
 
 	if (el->Attribute("type", "sfx")) {
@@ -197,27 +160,13 @@ oamlRC oamlBase::ReadTrackDefs(tinyxml2::XMLElement *el) {
 		else if (strcmp(trackEl->Name(), "xfadeOut") == 0) track->SetXFadeOut(strtol(trackEl->GetText(), NULL, 0));
 		else if (strcmp(trackEl->Name(), "volume") == 0) track->SetVolume(float(atof(trackEl->GetText())));
 		else if (strcmp(trackEl->Name(), "audio") == 0) {
-			oamlRC ret = ReadAudioDefs(trackEl, track, &tinfo);
+			oamlRC ret = ReadAudioDefs(trackEl, track);
 			if (ret != OAML_OK) return ret;
 		} else {
 			printf("%s: Unknown track tag: %s\n", __FUNCTION__, trackEl->Name());
 		}
 
 		trackEl = trackEl->NextSiblingElement();
-	}
-
-	if (enableTracksInfo) {
-		tinfo.name = track->GetName();
-		tinfo.volume = track->GetVolume();
-		tinfo.musicTrack = track->IsMusicTrack();
-		tinfo.sfxTrack = track->IsSfxTrack();
-		tinfo.groups = track->GetGroups();
-		tinfo.subgroups = track->GetSubgroups();
-		tinfo.fadeIn = track->GetFadeIn();
-		tinfo.fadeOut = track->GetFadeOut();
-		tinfo.xfadeIn = track->GetXFadeIn();
-		tinfo.xfadeOut = track->GetXFadeOut();
-		tracksInfo.tracks.push_back(tinfo);
 	}
 
 	if (track->IsMusicTrack()) {
@@ -576,7 +525,6 @@ int oamlBase::SafeAdd(int sample1, int sample2) {
 int oamlBase::ReadSample(void *buffer, int index) {
 	switch (bytesPerSample) {
 		case 1: { // 8bit (unsigned)
-			// TODO: Test me!
 			uint8_t *cbuf = (uint8_t *)buffer;
 			return (int)cbuf[index]<<23; }
 			break;
@@ -608,7 +556,6 @@ int oamlBase::ReadSample(void *buffer, int index) {
 void oamlBase::WriteSample(void *buffer, int index, int sample) {
 	switch (bytesPerSample) {
 		case 1: { // 8bit (unsigned)
-			// TODO: Test me!
 			uint8_t *cbuf = (uint8_t *)buffer;
 			cbuf[index] = (uint8_t)(sample>>23); }
 			break;
@@ -844,13 +791,25 @@ void oamlBase::EnableDynamicCompressor(bool enable, double threshold, double rat
 	}
 }
 
-void oamlBase::EnableTracksInfo(bool option) {
-	enableTracksInfo = option;
-}
-
 oamlTracksInfo* oamlBase::GetTracksInfo() {
-	if (enableTracksInfo == false)
-		return NULL;
+	tracksInfo.tracks.clear();
+
+	for (std::vector<oamlTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
+		oamlTrack *track = *it;
+
+		oamlTrackInfo tinfo;
+		track->ReadInfo(&tinfo);
+		tracksInfo.tracks.push_back(tinfo);
+	}
+
+	for (std::vector<oamlTrack*>::iterator it=sfxTracks.begin(); it<sfxTracks.end(); ++it) {
+		oamlTrack *track = *it;
+
+		oamlTrackInfo tinfo;
+		track->ReadInfo(&tinfo);
+		tracksInfo.tracks.push_back(tinfo);
+	}
+
 	return &tracksInfo;
 }
 

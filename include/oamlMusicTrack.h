@@ -69,6 +69,8 @@ public:
 
 	bool IsMusicTrack() const { return true; }
 
+	void ReadInfo(oamlTrackInfo *info);
+
 	void FreeMemory();
 };
 

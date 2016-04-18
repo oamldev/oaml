@@ -110,6 +110,12 @@ std::string oamlSfxTrack::GetPlayingInfo() {
 void oamlSfxTrack::Stop() {
 }
 
+void oamlSfxTrack::ReadInfo(oamlTrackInfo *info) {
+	oamlTrack::ReadInfo(info);
+
+	ReadAudiosInfo(&sfxAudios, info);
+}
+
 void oamlSfxTrack::FreeMemory() {
 	FreeAudiosMemory(&sfxAudios);
 }

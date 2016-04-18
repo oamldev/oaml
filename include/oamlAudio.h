@@ -106,6 +106,8 @@ public:
 	void DoFadeIn(int msec);
 	void DoFadeOut(int msec);
 
+	void ReadInfo(oamlAudioInfo *info);
+
 	void SetFilename(std::string audioFilename, std::string layer, oamlLayerData *info);
 	std::string GetFilename() const { return filename; }
 	const char *GetFilenameStr() const { return filename.c_str(); }

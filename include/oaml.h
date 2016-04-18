@@ -295,9 +295,6 @@ public:
 	/** Returns a simple text showing the track and audios being played */
 	const char* GetPlayingInfo();
 
-	/** TracksInfo must be enabled before loading definitions file to store oamlTracksInfo data */
-	void EnableTracksInfo(bool option);
-
 	/** Returns a pointer to the tracks information */
 	oamlTracksInfo *GetTracksInfo();
 };

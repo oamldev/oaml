@@ -49,6 +49,7 @@ protected:
 	unsigned int MixAudio(oamlAudio *audio, float *samples, int channels, bool debug, unsigned int pos);
 
 	void ClearAudios(std::vector<oamlAudio*> *audios);
+	void ReadAudiosInfo(std::vector<oamlAudio*> *audios, oamlTrackInfo *info);
 	void FreeAudiosMemory(std::vector<oamlAudio*> *audios);
 
 public:
@@ -63,6 +64,8 @@ public:
 	void SetXFadeIn(int trackXFadeIn) { xfadeIn = trackXFadeIn; }
 	void SetXFadeOut(int trackXFadeOut) { xfadeOut = trackXFadeOut; }
 	void SetVolume(float trackVolume) { volume = trackVolume; }
+
+	virtual void ReadInfo(oamlTrackInfo *info);
 
 	const char *GetNameStr() const { return name.c_str(); }
 	std::string GetName() const { return name; }

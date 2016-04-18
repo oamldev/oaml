@@ -53,6 +53,8 @@ public:
 
 	bool IsSfxTrack() const { return true; }
 
+	void ReadInfo(oamlTrackInfo *info);
+
 	void FreeMemory();
 };
 

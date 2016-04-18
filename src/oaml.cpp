@@ -158,10 +158,6 @@ void oamlApi::SetWriteAudioAtShutdown(bool option) {
 	oaml->SetWriteAudioAtShutdown(option);
 }
 
-void oamlApi::EnableTracksInfo(bool option) {
-	oaml->EnableTracksInfo(option);
-}
-
 void oamlApi::SetFileCallbacks(oamlFileCallbacks *cbs) {
 	oaml->SetFileCallbacks(cbs);
 }

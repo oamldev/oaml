@@ -32,7 +32,6 @@ private:
 	std::string defsFile;
 	std::string playingInfo;
 
-	bool enableTracksInfo;
 	bool verbose;
 	bool debugClipping;
 	bool writeAudioAtShutdown;
@@ -71,7 +70,7 @@ private:
 	bool IsTrackPlayingId(int id);
 
 	void ShowPlayingTracks();
-	oamlRC ReadAudioDefs(tinyxml2::XMLElement *el, oamlTrack *track, oamlTrackInfo *tinfo);
+	oamlRC ReadAudioDefs(tinyxml2::XMLElement *el, oamlTrack *track);
 	oamlRC ReadTrackDefs(tinyxml2::XMLElement *el);
 	oamlRC ReadDefs(const char *buf, int size);
 	void ReadInternalDefs(const char *filaname);
@@ -144,7 +143,6 @@ public:
 
 	void EnableDynamicCompressor(bool enable, double thresholdDb, double ratio);
 
-	void EnableTracksInfo(bool option);
 	oamlTracksInfo *GetTracksInfo();
 
 	const char* GetDefsFile();
