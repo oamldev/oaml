@@ -37,7 +37,7 @@ To build and run on Linux and OSX you can use this commands:
 	./msnake
 ```
 
-- UnityOAMLdemo:
+- UnityOAMLdemo: [https://github.com/marcelofg55/UnityOAMLdemo.git](https://github.com/marcelofg55/UnityOAMLdemo.git)
 This is a demo I've created using Unity, it's a very simple 2d platformer that implements adaptive music through OAML, it features two possible themes, one in 8bit style and another one in orchestral style, both have "day" and "night" music loops and a battle loop (which you can trigger "engaging" the spikes, I will add a proper enemy sometime in the future). 
 
 
