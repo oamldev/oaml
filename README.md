@@ -23,11 +23,19 @@ Supports the following audio formats: **ogg, wav, aif**.
 
 ### Demos
 
-Folder 'demos' contains so far:
+- msnake: [https://github.com/marcelofg55/msnake_oaml.git](https://github.com/marcelofg55/msnake_oaml.git)
 
-- msnake:
 Based on Mogria's Snake [https://github.com/mogria/msnake.git](https://github.com/mogria/msnake.git).
-This is a ncurses based snake game that I've adapted to use OAML, music in this demo gets faster as the snake grows. The music is a simple 8bit theme that starts with 80bpm and goes up to 180bpm.
+This is a ncurses based snake game that I've adapted to use OAML, music in this game gets faster as the snake grows. The music is a simple 8bit theme that starts with 80bpm and goes up to 180bpm.
+To build and run on Linux and OSX you can use this commands:
+```
+	git clone https://github.com/marcelofg55/msnake_oaml.git
+	cd msnake_oaml
+	cd build
+	cmake ..
+	make
+	./msnake
+```
 
 - UnityOAMLdemo:
 This is a demo I've created using Unity, it's a very simple 2d platformer that implements adaptive music through OAML, it features two possible themes, one in 8bit style and another one in orchestral style, both have "day" and "night" music loops and a battle loop (which you can trigger "engaging" the spikes, I will add a proper enemy sometime in the future). 
@@ -104,7 +112,7 @@ For now since resampling is not implemented in OAML you need to export the music
 
 ### Games using OAML
 
-- https://github.com/Andrettin/Wyrmgus
+- [https://github.com/Andrettin/Wyrmgus](https://github.com/Andrettin/Wyrmgus)
 
 ### About
 
