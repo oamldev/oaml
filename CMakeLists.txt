@@ -74,6 +74,12 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/GitSHA1.h.in" "${CMAKE_CURRENT_BINARY_DIR}/include/GitSHA1.h" @ONLY)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 
+include(CheckIncludeFiles)
+check_include_files("${CMAKE_CURRENT_BINARY_DIR}/include/GitSha1.h" HAVE_GITSHA1_H)
+if (HAVE_GITSHA1_H)
+	add_definitions(-D__HAVE_GITSHA1_H)
+endif()
+
 set(SOURCES src/audioFile.cpp src/ByteBuffer.cpp src/oaml.cpp src/oamlAudio.cpp src/oamlBase.cpp src/oamlCompressor.cpp src/oamlLayer.cpp src/oamlMusicTrack.cpp src/oamlSfxTrack.cpp src/oamlTrack.cpp src/oamlUtil.cpp src/aif.cpp src/ogg.cpp src/wav.cpp src/gettime.cpp src/tinyxml2.cpp)
 if (ENABLE_STATIC)
 	add_library(oaml STATIC ${SOURCES} src/oamlC.cpp)
