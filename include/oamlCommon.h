@@ -70,7 +70,9 @@
 #include "ByteBuffer.h"
 #include "audioFile.h"
 #include "aif.h"
+#ifdef __HAVE_OGG
 #include "ogg.h"
+#endif
 #include "wav.h"
 #include "oamlLayer.h"
 #include "oamlAudio.h"

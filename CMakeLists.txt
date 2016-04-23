@@ -24,6 +24,7 @@ endif()
 option(ENABLE_STATIC "Build static library" ON)
 option(ENABLE_SHARED "Build shared library" ON)
 option(ENABLE_UNITYPLUGIN "Build AudioPluginOAML plugin for Unity" ON)
+option(ENABLE_OGG "Build with OGG support" ON)
 
 if(ENABLE_STATIC)
 	message("Build static: Yes (Disable by param -DENABLE_STATIC=OFF)")
@@ -43,6 +44,12 @@ else()
 	message("Build AudioPluginOAML: No  (Enable by param -DENABLE_UNITYPLUGIN=ON)")
 endif()
 
+if(ENABLE_OGG)
+	message("Build OGG support: Yes (Disable by param -DENABLE_OGG=OFF)")
+else()
+	message("Build OGG support: No  (Enable by param -DENABLE_OGG=ON)")
+endif()
+
 
 ##
 # Set CXX_FLAGS depending on compiler
@@ -57,12 +64,15 @@ endif()
 ##
 # Find VorbisFile lib
 #
-find_package(OggVorbis REQUIRED)
-find_package(VorbisFile REQUIRED)
+if (ENABLE_OGG)
+	find_package(OggVorbis REQUIRED)
+	find_package(VorbisFile REQUIRED)
 
-if (OGGVORBIS_FOUND AND VORBISFILE_FOUND)
-	include_directories(${VORBISFILE_INCLUDE_DIR})
-	set(OAML_LIBS ${OAML_LIBS} ${OGG_LIBRARY} ${VORBIS_LIBRARY} ${VORBISFILE_LIBRARIES})
+	if (OGGVORBIS_FOUND AND VORBISFILE_FOUND)
+		add_definitions(-D__HAVE_OGG)
+		include_directories(${VORBISFILE_INCLUDE_DIR})
+		set(OAML_LIBS ${OAML_LIBS} ${OGG_LIBRARY} ${VORBIS_LIBRARY} ${VORBISFILE_LIBRARIES})
+	endif()
 endif()
 
 
@@ -80,7 +90,27 @@ if (HAVE_GITSHA1_H)
 	add_definitions(-D__HAVE_GITSHA1_H)
 endif()
 
-set(SOURCES src/audioFile.cpp src/ByteBuffer.cpp src/oaml.cpp src/oamlAudio.cpp src/oamlBase.cpp src/oamlCompressor.cpp src/oamlLayer.cpp src/oamlMusicTrack.cpp src/oamlSfxTrack.cpp src/oamlTrack.cpp src/oamlUtil.cpp src/aif.cpp src/ogg.cpp src/wav.cpp src/gettime.cpp src/tinyxml2.cpp)
+set(SOURCES
+	src/audioFile.cpp
+	src/ByteBuffer.cpp
+	src/oaml.cpp
+	src/oamlAudio.cpp
+	src/oamlBase.cpp
+	src/oamlCompressor.cpp
+	src/oamlLayer.cpp
+	src/oamlMusicTrack.cpp
+	src/oamlSfxTrack.cpp
+	src/oamlTrack.cpp
+	src/oamlUtil.cpp
+	src/aif.cpp
+	src/wav.cpp
+	src/gettime.cpp
+	src/tinyxml2.cpp)
+
+if (ENABLE_OGG)
+	set(SOURCES ${SOURCES} src/ogg.cpp)
+endif()
+
 if (ENABLE_STATIC)
 	add_library(oaml STATIC ${SOURCES} src/oamlC.cpp)
 endif()

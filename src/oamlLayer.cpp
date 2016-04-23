@@ -54,12 +54,14 @@ oamlLayer::~oamlLayer() {
 
 oamlRC oamlLayer::OpenFile() {
 	std::string ext = filename.substr(filename.find_last_of(".") + 1);
-	if (ext == "ogg") {
-		handle = (audioFile*)new oggFile(fcbs);
+	if (ext == "wav" || ext == "wave") {
+		handle = new wavFile(fcbs);
 	} else if (ext == "aif" || ext == "aiff") {
 		handle = (audioFile*)new aifFile(fcbs);
-	} else if (ext == "wav" || ext == "wave") {
-		handle = new wavFile(fcbs);
+#ifdef __HAVE_OGG
+	} else if (ext == "ogg") {
+		handle = (audioFile*)new oggFile(fcbs);
+#endif
 	} else {
 		fprintf(stderr, "liboaml: Unknown audio format: '%s'\n", GetFilenameStr());
 		return OAML_ERROR;
