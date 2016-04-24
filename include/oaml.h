@@ -164,6 +164,7 @@ typedef struct {
 //
 
 class oamlBase;
+class oamlStudioApi;
 
 //
 // Main class
@@ -176,6 +177,7 @@ class oamlApi {
 #endif
 private:
 	oamlBase *oaml;
+	oamlStudioApi *oamlStudio;
 
 public:
 	oamlApi();
@@ -297,6 +299,35 @@ public:
 
 	/** Returns a pointer to the tracks information */
 	oamlTracksInfo *GetTracksInfo();
+
+	/** Returns a pointer to the oamlStudioApi class */
+	oamlStudioApi *GetStudioApi();
+};
+
+
+//
+// oamlStudioApi, this api is used by the oamlStudio app
+//
+
+#if defined(oaml_shared_EXPORTS) || defined(OAML_EXPORTS)
+class DLLEXPORT oamlStudioApi {
+#else
+class oamlStudioApi {
+#endif
+private:
+	oamlBase *oaml;
+
+public:
+	oamlStudioApi(oamlBase *_oaml);
+	~oamlStudioApi();
+
+	oamlRC TrackNew(std::string name, bool sfxTrack = false);
+	void TrackRename(std::string name, std::string newName);
+	void TrackSetVolume(std::string name, float volume);
+	void TrackSetFadeIn(std::string name, int fadeIn);
+	void TrackSetFadeOut(std::string name, int fadeOut);
+	void TrackSetXFadeIn(std::string name, int xFadeIn);
+	void TrackSetXFadeOut(std::string name, int xFadeOut);
 };
 
 #endif

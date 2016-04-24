@@ -100,6 +100,7 @@ set(SOURCES
 	src/oamlLayer.cpp
 	src/oamlMusicTrack.cpp
 	src/oamlSfxTrack.cpp
+	src/oamlStudioApi.cpp
 	src/oamlTrack.cpp
 	src/oamlUtil.cpp
 	src/aif.cpp

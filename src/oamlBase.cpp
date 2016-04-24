@@ -868,3 +868,91 @@ void oamlBase::Shutdown() {
 		delete wav;
 	}
 }
+
+oamlRC oamlBase::TrackNew(std::string name, bool sfxTrack) {
+	oamlTrack *track;
+
+	if (sfxTrack) {
+		track = new oamlSfxTrack(verbose);
+	} else {
+		track = new oamlMusicTrack(verbose);
+	}
+
+	track->SetName(name);
+	if (track == NULL) return OAML_ERROR;
+
+	if (track->IsMusicTrack()) {
+		musicTracks.push_back(track);
+	} else {
+		sfxTracks.push_back(track);
+	}
+
+	return OAML_OK;
+}
+
+oamlTrack* oamlBase::GetTrack(std::string name) {
+	for (std::vector<oamlTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
+		oamlTrack *track = *it;
+		if (track->GetName().compare(name) == 0) {
+			return track;
+		}
+	}
+
+	for (std::vector<oamlTrack*>::iterator it=sfxTracks.begin(); it<sfxTracks.end(); ++it) {
+		oamlTrack *track = *it;
+		if (track->GetName().compare(name) == 0) {
+			return track;
+		}
+	}
+
+	return NULL;
+}
+
+void oamlBase::TrackRename(std::string name, std::string newName) {
+	oamlTrack *track = GetTrack(name);
+	if (track == NULL)
+		return;
+
+	track->SetName(newName);
+}
+
+void oamlBase::TrackSetVolume(std::string name, float volume) {
+	oamlTrack *track = GetTrack(name);
+	if (track == NULL)
+		return;
+
+	track->SetVolume(volume);
+}
+
+void oamlBase::TrackSetFadeIn(std::string name, int fadeIn) {
+	oamlTrack *track = GetTrack(name);
+	if (track == NULL)
+		return;
+
+	track->SetFadeIn(fadeIn);
+}
+
+void oamlBase::TrackSetFadeOut(std::string name, int fadeOut) {
+	oamlTrack *track = GetTrack(name);
+	if (track == NULL)
+		return;
+
+	track->SetFadeOut(fadeOut);
+}
+
+void oamlBase::TrackSetXFadeIn(std::string name, int xFadeIn) {
+	oamlTrack *track = GetTrack(name);
+	if (track == NULL)
+		return;
+
+	track->SetXFadeIn(xFadeIn);
+}
+
+void oamlBase::TrackSetXFadeOut(std::string name, int xFadeOut) {
+	oamlTrack *track = GetTrack(name);
+	if (track == NULL)
+		return;
+
+	track->SetXFadeOut(xFadeOut);
+}
+

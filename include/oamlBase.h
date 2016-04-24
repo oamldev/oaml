@@ -86,6 +86,8 @@ private:
 
 	void UpdateTension(uint64_t ms);
 
+	oamlTrack* GetTrack(std::string name);
+
 public:
 	oamlBase();
 	~oamlBase();
@@ -147,6 +149,14 @@ public:
 
 	const char* GetDefsFile();
 	const char* GetPlayingInfo();
+
+	oamlRC TrackNew(std::string name, bool sfxTrack = false);
+	void TrackRename(std::string name, std::string newName);
+	void TrackSetVolume(std::string name, float volume);
+	void TrackSetFadeIn(std::string name, int fadeIn);
+	void TrackSetFadeOut(std::string name, int fadeOut);
+	void TrackSetXFadeIn(std::string name, int xFadeIn);
+	void TrackSetXFadeOut(std::string name, int xFadeOut);
 };
 
 #endif /* __OAMLBASE_H__ */

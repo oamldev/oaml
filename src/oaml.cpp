@@ -28,10 +28,16 @@
 
 oamlApi::oamlApi() {
 	oaml = new oamlBase();
+	oamlStudio = NULL;
 }
 
 oamlApi::~oamlApi() {
 	delete oaml;
+
+	if (oamlStudio) {
+		delete oamlStudio;
+		oamlStudio = NULL;
+	}
 }
 
 oamlRC oamlApi::Init(const char *defsFilename) {
@@ -180,4 +186,12 @@ const char* oamlApi::GetPlayingInfo() {
 
 void oamlApi::Shutdown() {
 	oaml->Shutdown();
+}
+
+oamlStudioApi* oamlApi::GetStudioApi() {
+	if (oamlStudio == NULL) {
+		oamlStudio = new oamlStudioApi(oaml);
+	}
+
+	return oamlStudio;
 }
