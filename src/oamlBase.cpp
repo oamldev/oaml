@@ -956,3 +956,139 @@ void oamlBase::TrackSetXFadeOut(std::string name, int xFadeOut) {
 	track->SetXFadeOut(xFadeOut);
 }
 
+oamlRC oamlBase::AudioNew(std::string trackName, std::string filename, int type) {
+	oamlTrack *track = GetTrack(trackName);
+	if (track == NULL)
+		return OAML_NOT_FOUND;
+
+	oamlAudio *audio = new oamlAudio(fcbs, verbose);
+	if (audio == NULL)
+		return OAML_ERROR;
+
+	audio->SetType(type);
+	audio->SetFilename(filename, "", NULL);
+	track->AddAudio(audio);
+
+	return OAML_OK;
+}
+
+oamlAudio* oamlBase::GetAudio(std::string trackName, std::string filename) {
+	oamlTrack *track = GetTrack(trackName);
+	if (track == NULL)
+		return NULL;
+
+	return track->GetAudio(filename);
+}
+
+void oamlBase::AudioSetVolume(std::string trackName, std::string filename, float volume) {
+	oamlAudio *audio = GetAudio(trackName, filename);
+	if (audio == NULL)
+		return;
+
+	audio->SetVolume(volume);
+}
+
+void oamlBase::AudioSetBPM(std::string trackName, std::string filename, float bpm) {
+	oamlAudio *audio = GetAudio(trackName, filename);
+	if (audio == NULL)
+		return;
+
+	audio->SetBPM(bpm);
+}
+
+void oamlBase::AudioSetBeatsPerBar(std::string trackName, std::string filename, int beatsPerBar) {
+	oamlAudio *audio = GetAudio(trackName, filename);
+	if (audio == NULL)
+		return;
+
+	audio->SetBeatsPerBar(beatsPerBar);
+}
+
+void oamlBase::AudioSetBars(std::string trackName, std::string filename, int bars) {
+	oamlAudio *audio = GetAudio(trackName, filename);
+	if (audio == NULL)
+		return;
+
+	audio->SetBars(bars);
+}
+
+void oamlBase::AudioSetMinMovementBars(std::string trackName, std::string filename, int minMovementBars) {
+	oamlAudio *audio = GetAudio(trackName, filename);
+	if (audio == NULL)
+		return;
+
+	audio->SetMinMovementBars(minMovementBars);
+}
+
+void oamlBase::AudioSetRandomChance(std::string trackName, std::string filename, int randomChance) {
+	oamlAudio *audio = GetAudio(trackName, filename);
+	if (audio == NULL)
+		return;
+
+	audio->SetRandomChance(randomChance);
+}
+
+void oamlBase::AudioSetFadeIn(std::string trackName, std::string filename, int fadeIn) {
+	oamlAudio *audio = GetAudio(trackName, filename);
+	if (audio == NULL)
+		return;
+
+	audio->SetFadeIn(fadeIn);
+}
+
+void oamlBase::AudioSetFadeOut(std::string trackName, std::string filename, int fadeOut) {
+	oamlAudio *audio = GetAudio(trackName, filename);
+	if (audio == NULL)
+		return;
+
+	audio->SetFadeOut(fadeOut);
+}
+
+void oamlBase::AudioSetXFadeIn(std::string trackName, std::string filename, int xFadeIn) {
+	oamlAudio *audio = GetAudio(trackName, filename);
+	if (audio == NULL)
+		return;
+
+	audio->SetXFadeIn(xFadeIn);
+}
+
+void oamlBase::AudioSetXFadeOut(std::string trackName, std::string filename, int xFadeOut) {
+	oamlAudio *audio = GetAudio(trackName, filename);
+	if (audio == NULL)
+		return;
+
+	audio->SetXFadeOut(xFadeOut);
+}
+
+void oamlBase::AudioSetCondId(std::string trackName, std::string filename, int condId) {
+	oamlAudio *audio = GetAudio(trackName, filename);
+	if (audio == NULL)
+		return;
+
+	audio->SetCondId(condId);
+}
+
+void oamlBase::AudioSetCondType(std::string trackName, std::string filename, int condType) {
+	oamlAudio *audio = GetAudio(trackName, filename);
+	if (audio == NULL)
+		return;
+
+	audio->SetCondType(condType);
+}
+
+void oamlBase::AudioSetCondValue(std::string trackName, std::string filename, int condValue) {
+	oamlAudio *audio = GetAudio(trackName, filename);
+	if (audio == NULL)
+		return;
+
+	audio->SetCondValue(condValue);
+}
+
+void oamlBase::AudioSetCondValue2(std::string trackName, std::string filename, int condValue2) {
+	oamlAudio *audio = GetAudio(trackName, filename);
+	if (audio == NULL)
+		return;
+
+	audio->SetCondValue2(condValue2);
+}
+

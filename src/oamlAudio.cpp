@@ -127,6 +127,16 @@ oamlRC oamlAudio::Load() {
 	return OAML_OK;
 }
 
+bool oamlAudio::HasLayer(std::string filename) {
+	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
+		if (layer->GetFilename().compare(filename) == 0) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 oamlRC oamlAudio::Open() {
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, GetFilenameStr());
 

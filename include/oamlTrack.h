@@ -48,6 +48,7 @@ protected:
 	void MixAudio(oamlAudio *audio, float *samples, int channels, bool debug);
 	unsigned int MixAudio(oamlAudio *audio, float *samples, int channels, bool debug, unsigned int pos);
 
+	oamlAudio* FindAudio(std::vector<oamlAudio*> *audios, std::string filename);
 	void ClearAudios(std::vector<oamlAudio*> *audios);
 	void ReadAudiosInfo(std::vector<oamlAudio*> *audios, oamlTrackInfo *info);
 	void FreeAudiosMemory(std::vector<oamlAudio*> *audios);
@@ -80,6 +81,7 @@ public:
 	float GetVolume() const { return volume; }
 
 	virtual void AddAudio(oamlAudio *) { }
+	virtual oamlAudio* GetAudio(std::string) { return NULL; }
 	virtual oamlRC Play() { return OAML_NOT_FOUND; }
 	virtual oamlRC Play(const char *) { return OAML_NOT_FOUND; }
 	virtual oamlRC Play(const char *, float, float) { return OAML_NOT_FOUND; }

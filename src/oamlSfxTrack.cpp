@@ -42,6 +42,10 @@ void oamlSfxTrack::AddAudio(oamlAudio *audio) {
 	sfxAudios.push_back(audio);
 }
 
+oamlAudio* oamlSfxTrack::GetAudio(std::string filename) {
+	return FindAudio(&sfxAudios, filename);
+}
+
 oamlRC oamlSfxTrack::Play(const char *name, float vol, float pan) {
 	if (lock > 0) {
 		// Play function can't be called while Mix is being run

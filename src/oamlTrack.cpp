@@ -50,6 +50,17 @@ void oamlTrack::ClearAudios(std::vector<oamlAudio*> *audios) {
 	}
 }
 
+oamlAudio* oamlTrack::FindAudio(std::vector<oamlAudio*> *audios, std::string filename) {
+	for (std::vector<oamlAudio*>::iterator it=audios->begin(); it<audios->end(); ++it) {
+		oamlAudio *audio = *it;
+		if (audio->HasLayer(filename)) {
+			return audio;
+		}
+	}
+
+	return NULL;
+}
+
 void oamlTrack::FreeAudiosMemory(std::vector<oamlAudio*> *audios) {
 	for (std::vector<oamlAudio*>::iterator it=audios->begin(); it<audios->end(); ++it) {
 		oamlAudio *audio = *it;

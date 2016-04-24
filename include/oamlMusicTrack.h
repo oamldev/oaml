@@ -55,6 +55,7 @@ public:
 	~oamlMusicTrack();
 
 	void AddAudio(oamlAudio *audio);
+	oamlAudio* GetAudio(std::string filename);
 	oamlRC Play();
 	oamlRC Load();
 	void Stop();

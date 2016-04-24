@@ -43,6 +43,7 @@ public:
 	~oamlSfxTrack();
 
 	void AddAudio(oamlAudio *audio);
+	oamlAudio* GetAudio(std::string filename);
 	oamlRC Play(const char *name, float vol, float pan);
 	void Stop();
 

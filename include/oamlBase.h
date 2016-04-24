@@ -87,6 +87,7 @@ private:
 	void UpdateTension(uint64_t ms);
 
 	oamlTrack* GetTrack(std::string name);
+	oamlAudio* GetAudio(std::string trackName, std::string filename);
 
 public:
 	oamlBase();
@@ -157,6 +158,22 @@ public:
 	void TrackSetFadeOut(std::string name, int fadeOut);
 	void TrackSetXFadeIn(std::string name, int xFadeIn);
 	void TrackSetXFadeOut(std::string name, int xFadeOut);
+
+	oamlRC AudioNew(std::string trackName, std::string filename, int type);
+	void AudioSetVolume(std::string trackName, std::string filename, float volume);
+	void AudioSetBPM(std::string trackName, std::string filename, float bpm);
+	void AudioSetBeatsPerBar(std::string trackName, std::string filename, int beatsPerBar);
+	void AudioSetBars(std::string trackName, std::string filename, int bars);
+	void AudioSetMinMovementBars(std::string trackName, std::string filename, int minMovementBars);
+	void AudioSetRandomChance(std::string trackName, std::string filename, int randomChance);
+	void AudioSetFadeIn(std::string trackName, std::string filename, int fadeIn);
+	void AudioSetFadeOut(std::string trackName, std::string filename, int fadeOut);
+	void AudioSetXFadeIn(std::string trackName, std::string filename, int xFadeIn);
+	void AudioSetXFadeOut(std::string trackName, std::string filename, int xFadeOut);
+	void AudioSetCondId(std::string trackName, std::string filename, int condId);
+	void AudioSetCondType(std::string trackName, std::string filename, int condType);
+	void AudioSetCondValue(std::string trackName, std::string filename, int condValue);
+	void AudioSetCondValue2(std::string trackName, std::string filename, int condValue2);
 };
 
 #endif /* __OAMLBASE_H__ */

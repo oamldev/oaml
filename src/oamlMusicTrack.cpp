@@ -68,6 +68,21 @@ void oamlMusicTrack::AddAudio(oamlAudio *audio) {
 	}
 }
 
+oamlAudio* oamlMusicTrack::GetAudio(std::string filename) {
+	oamlAudio *audio;
+
+	audio = FindAudio(&introAudios, filename);
+	if (audio) return audio;
+	audio = FindAudio(&loopAudios, filename);
+	if (audio) return audio;
+	audio = FindAudio(&randAudios, filename);
+	if (audio) return audio;
+	audio = FindAudio(&condAudios, filename);
+	if (audio) return audio;
+
+	return NULL;
+}
+
 void oamlMusicTrack::SetCondition(int id, int value) {
 	bool stopCond = false;
 	bool playCond = false;
