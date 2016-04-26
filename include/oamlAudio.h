@@ -65,17 +65,19 @@ private:
 
 	bool pickable;
 
+	void UpdateSamplesToEnd();
+
 public:
 	oamlAudio(oamlFileCallbacks *cbs, bool _verbose);
 	~oamlAudio();
 
 	void SetType(int audioType) { type = audioType; }
 	void SetVolume(float audioVolume) { volume = audioVolume; }
-	void SetBPM(float audioBpm) { bpm = audioBpm; }
-	void SetBeatsPerBar(int audioBeatsPerBar) { beatsPerBar = audioBeatsPerBar; }
+	void SetBPM(float _bpm);
+	void SetBeatsPerBar(int _beatsPerBar);
+	void SetBars(int _bars);
 	void SetMinMovementBars(int audioMinMovementBars) { minMovementBars = audioMinMovementBars; }
 	void SetRandomChance(int audioRandomChance) { randomChance = audioRandomChance; }
-	void SetBars(int audioBars) { bars = audioBars; }
 	void SetFadeIn(unsigned int audioFadeIn) { fadeIn = audioFadeIn; }
 	void SetFadeOut(unsigned int audioFadeOut) { fadeOut = audioFadeOut; }
 	void SetXFadeIn(unsigned int audioXFadeIn) { xfadeIn = audioXFadeIn; }
@@ -89,8 +91,6 @@ public:
 	void SetCondition(int id, int type, int value, int value2 = 0);
 	bool TestCondition(int id, int value);
 	bool HasCondition(int id) { return id == condId; }
-
-	unsigned int GetBarsSamples(int bars);
 
 	bool HasFinished();
 	bool HasFinishedTail(unsigned int pos);
@@ -130,6 +130,7 @@ public:
 	unsigned int GetXFadeIn() const { return xfadeIn; }
 	unsigned int GetXFadeOut() const { return xfadeOut; }
 
+	unsigned int GetBarsSamples(int bars);
 	unsigned int GetSamplesCount() const { return samplesCount; }
 
 	void SetPickable(bool value) { pickable = value; }

@@ -114,6 +114,35 @@ unsigned int oamlAudio::GetBarsSamples(int bars) {
 	return (unsigned int)(secs * samplesPerSec);
 }
 
+void oamlAudio::SetBPM(float _bpm) {
+	bpm = _bpm;
+
+	UpdateSamplesToEnd();
+}
+
+void oamlAudio::SetBeatsPerBar(int _beatsPerBar) {
+	beatsPerBar = _beatsPerBar;
+
+	UpdateSamplesToEnd();
+}
+
+void oamlAudio::SetBars(int _bars) {
+	bars = _bars;
+
+	UpdateSamplesToEnd();
+}
+
+void oamlAudio::UpdateSamplesToEnd() {
+	samplesToEnd = GetBarsSamples(bars);
+	if (samplesToEnd == 0) {
+		samplesToEnd = totalSamples;
+	}
+
+	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
+		layer->SetSamplesToEnd(samplesToEnd);
+	}
+}
+
 oamlRC oamlAudio::Load() {
 	oamlRC ret = Open();
 	if (ret != OAML_OK) return ret;
@@ -152,14 +181,7 @@ oamlRC oamlAudio::Open() {
 		}
 	}
 
-	samplesToEnd = GetBarsSamples(bars);
-	if (samplesToEnd == 0) {
-		samplesToEnd = totalSamples;
-	}
-
-	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
-		layer->SetSamplesToEnd(samplesToEnd);
-	}
+	UpdateSamplesToEnd();
 
 	samplesCount = 0;
 	fadeInSamples = 0;
