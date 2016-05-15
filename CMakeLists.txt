@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 2.8)
 
-project (oaml)
+if (${CMAKE_MAJOR_VERSION} LESS 3)
+	project (oaml)
+	set (PROJECT_VERSION_MAJOR 1)
+	set (PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.0)
+else()
+	cmake_policy (SET CMP0048 NEW)
+	project (oaml VERSION 1.0)
+endif ()
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
@@ -119,6 +126,11 @@ endif()
 if (ENABLE_SHARED)
 	add_library(oaml_shared SHARED ${SOURCES} src/oamlC.cpp)
 	target_link_libraries(oaml_shared ${OAML_LIBS})
+	set_target_properties(oaml_shared
+		PROPERTIES
+			SOVERSION ${PROJECT_VERSION_MAJOR}
+			VERSION   ${PROJECT_VERSION}
+	)
 endif()
 
 
@@ -142,11 +154,11 @@ endif()
 # Install rules
 #
 if (ENABLE_STATIC)
-	install(TARGETS oaml DESTINATION lib)
+	install(TARGETS oaml DESTINATION lib${LIB_SUFFIX})
 endif()
 
 if (ENABLE_SHARED)
-	install(TARGETS oaml_shared DESTINATION lib)
+	install(TARGETS oaml_shared DESTINATION lib${LIB_SUFFIX})
 endif()
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/oaml.h DESTINATION include)
