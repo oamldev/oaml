@@ -30,6 +30,10 @@ static oamlBase oaml;
 
 extern "C" {
 
+const char* oamlGetVersion() {
+	return oaml.GetVersion();
+}
+
 oamlRC oamlInit(const char *defsFilename) {
 	return oaml.Init(defsFilename);
 }

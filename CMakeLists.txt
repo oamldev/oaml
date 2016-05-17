@@ -1,12 +1,16 @@
 cmake_minimum_required(VERSION 2.8)
 
+set(OAML_VERSION_MAJOR 1)
+set(OAML_VERSION_MINOR 0)
+set(OAML_VERSION ${OAML_VERSION_MAJOR}.${OAML_VERSION_MINOR})
+
 if (${CMAKE_MAJOR_VERSION} LESS 3)
 	project (oaml)
-	set (PROJECT_VERSION_MAJOR 1)
-	set (PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.0)
+	set (PROJECT_VERSION_MAJOR ${OAML_VERSION_MAJOR})
+	set (PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${OAML_VERSION_MINOR})
 else()
 	cmake_policy (SET CMP0048 NEW)
-	project (oaml VERSION 1.0)
+	project (oaml VERSION ${OAML_VERSION_MAJOR}.${OAML_VERSION_MINOR})
 endif ()
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
@@ -96,6 +100,8 @@ check_include_files("${CMAKE_CURRENT_BINARY_DIR}/include/GitSha1.h" HAVE_GITSHA1
 if (HAVE_GITSHA1_H)
 	add_definitions(-D__HAVE_GITSHA1_H)
 endif()
+
+add_definitions(-DOAML_VERSION_STRING="${OAML_VERSION}")
 
 set(SOURCES
 	src/audioFile.cpp

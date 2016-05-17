@@ -93,6 +93,8 @@ public:
 	oamlBase();
 	~oamlBase();
 
+	const char* GetVersion() { return OAML_VERSION_STRING; }
+
 	oamlRC Init(const char *defsFilename);
 	oamlRC ReadDefsFile(const char *defsFilename);
 	oamlRC InitString(const char *defs);

@@ -75,6 +75,7 @@ typedef int bool;
 #include <stdbool.h>
 #endif
 
+const char* oamlGetVersion();
 oamlRC oamlInit(const char *defsFilename);
 oamlRC oamlReadDefsFile(const char *defsFilename);
 oamlRC oamlInitString(const char *defs);
@@ -182,6 +183,8 @@ private:
 public:
 	oamlApi();
 	~oamlApi();
+
+	const char* GetVersion();
 
 	/** Initilize the Open Adaptive Music Library with the path to 'oaml.defs'
 	 *  @return returns 0, or -1 on error

@@ -40,6 +40,10 @@ oamlApi::~oamlApi() {
 	}
 }
 
+const char* oamlApi::GetVersion() {
+	return oaml->GetVersion();
+}
+
 oamlRC oamlApi::Init(const char *defsFilename) {
 	return oaml->Init(defsFilename);
 }
