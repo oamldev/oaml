@@ -34,6 +34,9 @@
     <ClCompile Include="..\src\ogg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\RtAudio.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\tinyxml2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -94,6 +97,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\ogg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\RtAudio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\tinyxml2.h">
