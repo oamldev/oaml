@@ -71,8 +71,11 @@ oamlBase::oamlBase() {
 	useCompressor = false;
 	updateTension = false;
 
-	curTrack = NULL;
+#ifdef __HAVE_RTAUDIO
+	rtAudio = NULL;
+#endif
 
+	curTrack = NULL;
 	fullBuffer = NULL;
 
 	sampleRate = 0;
@@ -90,10 +93,64 @@ oamlBase::oamlBase() {
 }
 
 oamlBase::~oamlBase() {
+#ifdef __HAVE_RTAUDIO
+	if (rtAudio) {
+		if (rtAudio->isStreamRunning()) {
+			rtAudio->closeStream();
+		}
+
+		delete rtAudio;
+		rtAudio = NULL;
+	}
+#endif
+
 	if (fullBuffer) {
 		delete fullBuffer;
 		fullBuffer = NULL;
 	}
+}
+
+#ifdef __HAVE_RTAUDIO
+int rtCallback(void *outputBuffer, void * /*inputBuffer*/, unsigned int nBufferFrames, double /*streamTime*/, RtAudioStreamStatus /*status*/, void *data) {
+	oamlBase *base = (oamlBase*)data;
+	memset(outputBuffer, 0, nBufferFrames*2*2);
+	base->MixToBuffer(outputBuffer, nBufferFrames*2);
+	return 0;
+}
+#endif
+
+oamlRC oamlBase::InitAudioDevice(int sampleRate, int channels) {
+#ifdef __HAVE_RTAUDIO
+	RtAudio::StreamParameters params;
+	unsigned int bufferSize = 1024;
+
+	if (rtAudio == NULL) {
+		rtAudio = new RtAudio();
+	} else {
+		// Close the stream if it's already open, to allow re-initialization of the device
+		if (rtAudio->isStreamRunning()) {
+			rtAudio->closeStream();
+		}
+	}
+
+	params.deviceId = rtAudio->getDefaultOutputDevice();
+	params.nChannels = channels;
+	params.firstChannel = 0;
+	try {
+		rtAudio->openStream(&params, NULL, RTAUDIO_SINT16, sampleRate, &bufferSize, &rtCallback, (void*)this);
+		rtAudio->startStream();
+
+		SetAudioFormat(sampleRate, channels, 2, false);
+	}
+	catch (RtAudioError &e) {
+		rtAudio->closeStream();
+		return OAML_ERROR;
+	}
+
+	return OAML_OK;
+#else
+	return OAML_ERROR;
+#endif
 }
 
 oamlRC oamlBase::ReadAudioDefs(tinyxml2::XMLElement *el, oamlTrack *track) {

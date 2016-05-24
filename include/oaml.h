@@ -76,6 +76,7 @@ typedef int bool;
 #endif
 
 const char* oamlGetVersion();
+oamlRC oamlInitAudioDevice(int sampleRate, int channels);
 oamlRC oamlInit(const char *defsFilename);
 oamlRC oamlReadDefsFile(const char *defsFilename);
 oamlRC oamlInitString(const char *defs);
@@ -187,19 +188,24 @@ public:
 	const char* GetVersion();
 
 	/** Initilize the Open Adaptive Music Library with the path to 'oaml.defs'
-	 *  @return returns 0, or -1 on error
+	 *  @return returns OAML_OK on success
 	 */
 	oamlRC Init(const char *defsFilename);
 
 	/** Read Open Adaptive Music Library definition file
-	 *  @return returns 0, or -1 on error
+	 *  @return returns OAML_OK on success
 	 */
 	oamlRC ReadDefsFile(const char *defsFilename);
 
 	/** Initilize the Open Adaptive Music Library with xml definitions on value defs
-	 *  @return returns 0, or -1 on error
+	 *  @return returns OAML_OK on success
 	 */
 	oamlRC InitString(const char *defs);
+
+	/** Initialize the audio device through RtAudio
+	 *  @return returns OAML_OK on success
+	 */
+	oamlRC InitAudioDevice(int sampleRate = 44100, int channels = 2);
 
 	/** Shutdown the library */
 	void Shutdown();
@@ -210,27 +216,27 @@ public:
 	float GetVolume();
 
 	/** Play a music track by name (recommended) or id
-	 *  @return returns 0, or -1 on error
+	 *  @return returns OAML_OK on success
 	 */
 	oamlRC PlayTrack(const char *name);
 
 	/** Play a random music track that contains str in the name
-	 *  @return returns 0, or -1 on error
+	 *  @return returns OAML_OK on success
 	 */
 	oamlRC PlayTrackWithStringRandom(const char *str);
 
 	/** Play a random music track that belongs to a certain group
-	 *  @return returns 0, or -1 on error
+	 *  @return returns OAML_OK on success
 	 */
 	oamlRC PlayTrackByGroupRandom(const char *group);
 
 	/** Play a random music track that belongs to a certain group and subgroup
-	 *  @return returns 0, or -1 on error
+	 *  @return returns OAML_OK on success
 	 */
 	oamlRC PlayTrackByGroupAndSubgroupRandom(const char *group, const char *subgroup);
 
 	/** Play a sound fx
-	 *  @return returns 0, or -1 on error
+	 *  @return returns OAML_OK on success
 	 */
 	oamlRC PlaySfx(const char *name);
 	oamlRC PlaySfxEx(const char *name, float vol, float pan);

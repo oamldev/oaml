@@ -25,6 +25,9 @@
 
 
 #include "tinyxml2.h"
+#ifdef __HAVE_RTAUDIO
+#include "RtAudio.h"
+#endif
 
 
 class oamlBase {
@@ -45,6 +48,10 @@ private:
 	oamlTrack *curTrack;
 
 	ByteBuffer *fullBuffer;
+
+#ifdef __HAVE_RTAUDIO
+	RtAudio *rtAudio;
+#endif
 
 	int sampleRate;
 	int channels;
@@ -95,6 +102,7 @@ public:
 
 	const char* GetVersion() { return OAML_VERSION_STRING; }
 
+	oamlRC InitAudioDevice(int sampleRate, int channels);
 	oamlRC Init(const char *defsFilename);
 	oamlRC ReadDefsFile(const char *defsFilename);
 	oamlRC InitString(const char *defs);

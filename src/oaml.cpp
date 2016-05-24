@@ -44,6 +44,10 @@ const char* oamlApi::GetVersion() {
 	return oaml->GetVersion();
 }
 
+oamlRC oamlApi::InitAudioDevice(int sampleRate, int channels) {
+	return oaml->InitAudioDevice(sampleRate, channels);
+}
+
 oamlRC oamlApi::Init(const char *defsFilename) {
 	return oaml->Init(defsFilename);
 }

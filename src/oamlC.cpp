@@ -34,6 +34,10 @@ const char* oamlGetVersion() {
 	return oaml.GetVersion();
 }
 
+oamlRC oamlInitAudioDevice(int sampleRate, int channels) {
+	return oaml.InitAudioDevice(sampleRate, channels);
+}
+
 oamlRC oamlInit(const char *defsFilename) {
 	return oaml.Init(defsFilename);
 }

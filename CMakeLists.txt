@@ -36,6 +36,7 @@ option(ENABLE_STATIC "Build static library" ON)
 option(ENABLE_SHARED "Build shared library" ON)
 option(ENABLE_UNITYPLUGIN "Build AudioPluginOAML plugin for Unity" ON)
 option(ENABLE_OGG "Build with OGG support" ON)
+option(ENABLE_RTAUDIO "Build with RtAudio support" ON)
 
 if(ENABLE_STATIC)
 	message("Build static: Yes (Disable by param -DENABLE_STATIC=OFF)")
@@ -59,6 +60,12 @@ if(ENABLE_OGG)
 	message("Build OGG support: Yes (Disable by param -DENABLE_OGG=OFF)")
 else()
 	message("Build OGG support: No  (Enable by param -DENABLE_OGG=ON)")
+endif()
+
+if(ENABLE_RTAUDIO)
+	message("Build RtAudio support: Yes (Disable by param -DENABLE_RTAUDIO=OFF)")
+else()
+	message("Build RtAudio support: No  (Enable by param -DENABLE_RTAUDIO=ON)")
 endif()
 
 
@@ -88,6 +95,72 @@ endif()
 
 
 ##
+# RtAudio flags
+#
+
+if (ENABLE_RTAUDIO)
+	add_definitions(-D__HAVE_RTAUDIO)
+
+	if (CMAKE_SYSTEM_NAME MATCHES "kNetBSD.*|NetBSD.*")
+		message(STATUS "NetBSD detected, using OSS")
+		find_package(Threads REQUIRED CMAKE_THREAD_PREFER_PTHREAD)
+		list(APPEND OAML_LIBS ossaudio ${CMAKE_THREAD_LIBS_INIT})
+		set(AUDIO_LINUX_OSS ON)
+	elseif (UNIX AND NOT APPLE)
+		find_library(PULSE_LIB pulse)
+		find_library(PULSESIMPLE_LIB pulse-simple)
+		if (PULSE_LIB AND PULSESIMPLE_LIB)
+			list(APPEND OAML_LIBS ${PULSE_LIB} ${PULSESIMPLE_LIB})
+			add_definitions(-D__LINUX_PULSE__)
+			message(STATUS "RtAudio: Using Linux PulseAudio")
+		endif()
+
+		find_package(ALSA)
+		if (ALSA_FOUND)
+			find_package(Threads REQUIRED CMAKE_THREAD_PREFER_PTHREAD)
+			include_directories(${ALSA_INCLUDE_DIR})
+			list(APPEND OAML_LIBS ${ALSA_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
+			add_definitions(-D__LINUX_ALSA__)
+			message(STATUS "RtAudio: Using Linux ALSA")
+		endif()
+	endif ()
+
+	if (APPLE)
+		find_library(COREAUDIO_LIB CoreAudio)
+		find_library(COREFOUNDATION_LIB CoreFoundation)
+		if (COREAUDIO_LIB AND COREFOUNDATION_LIB)
+			list(APPEND OAML_LIBS ${COREAUDIO_LIB} ${COREFOUNDATION_LIB})
+			add_definitions(-D__MACOSX_CORE__)
+			message(STATUS "RtAudio: Using OSX CoreAudio")
+		endif()
+	endif (APPLE)
+
+	# JACK supported on many Unices
+	if (UNIX)
+		find_library(JACK_LIB jack)
+		if (JACK_LIB)
+			list(APPEND OAML_LIBS ${JACK_LIB})
+			add_definitions(-D__UNIX_JACK__)
+			message(STATUS "RtAudio: Using JACK")
+		endif()
+	endif (UNIX)
+
+	if (WIN32)
+		list(APPEND OAML_LIBS winmm ole32)
+
+		add_definitions(-D__WINDOWS_DS__)
+		message(STATUS "RtAudio: Using Windows DirectSound")
+		list(APPEND OAML_LIBS dsound)
+
+		add_definitions(-D__WINDOWS_WASAPI__)
+		message(STATUS "RtAudio: Using Windows WASAPI")
+		list(APPEND OAML_LIBS uuid ksuser)
+	endif (WIN32)
+endif()
+
+
+
+##
 # Build static and shared libraries
 #
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -104,8 +177,10 @@ endif()
 add_definitions(-DOAML_VERSION_STRING="${OAML_VERSION}")
 
 set(SOURCES
+	src/aif.cpp
 	src/audioFile.cpp
 	src/ByteBuffer.cpp
+	src/gettime.cpp
 	src/oaml.cpp
 	src/oamlAudio.cpp
 	src/oamlBase.cpp
@@ -116,13 +191,15 @@ set(SOURCES
 	src/oamlStudioApi.cpp
 	src/oamlTrack.cpp
 	src/oamlUtil.cpp
-	src/aif.cpp
-	src/wav.cpp
-	src/gettime.cpp
-	src/tinyxml2.cpp)
+	src/tinyxml2.cpp
+	src/wav.cpp)
 
 if (ENABLE_OGG)
-	set(SOURCES ${SOURCES} src/ogg.cpp)
+	list(APPEND SOURCES src/ogg.cpp)
+endif()
+
+if (ENABLE_RTAUDIO)
+	list(APPEND SOURCES src/RtAudio.cpp)
 endif()
 
 if (ENABLE_STATIC)
