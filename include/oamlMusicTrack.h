@@ -56,6 +56,7 @@ public:
 
 	void AddAudio(oamlAudio *audio);
 	oamlAudio* GetAudio(std::string filename);
+	oamlRC RemoveAudio(std::string filename);
 	oamlRC Play();
 	oamlRC Load();
 	void Stop();

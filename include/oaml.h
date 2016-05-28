@@ -339,6 +339,7 @@ public:
 	void TrackSetXFadeOut(std::string name, int xFadeOut);
 
 	oamlRC AudioNew(std::string trackName, std::string filename, int type);
+	oamlRC AudioRemove(std::string trackName, std::string filename);
 	void AudioSetVolume(std::string trackName, std::string filename, float volume);
 	void AudioSetBPM(std::string trackName, std::string filename, float bpm);
 	void AudioSetBeatsPerBar(std::string trackName, std::string filename, int beatsPerBar);

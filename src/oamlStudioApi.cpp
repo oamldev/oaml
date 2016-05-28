@@ -69,6 +69,10 @@ oamlRC oamlStudioApi::AudioNew(std::string trackName, std::string filename, int 
 	return oaml->AudioNew(trackName, filename, type);
 }
 
+oamlRC oamlStudioApi::AudioRemove(std::string trackName, std::string filename) {
+	return oaml->AudioRemove(trackName, filename);
+}
+
 void oamlStudioApi::AudioSetVolume(std::string trackName, std::string filename, float volume) {
 	oaml->AudioSetVolume(trackName, filename, volume);
 }

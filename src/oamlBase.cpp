@@ -1037,6 +1037,14 @@ oamlAudio* oamlBase::GetAudio(std::string trackName, std::string filename) {
 	return track->GetAudio(filename);
 }
 
+oamlRC oamlBase::AudioRemove(std::string trackName, std::string filename) {
+	oamlTrack *track = GetTrack(trackName);
+	if (track == NULL)
+		return OAML_NOT_FOUND;
+
+	return track->RemoveAudio(filename);
+}
+
 void oamlBase::AudioSetVolume(std::string trackName, std::string filename, float volume) {
 	oamlAudio *audio = GetAudio(trackName, filename);
 	if (audio == NULL)

@@ -83,6 +83,18 @@ oamlAudio* oamlMusicTrack::GetAudio(std::string filename) {
 	return NULL;
 }
 
+oamlRC oamlMusicTrack::RemoveAudio(std::string filename) {
+	if (FindAudioAndRemove(&introAudios, filename) == OAML_OK)
+		return OAML_OK;
+	if (FindAudioAndRemove(&loopAudios, filename) == OAML_OK)
+		return OAML_OK;
+	if (FindAudioAndRemove(&randAudios, filename) == OAML_OK)
+		return OAML_OK;
+	if (FindAudioAndRemove(&condAudios, filename) == OAML_OK)
+		return OAML_OK;
+	return OAML_NOT_FOUND;
+}
+
 void oamlMusicTrack::SetCondition(int id, int value) {
 	bool stopCond = false;
 	bool playCond = false;
@@ -420,3 +432,4 @@ void oamlMusicTrack::FreeMemory() {
 	FreeAudiosMemory(&randAudios);
 	FreeAudiosMemory(&condAudios);
 }
+
