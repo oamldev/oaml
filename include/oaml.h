@@ -330,6 +330,8 @@ public:
 	oamlStudioApi(oamlBase *_oaml);
 	~oamlStudioApi();
 
+	void ProjectNew();
+
 	oamlRC TrackNew(std::string name, bool sfxTrack = false);
 	void TrackRename(std::string name, std::string newName);
 	void TrackSetVolume(std::string name, float volume);

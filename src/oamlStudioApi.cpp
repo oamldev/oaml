@@ -37,6 +37,10 @@ oamlStudioApi::oamlStudioApi(oamlBase *_oaml) {
 oamlStudioApi::~oamlStudioApi() {
 }
 
+void oamlStudioApi::ProjectNew() {
+	oaml->ProjectNew();
+}
+
 oamlRC oamlStudioApi::TrackNew(std::string name, bool sfxTrack) {
 	return oaml->TrackNew(name, sfxTrack);
 }

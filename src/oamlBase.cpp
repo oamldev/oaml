@@ -926,6 +926,12 @@ void oamlBase::Shutdown() {
 	}
 }
 
+void oamlBase::ProjectNew() {
+	StopPlaying();
+
+	Clear();
+}
+
 oamlRC oamlBase::TrackNew(std::string name, bool sfxTrack) {
 	oamlTrack *track;
 
