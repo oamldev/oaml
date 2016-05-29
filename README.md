@@ -3,20 +3,25 @@
 OAML is a library the makes it easy to implement adaptive music in games.
 
 
+### First, what is adaptive music on video games?
+
+Adaptive music, also known as interactive music or dynamic music, is music that reacts to what's happening on the video game. For example, if there is a battle going on, music will get more tense to stimulate the player's reaction to the battle. There is a nice paper on the subject written by David Vink that can be found on gamecareerguide ([link](http://www.gamecareerguide.com/features/768/student_thesis_adaptive_music_for_.php?print=1)).
+
+
 ### How does it works?
 
 OAML uses short music loops to make music less linear and more interactive with the player.
-It's usual in games that music is only used as a background and that it doesn't react to what is happening in the game, with OAML this changes and music can react based on what's going on in the game.
 
 In OAML there are three basic types of short loops:
+
 - Intro loops, played when the track starts.
-- Main loops, this is what OAML will keep playing when there is no condition triggered.
+- Main loops, this is what OAML will keep playing when there is no condition triggered (actually these main loops can have one condition that is OAML_CONDID_MAIN_LOOP, check the msnake_oaml demo for more info on how it works).
 - Conditional loops, these loops are defined by a condition, based on the data provided for the condition (id, type and values) OAML will play them when these conditions meet, for example, when enemies are engaged a condition can be triggered and music will play loops that get more intense.
 
 Note that a track is only required to have one main loop at least, all the other loops are optional.
 
 
-### Features
+### Supported audio formats
 
 Supports the following audio formats: **ogg, wav, aif**.
 
@@ -28,8 +33,9 @@ Supports the following audio formats: **ogg, wav, aif**.
 Based on Mogria's Snake [https://github.com/mogria/msnake.git](https://github.com/mogria/msnake.git).
 This is a ncurses based snake game that I've adapted to use OAML, music in this game gets faster as the snake grows. The music is a simple 8bit theme that starts with 80bpm and goes up to 180bpm.
 To build and run on Linux and OSX you can use this commands:
+
 ```
-	git clone https://github.com/marcelofg55/msnake_oaml.git
+	git clone https://github.com/oamldev/msnake_oaml.git
 	cd msnake_oaml
 	cd build
 	cmake ..
@@ -44,6 +50,7 @@ This is a demo I've created using Unity, it's a very simple 2d platformer that i
 ### How to compile
 
 On Linux and OSX:
+
 ```
 	mkdir build
 	cd build
