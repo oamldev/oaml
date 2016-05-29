@@ -69,6 +69,26 @@ void oamlStudioApi::TrackSetXFadeOut(std::string name, int xFadeOut) {
 	oaml->TrackSetXFadeOut(name, xFadeOut);
 }
 
+float oamlStudioApi::TrackGetVolume(std::string name) {
+	return oaml->TrackGetVolume(name);
+}
+
+int oamlStudioApi::TrackGetFadeIn(std::string name) {
+	return oaml->TrackGetFadeIn(name);
+}
+
+int oamlStudioApi::TrackGetFadeOut(std::string name) {
+	return oaml->TrackGetFadeOut(name);
+}
+
+int oamlStudioApi::TrackGetXFadeIn(std::string name) {
+	return oaml->TrackGetXFadeIn(name);
+}
+
+int oamlStudioApi::TrackGetXFadeOut(std::string name) {
+	return oaml->TrackGetXFadeOut(name);
+}
+
 oamlRC oamlStudioApi::AudioNew(std::string trackName, std::string filename, int type) {
 	return oaml->AudioNew(trackName, filename, type);
 }

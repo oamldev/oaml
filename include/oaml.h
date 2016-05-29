@@ -340,6 +340,12 @@ public:
 	void TrackSetXFadeIn(std::string name, int xFadeIn);
 	void TrackSetXFadeOut(std::string name, int xFadeOut);
 
+	float TrackGetVolume(std::string name);
+	int TrackGetFadeIn(std::string name);
+	int TrackGetFadeOut(std::string name);
+	int TrackGetXFadeIn(std::string name);
+	int TrackGetXFadeOut(std::string name);
+
 	oamlRC AudioNew(std::string trackName, std::string filename, int type);
 	oamlRC AudioRemove(std::string trackName, std::string filename);
 	void AudioSetVolume(std::string trackName, std::string filename, float volume);

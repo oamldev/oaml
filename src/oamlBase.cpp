@@ -1019,6 +1019,46 @@ void oamlBase::TrackSetXFadeOut(std::string name, int xFadeOut) {
 	track->SetXFadeOut(xFadeOut);
 }
 
+float oamlBase::TrackGetVolume(std::string name) {
+	oamlTrack *track = GetTrack(name);
+	if (track == NULL)
+		return 1.0;
+
+	return track->GetVolume();
+}
+
+int oamlBase::TrackGetFadeIn(std::string name) {
+	oamlTrack *track = GetTrack(name);
+	if (track == NULL)
+		return 0;
+
+	return track->GetFadeIn();
+}
+
+int oamlBase::TrackGetFadeOut(std::string name) {
+	oamlTrack *track = GetTrack(name);
+	if (track == NULL)
+		return 0;
+
+	return track->GetFadeOut();
+}
+
+int oamlBase::TrackGetXFadeIn(std::string name) {
+	oamlTrack *track = GetTrack(name);
+	if (track == NULL)
+		return 0;
+
+	return track->GetXFadeIn();
+}
+
+int oamlBase::TrackGetXFadeOut(std::string name) {
+	oamlTrack *track = GetTrack(name);
+	if (track == NULL)
+		return 0;
+
+	return track->GetXFadeOut();
+}
+
 oamlRC oamlBase::AudioNew(std::string trackName, std::string filename, int type) {
 	oamlTrack *track = GetTrack(trackName);
 	if (track == NULL)
