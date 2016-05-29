@@ -362,6 +362,21 @@ public:
 	void AudioSetCondType(std::string trackName, std::string filename, int condType);
 	void AudioSetCondValue(std::string trackName, std::string filename, int condValue);
 	void AudioSetCondValue2(std::string trackName, std::string filename, int condValue2);
+
+	float AudioGetVolume(std::string trackName, std::string filename);
+	float AudioGetBPM(std::string trackName, std::string filename);
+	int AudioGetBeatsPerBar(std::string trackName, std::string filename);
+	int AudioGetBars(std::string trackName, std::string filename);
+	int AudioGetMinMovementBars(std::string trackName, std::string filename);
+	int AudioGetRandomChance(std::string trackName, std::string filename);
+	int AudioGetFadeIn(std::string trackName, std::string filename);
+	int AudioGetFadeOut(std::string trackName, std::string filename);
+	int AudioGetXFadeIn(std::string trackName, std::string filename);
+	int AudioGetXFadeOut(std::string trackName, std::string filename);
+	int AudioGetCondId(std::string trackName, std::string filename);
+	int AudioGetCondType(std::string trackName, std::string filename);
+	int AudioGetCondValue(std::string trackName, std::string filename);
+	int AudioGetCondValue2(std::string trackName, std::string filename);
 };
 
 #endif

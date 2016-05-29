@@ -153,3 +153,59 @@ void oamlStudioApi::AudioSetCondValue2(std::string trackName, std::string filena
 	oaml->AudioSetCondValue2(trackName, filename, condValue2);
 }
 
+float oamlStudioApi::AudioGetVolume(std::string trackName, std::string filename) {
+	return oaml->AudioGetVolume(trackName, filename);
+}
+
+float oamlStudioApi::AudioGetBPM(std::string trackName, std::string filename) {
+	return oaml->AudioGetBPM(trackName, filename);
+}
+
+int oamlStudioApi::AudioGetBeatsPerBar(std::string trackName, std::string filename) {
+	return oaml->AudioGetBeatsPerBar(trackName, filename);
+}
+
+int oamlStudioApi::AudioGetBars(std::string trackName, std::string filename) {
+	return oaml->AudioGetBars(trackName, filename);
+}
+
+int oamlStudioApi::AudioGetMinMovementBars(std::string trackName, std::string filename) {
+	return oaml->AudioGetMinMovementBars(trackName, filename);
+}
+
+int oamlStudioApi::AudioGetRandomChance(std::string trackName, std::string filename) {
+	return oaml->AudioGetRandomChance(trackName, filename);
+}
+
+int oamlStudioApi::AudioGetFadeIn(std::string trackName, std::string filename) {
+	return oaml->AudioGetFadeIn(trackName, filename);
+}
+
+int oamlStudioApi::AudioGetFadeOut(std::string trackName, std::string filename) {
+	return oaml->AudioGetFadeOut(trackName, filename);
+}
+
+int oamlStudioApi::AudioGetXFadeIn(std::string trackName, std::string filename) {
+	return oaml->AudioGetXFadeIn(trackName, filename);
+}
+
+int oamlStudioApi::AudioGetXFadeOut(std::string trackName, std::string filename) {
+	return oaml->AudioGetXFadeOut(trackName, filename);
+}
+
+int oamlStudioApi::AudioGetCondId(std::string trackName, std::string filename) {
+	return oaml->AudioGetCondId(trackName, filename);
+}
+
+int oamlStudioApi::AudioGetCondType(std::string trackName, std::string filename) {
+	return oaml->AudioGetCondType(trackName, filename);
+}
+
+int oamlStudioApi::AudioGetCondValue(std::string trackName, std::string filename) {
+	return oaml->AudioGetCondValue(trackName, filename);
+}
+
+int oamlStudioApi::AudioGetCondValue2(std::string trackName, std::string filename) {
+	return oaml->AudioGetCondValue2(trackName, filename);
+}
+
