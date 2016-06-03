@@ -340,6 +340,7 @@ public:
 	void TrackSetXFadeIn(std::string name, int xFadeIn);
 	void TrackSetXFadeOut(std::string name, int xFadeOut);
 
+	bool TrackExists(std::string name);
 	bool TrackIsSfxTrack(std::string name);
 	bool TrackIsMusicTrack(std::string name);
 	void TrackGetAudioList(std::string name, std::vector<std::string>& list);

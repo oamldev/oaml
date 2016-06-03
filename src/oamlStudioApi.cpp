@@ -69,6 +69,10 @@ void oamlStudioApi::TrackSetXFadeOut(std::string name, int xFadeOut) {
 	oaml->TrackSetXFadeOut(name, xFadeOut);
 }
 
+bool oamlStudioApi::TrackExists(std::string name) {
+	return oaml->TrackExists(name);
+}
+
 bool oamlStudioApi::TrackIsSfxTrack(std::string name) {
 	return oaml->TrackIsSfxTrack(name);
 }

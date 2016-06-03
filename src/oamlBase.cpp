@@ -1019,6 +1019,11 @@ void oamlBase::TrackSetXFadeOut(std::string name, int xFadeOut) {
 	track->SetXFadeOut(xFadeOut);
 }
 
+bool oamlBase::TrackExists(std::string name) {
+	oamlTrack *track = GetTrack(name);
+	return track != NULL;
+}
+
 bool oamlBase::TrackIsSfxTrack(std::string name) {
 	oamlTrack *track = GetTrack(name);
 	if (track == NULL)
