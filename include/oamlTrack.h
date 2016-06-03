@@ -53,6 +53,7 @@ protected:
 	void ClearAudios(std::vector<oamlAudio*> *audios);
 	void ReadAudiosInfo(std::vector<oamlAudio*> *audios, oamlTrackInfo *info);
 	void FreeAudiosMemory(std::vector<oamlAudio*> *audios);
+	void FillAudiosList(std::vector<oamlAudio*> *audios, std::vector<std::string>& list);
 
 public:
 	oamlTrack();
@@ -81,6 +82,7 @@ public:
 	int GetXFadeOut() const { return xfadeOut; }
 	float GetVolume() const { return volume; }
 
+	virtual void GetAudioList(std::vector<std::string>&) { }
 	virtual void AddAudio(oamlAudio *) { }
 	virtual oamlAudio* GetAudio(std::string) { return NULL; }
 	virtual oamlRC RemoveAudio(std::string) { return OAML_NOT_FOUND; }

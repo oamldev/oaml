@@ -123,3 +123,8 @@ void oamlSfxTrack::ReadInfo(oamlTrackInfo *info) {
 void oamlSfxTrack::FreeMemory() {
 	FreeAudiosMemory(&sfxAudios);
 }
+
+void oamlSfxTrack::GetAudioList(std::vector<std::string>& list) {
+	FillAudiosList(&sfxAudios, list);
+}
+

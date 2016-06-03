@@ -69,6 +69,18 @@ void oamlStudioApi::TrackSetXFadeOut(std::string name, int xFadeOut) {
 	oaml->TrackSetXFadeOut(name, xFadeOut);
 }
 
+bool oamlStudioApi::TrackIsSfxTrack(std::string name) {
+	return oaml->TrackIsSfxTrack(name);
+}
+
+bool oamlStudioApi::TrackIsMusicTrack(std::string name) {
+	return oaml->TrackIsMusicTrack(name);
+}
+
+void oamlStudioApi::TrackGetAudioList(std::string name, std::vector<std::string>& list) {
+	return oaml->TrackGetAudioList(name, list);
+}
+
 float oamlStudioApi::TrackGetVolume(std::string name) {
 	return oaml->TrackGetVolume(name);
 }
@@ -151,6 +163,14 @@ void oamlStudioApi::AudioSetCondValue(std::string trackName, std::string filenam
 
 void oamlStudioApi::AudioSetCondValue2(std::string trackName, std::string filename, int condValue2) {
 	oaml->AudioSetCondValue2(trackName, filename, condValue2);
+}
+
+bool oamlStudioApi::AudioExists(std::string trackName, std::string filename) {
+	return oaml->AudioExists(trackName, filename);
+}
+
+int oamlStudioApi::AudioGetType(std::string trackName, std::string filename) {
+	return oaml->AudioGetType(trackName, filename);
 }
 
 float oamlStudioApi::AudioGetVolume(std::string trackName, std::string filename) {

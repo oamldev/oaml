@@ -1019,6 +1019,30 @@ void oamlBase::TrackSetXFadeOut(std::string name, int xFadeOut) {
 	track->SetXFadeOut(xFadeOut);
 }
 
+bool oamlBase::TrackIsSfxTrack(std::string name) {
+	oamlTrack *track = GetTrack(name);
+	if (track == NULL)
+		return false;
+
+	return track->IsSfxTrack();
+}
+
+bool oamlBase::TrackIsMusicTrack(std::string name) {
+	oamlTrack *track = GetTrack(name);
+	if (track == NULL)
+		return false;
+
+	return track->IsMusicTrack();
+}
+
+void oamlBase::TrackGetAudioList(std::string name, std::vector<std::string>& list) {
+	oamlTrack *track = GetTrack(name);
+	if (track == NULL)
+		return;
+
+	return track->GetAudioList(list);
+}
+
 float oamlBase::TrackGetVolume(std::string name) {
 	oamlTrack *track = GetTrack(name);
 	if (track == NULL)
@@ -1203,6 +1227,19 @@ void oamlBase::AudioSetCondValue2(std::string trackName, std::string filename, i
 	audio->SetCondValue2(condValue2);
 }
 
+bool oamlBase::AudioExists(std::string trackName, std::string filename) {
+	oamlAudio *audio = GetAudio(trackName, filename);
+	return audio != NULL;
+}
+
+int oamlBase::AudioGetType(std::string trackName, std::string filename) {
+	oamlAudio *audio = GetAudio(trackName, filename);
+	if (audio == NULL)
+		return 0;
+
+	return audio->GetType();
+}
+
 float oamlBase::AudioGetVolume(std::string trackName, std::string filename) {
 	oamlAudio *audio = GetAudio(trackName, filename);
 	if (audio == NULL)
@@ -1314,4 +1351,3 @@ int oamlBase::AudioGetCondValue2(std::string trackName, std::string filename) {
 
 	return audio->GetCondValue2();
 }
-

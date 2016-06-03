@@ -80,6 +80,13 @@ void oamlTrack::FreeAudiosMemory(std::vector<oamlAudio*> *audios) {
 	}
 }
 
+void oamlTrack::FillAudiosList(std::vector<oamlAudio*> *audios, std::vector<std::string>& list) {
+	for (std::vector<oamlAudio*>::iterator it=audios->begin(); it<audios->end(); ++it) {
+		oamlAudio *audio = *it;
+		list.push_back(audio->GetFilename());
+	}
+}
+
 int oamlTrack::Random(int min, int max) {
 	int range = max - min + 1;
 	return rand() % range + min;

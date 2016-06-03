@@ -433,3 +433,10 @@ void oamlMusicTrack::FreeMemory() {
 	FreeAudiosMemory(&condAudios);
 }
 
+void oamlMusicTrack::GetAudioList(std::vector<std::string>& list) {
+	FillAudiosList(&introAudios, list);
+	FillAudiosList(&loopAudios, list);
+	FillAudiosList(&randAudios, list);
+	FillAudiosList(&condAudios, list);
+}
+

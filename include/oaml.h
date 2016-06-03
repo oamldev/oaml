@@ -340,6 +340,9 @@ public:
 	void TrackSetXFadeIn(std::string name, int xFadeIn);
 	void TrackSetXFadeOut(std::string name, int xFadeOut);
 
+	bool TrackIsSfxTrack(std::string name);
+	bool TrackIsMusicTrack(std::string name);
+	void TrackGetAudioList(std::string name, std::vector<std::string>& list);
 	float TrackGetVolume(std::string name);
 	int TrackGetFadeIn(std::string name);
 	int TrackGetFadeOut(std::string name);
@@ -363,6 +366,8 @@ public:
 	void AudioSetCondValue(std::string trackName, std::string filename, int condValue);
 	void AudioSetCondValue2(std::string trackName, std::string filename, int condValue2);
 
+	bool AudioExists(std::string trackName, std::string filename);
+	int AudioGetType(std::string trackName, std::string filename);
 	float AudioGetVolume(std::string trackName, std::string filename);
 	float AudioGetBPM(std::string trackName, std::string filename);
 	int AudioGetBeatsPerBar(std::string trackName, std::string filename);

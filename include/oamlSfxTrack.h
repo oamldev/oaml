@@ -42,6 +42,7 @@ public:
 	oamlSfxTrack(bool _verbose);
 	~oamlSfxTrack();
 
+	void GetAudioList(std::vector<std::string>& list);
 	void AddAudio(oamlAudio *audio);
 	oamlAudio* GetAudio(std::string filename);
 	oamlRC Play(const char *name, float vol, float pan);

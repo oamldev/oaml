@@ -54,6 +54,7 @@ public:
 	oamlMusicTrack(bool _verbose);
 	~oamlMusicTrack();
 
+	void GetAudioList(std::vector<std::string>& list);
 	void AddAudio(oamlAudio *audio);
 	oamlAudio* GetAudio(std::string filename);
 	oamlRC RemoveAudio(std::string filename);
