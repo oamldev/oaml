@@ -124,6 +124,7 @@ typedef struct {
 } oamlLayerInfo;
 
 typedef struct {
+	std::string name;
 	int type;
 	float volume;
 	float bpm;
@@ -350,39 +351,41 @@ public:
 	int TrackGetXFadeIn(std::string name);
 	int TrackGetXFadeOut(std::string name);
 
-	oamlRC AudioNew(std::string trackName, std::string filename, int type);
-	oamlRC AudioRemove(std::string trackName, std::string filename);
-	void AudioSetVolume(std::string trackName, std::string filename, float volume);
-	void AudioSetBPM(std::string trackName, std::string filename, float bpm);
-	void AudioSetBeatsPerBar(std::string trackName, std::string filename, int beatsPerBar);
-	void AudioSetBars(std::string trackName, std::string filename, int bars);
-	void AudioSetMinMovementBars(std::string trackName, std::string filename, int minMovementBars);
-	void AudioSetRandomChance(std::string trackName, std::string filename, int randomChance);
-	void AudioSetFadeIn(std::string trackName, std::string filename, int fadeIn);
-	void AudioSetFadeOut(std::string trackName, std::string filename, int fadeOut);
-	void AudioSetXFadeIn(std::string trackName, std::string filename, int xFadeIn);
-	void AudioSetXFadeOut(std::string trackName, std::string filename, int xFadeOut);
-	void AudioSetCondId(std::string trackName, std::string filename, int condId);
-	void AudioSetCondType(std::string trackName, std::string filename, int condType);
-	void AudioSetCondValue(std::string trackName, std::string filename, int condValue);
-	void AudioSetCondValue2(std::string trackName, std::string filename, int condValue2);
+	oamlRC AudioNew(std::string trackName, std::string audioName, int type);
+	oamlRC AudioRemove(std::string trackName, std::string audioName);
+	void AudioSetName(std::string trackName, std::string audioName, std::string name);
+	void AudioSetVolume(std::string trackName, std::string audioName, float volume);
+	void AudioSetBPM(std::string trackName, std::string audioName, float bpm);
+	void AudioSetBeatsPerBar(std::string trackName, std::string audioName, int beatsPerBar);
+	void AudioSetBars(std::string trackName, std::string audioName, int bars);
+	void AudioSetMinMovementBars(std::string trackName, std::string audioName, int minMovementBars);
+	void AudioSetRandomChance(std::string trackName, std::string audioName, int randomChance);
+	void AudioSetFadeIn(std::string trackName, std::string audioName, int fadeIn);
+	void AudioSetFadeOut(std::string trackName, std::string audioName, int fadeOut);
+	void AudioSetXFadeIn(std::string trackName, std::string audioName, int xFadeIn);
+	void AudioSetXFadeOut(std::string trackName, std::string audioName, int xFadeOut);
+	void AudioSetCondId(std::string trackName, std::string audioName, int condId);
+	void AudioSetCondType(std::string trackName, std::string audioName, int condType);
+	void AudioSetCondValue(std::string trackName, std::string audioName, int condValue);
+	void AudioSetCondValue2(std::string trackName, std::string audioName, int condValue2);
 
-	bool AudioExists(std::string trackName, std::string filename);
-	int AudioGetType(std::string trackName, std::string filename);
-	float AudioGetVolume(std::string trackName, std::string filename);
-	float AudioGetBPM(std::string trackName, std::string filename);
-	int AudioGetBeatsPerBar(std::string trackName, std::string filename);
-	int AudioGetBars(std::string trackName, std::string filename);
-	int AudioGetMinMovementBars(std::string trackName, std::string filename);
-	int AudioGetRandomChance(std::string trackName, std::string filename);
-	int AudioGetFadeIn(std::string trackName, std::string filename);
-	int AudioGetFadeOut(std::string trackName, std::string filename);
-	int AudioGetXFadeIn(std::string trackName, std::string filename);
-	int AudioGetXFadeOut(std::string trackName, std::string filename);
-	int AudioGetCondId(std::string trackName, std::string filename);
-	int AudioGetCondType(std::string trackName, std::string filename);
-	int AudioGetCondValue(std::string trackName, std::string filename);
-	int AudioGetCondValue2(std::string trackName, std::string filename);
+	bool AudioExists(std::string trackName, std::string audioName);
+	void AudioGetLayerList(std::string trackName, std::string audioName, std::vector<std::string>& list);
+	int AudioGetType(std::string trackName, std::string audioName);
+	float AudioGetVolume(std::string trackName, std::string audioName);
+	float AudioGetBPM(std::string trackName, std::string audioName);
+	int AudioGetBeatsPerBar(std::string trackName, std::string audioName);
+	int AudioGetBars(std::string trackName, std::string audioName);
+	int AudioGetMinMovementBars(std::string trackName, std::string audioName);
+	int AudioGetRandomChance(std::string trackName, std::string audioName);
+	int AudioGetFadeIn(std::string trackName, std::string audioName);
+	int AudioGetFadeOut(std::string trackName, std::string audioName);
+	int AudioGetXFadeIn(std::string trackName, std::string audioName);
+	int AudioGetXFadeOut(std::string trackName, std::string audioName);
+	int AudioGetCondId(std::string trackName, std::string audioName);
+	int AudioGetCondType(std::string trackName, std::string audioName);
+	int AudioGetCondValue(std::string trackName, std::string audioName);
+	int AudioGetCondValue2(std::string trackName, std::string audioName);
 };
 
 #endif

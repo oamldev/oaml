@@ -82,7 +82,7 @@ bool oamlStudioApi::TrackIsMusicTrack(std::string name) {
 }
 
 void oamlStudioApi::TrackGetAudioList(std::string name, std::vector<std::string>& list) {
-	return oaml->TrackGetAudioList(name, list);
+	oaml->TrackGetAudioList(name, list);
 }
 
 float oamlStudioApi::TrackGetVolume(std::string name) {
@@ -105,131 +105,139 @@ int oamlStudioApi::TrackGetXFadeOut(std::string name) {
 	return oaml->TrackGetXFadeOut(name);
 }
 
-oamlRC oamlStudioApi::AudioNew(std::string trackName, std::string filename, int type) {
-	return oaml->AudioNew(trackName, filename, type);
+oamlRC oamlStudioApi::AudioNew(std::string trackName, std::string audioName, int type) {
+	return oaml->AudioNew(trackName, audioName, type);
 }
 
-oamlRC oamlStudioApi::AudioRemove(std::string trackName, std::string filename) {
-	return oaml->AudioRemove(trackName, filename);
+oamlRC oamlStudioApi::AudioRemove(std::string trackName, std::string audioName) {
+	return oaml->AudioRemove(trackName, audioName);
 }
 
-void oamlStudioApi::AudioSetVolume(std::string trackName, std::string filename, float volume) {
-	oaml->AudioSetVolume(trackName, filename, volume);
+void oamlStudioApi::AudioSetName(std::string trackName, std::string audioName, std::string name) {
+	oaml->AudioSetName(trackName, audioName, name);
 }
 
-void oamlStudioApi::AudioSetBPM(std::string trackName, std::string filename, float bpm) {
-	oaml->AudioSetBPM(trackName, filename, bpm);
+void oamlStudioApi::AudioSetVolume(std::string trackName, std::string audioName, float volume) {
+	oaml->AudioSetVolume(trackName, audioName, volume);
 }
 
-void oamlStudioApi::AudioSetBeatsPerBar(std::string trackName, std::string filename, int beatsPerBar) {
-	oaml->AudioSetBeatsPerBar(trackName, filename, beatsPerBar);
+void oamlStudioApi::AudioSetBPM(std::string trackName, std::string audioName, float bpm) {
+	oaml->AudioSetBPM(trackName, audioName, bpm);
 }
 
-void oamlStudioApi::AudioSetBars(std::string trackName, std::string filename, int bars) {
-	oaml->AudioSetBars(trackName, filename, bars);
+void oamlStudioApi::AudioSetBeatsPerBar(std::string trackName, std::string audioName, int beatsPerBar) {
+	oaml->AudioSetBeatsPerBar(trackName, audioName, beatsPerBar);
 }
 
-void oamlStudioApi::AudioSetMinMovementBars(std::string trackName, std::string filename, int minMovementBars) {
-	oaml->AudioSetMinMovementBars(trackName, filename, minMovementBars);
+void oamlStudioApi::AudioSetBars(std::string trackName, std::string audioName, int bars) {
+	oaml->AudioSetBars(trackName, audioName, bars);
 }
 
-void oamlStudioApi::AudioSetRandomChance(std::string trackName, std::string filename, int randomChance) {
-	oaml->AudioSetRandomChance(trackName, filename, randomChance);
+void oamlStudioApi::AudioSetMinMovementBars(std::string trackName, std::string audioName, int minMovementBars) {
+	oaml->AudioSetMinMovementBars(trackName, audioName, minMovementBars);
 }
 
-void oamlStudioApi::AudioSetFadeIn(std::string trackName, std::string filename, int fadeIn) {
-	oaml->AudioSetFadeIn(trackName, filename, fadeIn);
+void oamlStudioApi::AudioSetRandomChance(std::string trackName, std::string audioName, int randomChance) {
+	oaml->AudioSetRandomChance(trackName, audioName, randomChance);
 }
 
-void oamlStudioApi::AudioSetFadeOut(std::string trackName, std::string filename, int fadeOut) {
-	oaml->AudioSetFadeOut(trackName, filename, fadeOut);
+void oamlStudioApi::AudioSetFadeIn(std::string trackName, std::string audioName, int fadeIn) {
+	oaml->AudioSetFadeIn(trackName, audioName, fadeIn);
 }
 
-void oamlStudioApi::AudioSetXFadeIn(std::string trackName, std::string filename, int xFadeIn) {
-	oaml->AudioSetXFadeIn(trackName, filename, xFadeIn);
+void oamlStudioApi::AudioSetFadeOut(std::string trackName, std::string audioName, int fadeOut) {
+	oaml->AudioSetFadeOut(trackName, audioName, fadeOut);
 }
 
-void oamlStudioApi::AudioSetXFadeOut(std::string trackName, std::string filename, int xFadeOut) {
-	oaml->AudioSetXFadeOut(trackName, filename, xFadeOut);
+void oamlStudioApi::AudioSetXFadeIn(std::string trackName, std::string audioName, int xFadeIn) {
+	oaml->AudioSetXFadeIn(trackName, audioName, xFadeIn);
 }
 
-void oamlStudioApi::AudioSetCondId(std::string trackName, std::string filename, int condId) {
-	oaml->AudioSetCondId(trackName, filename, condId);
+void oamlStudioApi::AudioSetXFadeOut(std::string trackName, std::string audioName, int xFadeOut) {
+	oaml->AudioSetXFadeOut(trackName, audioName, xFadeOut);
 }
 
-void oamlStudioApi::AudioSetCondType(std::string trackName, std::string filename, int condType) {
-	oaml->AudioSetCondType(trackName, filename, condType);
+void oamlStudioApi::AudioSetCondId(std::string trackName, std::string audioName, int condId) {
+	oaml->AudioSetCondId(trackName, audioName, condId);
 }
 
-void oamlStudioApi::AudioSetCondValue(std::string trackName, std::string filename, int condValue) {
-	oaml->AudioSetCondValue(trackName, filename, condValue);
+void oamlStudioApi::AudioSetCondType(std::string trackName, std::string audioName, int condType) {
+	oaml->AudioSetCondType(trackName, audioName, condType);
 }
 
-void oamlStudioApi::AudioSetCondValue2(std::string trackName, std::string filename, int condValue2) {
-	oaml->AudioSetCondValue2(trackName, filename, condValue2);
+void oamlStudioApi::AudioSetCondValue(std::string trackName, std::string audioName, int condValue) {
+	oaml->AudioSetCondValue(trackName, audioName, condValue);
 }
 
-bool oamlStudioApi::AudioExists(std::string trackName, std::string filename) {
-	return oaml->AudioExists(trackName, filename);
+void oamlStudioApi::AudioSetCondValue2(std::string trackName, std::string audioName, int condValue2) {
+	oaml->AudioSetCondValue2(trackName, audioName, condValue2);
 }
 
-int oamlStudioApi::AudioGetType(std::string trackName, std::string filename) {
-	return oaml->AudioGetType(trackName, filename);
+bool oamlStudioApi::AudioExists(std::string trackName, std::string audioName) {
+	return oaml->AudioExists(trackName, audioName);
 }
 
-float oamlStudioApi::AudioGetVolume(std::string trackName, std::string filename) {
-	return oaml->AudioGetVolume(trackName, filename);
+int oamlStudioApi::AudioGetType(std::string trackName, std::string audioName) {
+	return oaml->AudioGetType(trackName, audioName);
 }
 
-float oamlStudioApi::AudioGetBPM(std::string trackName, std::string filename) {
-	return oaml->AudioGetBPM(trackName, filename);
+void oamlStudioApi::AudioGetLayerList(std::string trackName, std::string audioName, std::vector<std::string>& list) {
+	oaml->AudioGetLayerList(trackName, audioName, list);
 }
 
-int oamlStudioApi::AudioGetBeatsPerBar(std::string trackName, std::string filename) {
-	return oaml->AudioGetBeatsPerBar(trackName, filename);
+float oamlStudioApi::AudioGetVolume(std::string trackName, std::string audioName) {
+	return oaml->AudioGetVolume(trackName, audioName);
 }
 
-int oamlStudioApi::AudioGetBars(std::string trackName, std::string filename) {
-	return oaml->AudioGetBars(trackName, filename);
+float oamlStudioApi::AudioGetBPM(std::string trackName, std::string audioName) {
+	return oaml->AudioGetBPM(trackName, audioName);
 }
 
-int oamlStudioApi::AudioGetMinMovementBars(std::string trackName, std::string filename) {
-	return oaml->AudioGetMinMovementBars(trackName, filename);
+int oamlStudioApi::AudioGetBeatsPerBar(std::string trackName, std::string audioName) {
+	return oaml->AudioGetBeatsPerBar(trackName, audioName);
 }
 
-int oamlStudioApi::AudioGetRandomChance(std::string trackName, std::string filename) {
-	return oaml->AudioGetRandomChance(trackName, filename);
+int oamlStudioApi::AudioGetBars(std::string trackName, std::string audioName) {
+	return oaml->AudioGetBars(trackName, audioName);
 }
 
-int oamlStudioApi::AudioGetFadeIn(std::string trackName, std::string filename) {
-	return oaml->AudioGetFadeIn(trackName, filename);
+int oamlStudioApi::AudioGetMinMovementBars(std::string trackName, std::string audioName) {
+	return oaml->AudioGetMinMovementBars(trackName, audioName);
 }
 
-int oamlStudioApi::AudioGetFadeOut(std::string trackName, std::string filename) {
-	return oaml->AudioGetFadeOut(trackName, filename);
+int oamlStudioApi::AudioGetRandomChance(std::string trackName, std::string audioName) {
+	return oaml->AudioGetRandomChance(trackName, audioName);
 }
 
-int oamlStudioApi::AudioGetXFadeIn(std::string trackName, std::string filename) {
-	return oaml->AudioGetXFadeIn(trackName, filename);
+int oamlStudioApi::AudioGetFadeIn(std::string trackName, std::string audioName) {
+	return oaml->AudioGetFadeIn(trackName, audioName);
 }
 
-int oamlStudioApi::AudioGetXFadeOut(std::string trackName, std::string filename) {
-	return oaml->AudioGetXFadeOut(trackName, filename);
+int oamlStudioApi::AudioGetFadeOut(std::string trackName, std::string audioName) {
+	return oaml->AudioGetFadeOut(trackName, audioName);
 }
 
-int oamlStudioApi::AudioGetCondId(std::string trackName, std::string filename) {
-	return oaml->AudioGetCondId(trackName, filename);
+int oamlStudioApi::AudioGetXFadeIn(std::string trackName, std::string audioName) {
+	return oaml->AudioGetXFadeIn(trackName, audioName);
 }
 
-int oamlStudioApi::AudioGetCondType(std::string trackName, std::string filename) {
-	return oaml->AudioGetCondType(trackName, filename);
+int oamlStudioApi::AudioGetXFadeOut(std::string trackName, std::string audioName) {
+	return oaml->AudioGetXFadeOut(trackName, audioName);
 }
 
-int oamlStudioApi::AudioGetCondValue(std::string trackName, std::string filename) {
-	return oaml->AudioGetCondValue(trackName, filename);
+int oamlStudioApi::AudioGetCondId(std::string trackName, std::string audioName) {
+	return oaml->AudioGetCondId(trackName, audioName);
 }
 
-int oamlStudioApi::AudioGetCondValue2(std::string trackName, std::string filename) {
-	return oaml->AudioGetCondValue2(trackName, filename);
+int oamlStudioApi::AudioGetCondType(std::string trackName, std::string audioName) {
+	return oaml->AudioGetCondType(trackName, audioName);
+}
+
+int oamlStudioApi::AudioGetCondValue(std::string trackName, std::string audioName) {
+	return oaml->AudioGetCondValue(trackName, audioName);
+}
+
+int oamlStudioApi::AudioGetCondValue2(std::string trackName, std::string audioName) {
+	return oaml->AudioGetCondValue2(trackName, audioName);
 }
 

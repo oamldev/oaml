@@ -57,6 +57,10 @@ oamlMusicTrack::~oamlMusicTrack() {
 void oamlMusicTrack::AddAudio(oamlAudio *audio) {
 	ASSERT(audio != NULL);
 
+	if (GetAudio(audio->GetName())) {
+		printf("Duplicated audio name: %s\n", audio->GetName().c_str());
+	}
+
 	if (audio->GetType() == 1) {
 		introAudios.push_back(audio);
 	} else if (audio->GetType() == 4) {

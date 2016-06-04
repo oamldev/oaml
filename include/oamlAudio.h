@@ -71,6 +71,7 @@ public:
 	oamlAudio(oamlFileCallbacks *cbs, bool _verbose);
 	~oamlAudio();
 
+	void SetName(std::string _name) { name = _name; }
 	void SetType(int audioType) { type = audioType; }
 	void SetVolume(float audioVolume) { volume = audioVolume; }
 	void SetBPM(float _bpm);
@@ -108,6 +109,7 @@ public:
 
 	void ReadInfo(oamlAudioInfo *info);
 
+	void GetLayerList(std::vector<std::string>& list);
 	bool HasLayer(std::string filename);
 
 	void SetFilename(std::string audioFilename, std::string layer, oamlLayerData *info);

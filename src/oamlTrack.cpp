@@ -50,10 +50,10 @@ void oamlTrack::ClearAudios(std::vector<oamlAudio*> *audios) {
 	}
 }
 
-oamlAudio* oamlTrack::FindAudio(std::vector<oamlAudio*> *audios, std::string filename) {
+oamlAudio* oamlTrack::FindAudio(std::vector<oamlAudio*> *audios, std::string audioName) {
 	for (std::vector<oamlAudio*>::iterator it=audios->begin(); it<audios->end(); ++it) {
 		oamlAudio *audio = *it;
-		if (audio->HasLayer(filename)) {
+		if (audio->GetName() == audioName) {
 			return audio;
 		}
 	}
@@ -61,10 +61,10 @@ oamlAudio* oamlTrack::FindAudio(std::vector<oamlAudio*> *audios, std::string fil
 	return NULL;
 }
 
-oamlRC oamlTrack::FindAudioAndRemove(std::vector<oamlAudio*> *audios, std::string filename) {
+oamlRC oamlTrack::FindAudioAndRemove(std::vector<oamlAudio*> *audios, std::string audioName) {
 	for (std::vector<oamlAudio*>::iterator it=audios->begin(); it<audios->end(); ++it) {
 		oamlAudio *audio = *it;
-		if (audio->HasLayer(filename)) {
+		if (audio->GetName() == audioName) {
 			audios->erase(it);
 			return OAML_OK;
 		}
@@ -83,7 +83,7 @@ void oamlTrack::FreeAudiosMemory(std::vector<oamlAudio*> *audios) {
 void oamlTrack::FillAudiosList(std::vector<oamlAudio*> *audios, std::vector<std::string>& list) {
 	for (std::vector<oamlAudio*>::iterator it=audios->begin(); it<audios->end(); ++it) {
 		oamlAudio *audio = *it;
-		list.push_back(audio->GetFilename());
+		list.push_back(audio->GetName());
 	}
 }
 

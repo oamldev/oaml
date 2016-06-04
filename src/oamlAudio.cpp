@@ -32,6 +32,7 @@
 
 
 oamlAudio::oamlAudio(oamlFileCallbacks *cbs, bool _verbose) {
+	name = "";
 	verbose = _verbose;
 	fcbs = cbs;
 
@@ -156,6 +157,12 @@ oamlRC oamlAudio::Load() {
 	return OAML_OK;
 }
 
+void oamlAudio::GetLayerList(std::vector<std::string>& list) {
+	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
+		list.push_back(layer->GetFilename());
+	}
+}
+
 bool oamlAudio::HasLayer(std::string filename) {
 	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
 		if (layer->GetFilename().compare(filename) == 0) {
@@ -272,12 +279,14 @@ void oamlAudio::SetFilename(std::string audioFilename, std::string layer, oamlLa
 	layers.push_back(oamlLayer(audioFilename, layer, info, fcbs, verbose));
 
 	filename = audioFilename;
-	size_t pos = filename.find_last_of(PATH_SEPARATOR);
-	if (pos != std::string::npos) {
-		name = filename.substr(pos+1);
-		size_t pos = name.find_last_of('.');
+	if (name == "") {
+		size_t pos = filename.find_last_of(PATH_SEPARATOR);
 		if (pos != std::string::npos) {
-			name = name.substr(0, pos);
+			name = filename.substr(pos+1);
+			size_t pos = name.find_last_of('.');
+			if (pos != std::string::npos) {
+				name = name.substr(0, pos);
+			}
 		}
 	}
 }
@@ -336,6 +345,7 @@ void oamlAudio::FreeMemory() {
 }
 
 void oamlAudio::ReadInfo(oamlAudioInfo *info) {
+	info->name = GetName();
 	info->type = GetType();
 	info->volume = GetVolume();
 	info->bars = GetBars();
