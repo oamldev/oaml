@@ -75,6 +75,7 @@
 #endif
 #include "wav.h"
 #include "oamlLayer.h"
+#include "oamlAudioFile.h"
 #include "oamlAudio.h"
 #include "oamlTrack.h"
 #include "oamlMusicTrack.h"

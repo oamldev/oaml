@@ -80,6 +80,7 @@
     <ClCompile Include="..\src\gettime.cpp" />
     <ClCompile Include="..\src\oaml.cpp" />
     <ClCompile Include="..\src\oamlAudio.cpp" />
+    <ClCompile Include="..\src\oamlAudioFile.cpp" />
     <ClCompile Include="..\src\oamlBase.cpp" />
     <ClCompile Include="..\src\oamlC.cpp" />
     <ClCompile Include="..\src\oamlCompressor.cpp" />
@@ -102,6 +103,7 @@
     <ClInclude Include="..\include\gettime.h" />
     <ClInclude Include="..\include\oaml.h" />
     <ClInclude Include="..\include\oamlAudio.h" />
+    <ClInclude Include="..\include\oamlAudioFile.h" />
     <ClInclude Include="..\include\oamlBase.h" />
     <ClInclude Include="..\include\oamlCommon.h" />
     <ClInclude Include="..\include\oamlCompressor.h" />

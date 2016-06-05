@@ -162,14 +162,16 @@ oamlRC oamlBase::ReadAudioDefs(tinyxml2::XMLElement *el, oamlTrack *track) {
 		else if (strcmp(audioEl->Name(), "filename") == 0) {
 			const char *layer = audioEl->Attribute("layer");
 			if (layer) {
-				if (GetLayerId(layer) == -1) AddLayer(layer);
-				const char *randomChance = audioEl->Attribute("randomChance");
-				if (randomChance) {
-					SetLayerRandomChance(layer, strtol(randomChance, NULL, 0));
+				const char *randomChanceAttr = audioEl->Attribute("randomChance");
+				int randomChance = randomChanceAttr ? strtol(randomChanceAttr, NULL, 0) : -1;
+
+				if (GetLayerId(layer) == -1) {
+					AddLayer(layer);
 				}
-				audio->SetFilename(audioEl->GetText(), layer, GetLayer(layer));
+
+				audio->AddAudioFile(audioEl->GetText(), layer, randomChance);
 			} else {
-				audio->SetFilename(audioEl->GetText(), "", NULL);
+				audio->AddAudioFile(audioEl->GetText());
 			}
 		} else if (strcmp(audioEl->Name(), "type") == 0) audio->SetType(strtol(audioEl->GetText(), NULL, 0));
 		else if (strcmp(audioEl->Name(), "bars") == 0) audio->SetBars(strtol(audioEl->GetText(), NULL, 0));
@@ -750,38 +752,28 @@ void oamlBase::SetMainLoopCondition(int value) {
 	SetCondition(OAML_CONDID_MAIN_LOOP, value);
 }
 
-void oamlBase::AddLayer(const char *layer) {
+void oamlBase::AddLayer(std::string layer) {
 	if (GetLayerId(layer) == -1) {
-		oamlLayerData *info = new oamlLayerData();
-		info->id = layers.size();
-		info->name = layer;
-		info->randomChance = 100;
-		info->gain = 1.f;
-		layers.push_back(info);
+		oamlLayer *l = new oamlLayer(layers.size(), layer);
+		layers.push_back(l);
 	}
 }
 
-int oamlBase::GetLayerId(const char *layer) {
-	if (layer == NULL)
-		return -1;
-
-	for (std::vector<oamlLayerData*>::iterator it=layers.begin(); it<layers.end(); ++it) {
-		oamlLayerData *info = *it;
-		if (info->name.compare(layer) == 0) {
-			return info->id;
+int oamlBase::GetLayerId(std::string layer) {
+	for (std::vector<oamlLayer*>::iterator it=layers.begin(); it<layers.end(); ++it) {
+		oamlLayer *info = *it;
+		if (info->GetName().compare(layer) == 0) {
+			return info->GetId();
 		}
 	}
 
 	return -1;
 }
 
-oamlLayerData* oamlBase::GetLayer(const char *layer) {
-	if (layer == NULL)
-		return NULL;
-
-	for (std::vector<oamlLayerData*>::iterator it=layers.begin(); it<layers.end(); ++it) {
-		oamlLayerData *info = *it;
-		if (info->name.compare(layer) == 0) {
+oamlLayer* oamlBase::GetLayer(std::string layer) {
+	for (std::vector<oamlLayer*>::iterator it=layers.begin(); it<layers.end(); ++it) {
+		oamlLayer *info = *it;
+		if (info->GetName().compare(layer) == 0) {
 			return info;
 		}
 	}
@@ -790,19 +782,19 @@ oamlLayerData* oamlBase::GetLayer(const char *layer) {
 }
 
 void oamlBase::SetLayerGain(const char *layer, float gain) {
-	oamlLayerData *info = GetLayer(layer);
+	oamlLayer *info = GetLayer(layer);
 	if (info == NULL)
 		return;
 
-	info->gain = gain;
+	info->SetGain(gain);
 }
 
 void oamlBase::SetLayerRandomChance(const char *layer, int randomChance) {
-	oamlLayerData *info = GetLayer(layer);
+	oamlLayer *info = GetLayer(layer);
 	if (info == NULL)
 		return;
 
-	info->randomChance = randomChance;
+	info->SetRandomChance(randomChance);
 }
 
 void oamlBase::UpdateTension(uint64_t ms) {
@@ -978,6 +970,28 @@ oamlTrack* oamlBase::GetTrack(std::string name) {
 	}
 
 	return NULL;
+}
+
+oamlRC oamlBase::TrackRemove(std::string name) {
+	for (std::vector<oamlTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
+		oamlTrack *track = *it;
+		if (track->GetName().compare(name) == 0) {
+			musicTracks.erase(it);
+			delete track;
+			return OAML_OK;
+		}
+	}
+
+	for (std::vector<oamlTrack*>::iterator it=sfxTracks.begin(); it<sfxTracks.end(); ++it) {
+		oamlTrack *track = *it;
+		if (track->GetName().compare(name) == 0) {
+			musicTracks.erase(it);
+			delete track;
+			return OAML_OK;
+		}
+	}
+
+	return OAML_NOT_FOUND;
 }
 
 void oamlBase::TrackRename(std::string name, std::string newName) {
@@ -1254,12 +1268,12 @@ bool oamlBase::AudioExists(std::string trackName, std::string audioName) {
 	return audio != NULL;
 }
 
-void oamlBase::AudioGetLayerList(std::string trackName, std::string audioName, std::vector<std::string>& list) {
+void oamlBase::AudioGetAudioFileList(std::string trackName, std::string audioName, std::vector<std::string>& list) {
 	oamlAudio *audio = GetAudio(trackName, audioName);
 	if (audio == NULL)
 		return;
 
-	return audio->GetLayerList(list);
+	return audio->GetAudioFileList(list);
 }
 
 int oamlBase::AudioGetType(std::string trackName, std::string audioName) {
@@ -1380,5 +1394,69 @@ int oamlBase::AudioGetCondValue2(std::string trackName, std::string audioName) {
 		return 0;
 
 	return audio->GetCondValue2();
+}
+
+oamlAudioFile* oamlBase::GetAudioFile(std::string trackName, std::string audioName, std::string filename) {
+	oamlAudio *audio = GetAudio(trackName, audioName);
+	if (audio == NULL)
+		return NULL;
+
+	return audio->GetAudioFile(filename);
+}
+
+
+void oamlBase::AudioFileSetLayer(std::string trackName, std::string audioName, std::string filename, std::string layer) {
+	oamlAudioFile *file = GetAudioFile(trackName, audioName, filename);
+	if (file == NULL)
+		return;
+
+	file->SetLayer(layer);
+}
+
+void oamlBase::AudioFileSetRandomChance(std::string trackName, std::string audioName, std::string filename, int randomChance) {
+	oamlAudioFile *file = GetAudioFile(trackName, audioName, filename);
+	if (file == NULL)
+		return;
+
+	file->SetRandomChance(randomChance);
+}
+
+std::string oamlBase::AudioFileGetLayer(std::string trackName, std::string audioName, std::string filename) {
+	oamlAudioFile *file = GetAudioFile(trackName, audioName, filename);
+	if (file == NULL)
+		return "";
+
+	return file->GetLayer();
+}
+
+int oamlBase::AudioFileGetRandomChance(std::string trackName, std::string audioName, std::string filename) {
+	oamlAudioFile *file = GetAudioFile(trackName, audioName, filename);
+	if (file == NULL)
+		return 0;
+
+	return file->GetRandomChance();
+}
+
+void oamlBase::LayerList(std::vector<std::string>& list) {
+	for (std::vector<oamlLayer*>::iterator it=layers.begin(); it<layers.end(); ++it) {
+		oamlLayer *layer = *it;
+		list.push_back(layer->GetName());
+	}
+}
+
+int oamlBase::LayerGetRandomChance(std::string name) {
+	oamlLayer *layer = GetLayer(name);
+	if (layer == NULL)
+		return 100;
+
+	return layer->GetRandomChance();
+}
+
+float oamlBase::LayerGetGain(std::string name) {
+	oamlLayer *layer = GetLayer(name);
+	if (layer == NULL)
+		return 1.f;
+
+	return layer->GetGain();
 }
 

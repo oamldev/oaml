@@ -43,7 +43,7 @@ private:
 
 	std::vector<oamlTrack*> musicTracks;
 	std::vector<oamlTrack*> sfxTracks;
-	std::vector<oamlLayerData*> layers;
+	std::vector<oamlLayer*> layers;
 
 	oamlTrack *curTrack;
 
@@ -87,14 +87,15 @@ private:
 
 	bool IsAudioFormatSupported();
 
-	void AddLayer(const char *layer);
-	int GetLayerId(const char *layer);
-	oamlLayerData *GetLayer(const char *layer);
+	void AddLayer(std::string layer);
+	int GetLayerId(std::string layer);
+	oamlLayer *GetLayer(std::string layer);
 
 	void UpdateTension(uint64_t ms);
 
 	oamlTrack* GetTrack(std::string name);
-	oamlAudio* GetAudio(std::string trackName, std::string filename);
+	oamlAudio* GetAudio(std::string trackName, std::string audioName);
+	oamlAudioFile* GetAudioFile(std::string trackName, std::string audioName, std::string filename);
 
 public:
 	oamlBase();
@@ -164,6 +165,7 @@ public:
 	void ProjectNew();
 
 	oamlRC TrackNew(std::string name, bool sfxTrack = false);
+	oamlRC TrackRemove(std::string name);
 	void TrackRename(std::string name, std::string newName);
 	void TrackSetVolume(std::string name, float volume);
 	void TrackSetFadeIn(std::string name, int fadeIn);
@@ -200,7 +202,7 @@ public:
 	void AudioSetCondValue2(std::string trackName, std::string audioName, int condValue2);
 
 	bool AudioExists(std::string trackName, std::string audioName);
-	void AudioGetLayerList(std::string trackName, std::string audioName, std::vector<std::string>& list);
+	void AudioGetAudioFileList(std::string trackName, std::string audioName, std::vector<std::string>& list);
 	int AudioGetType(std::string trackName, std::string audioName);
 	float AudioGetVolume(std::string trackName, std::string audioName);
 	float AudioGetBPM(std::string trackName, std::string audioName);
@@ -216,6 +218,16 @@ public:
 	int AudioGetCondType(std::string trackName, std::string audioName);
 	int AudioGetCondValue(std::string trackName, std::string audioName);
 	int AudioGetCondValue2(std::string trackName, std::string audioName);
+
+	void AudioFileSetLayer(std::string trackName, std::string audioName, std::string filename, std::string layer);
+	void AudioFileSetRandomChance(std::string trackName, std::string audioName, std::string filename, int randomChance);
+
+	std::string AudioFileGetLayer(std::string trackName, std::string audioName, std::string filename);
+	int AudioFileGetRandomChance(std::string trackName, std::string audioName, std::string filename);
+
+	void LayerList(std::vector<std::string>& list);
+	int LayerGetRandomChance(std::string layer);
+	float LayerGetGain(std::string layer);
 };
 
 #endif /* __OAMLBASE_H__ */

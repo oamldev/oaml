@@ -183,6 +183,7 @@ set(SOURCES
 	src/gettime.cpp
 	src/oaml.cpp
 	src/oamlAudio.cpp
+	src/oamlAudioFile.cpp
 	src/oamlBase.cpp
 	src/oamlCompressor.cpp
 	src/oamlLayer.cpp

@@ -139,8 +139,8 @@ void oamlAudio::UpdateSamplesToEnd() {
 		samplesToEnd = totalSamples;
 	}
 
-	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
-		layer->SetSamplesToEnd(samplesToEnd);
+	for (std::vector<oamlAudioFile>::iterator file=files.begin(); file<files.end(); ++file) {
+		file->SetSamplesToEnd(samplesToEnd);
 	}
 }
 
@@ -148,8 +148,8 @@ oamlRC oamlAudio::Load() {
 	oamlRC ret = Open();
 	if (ret != OAML_OK) return ret;
 
-	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
-		ret = layer->Load();
+	for (std::vector<oamlAudioFile>::iterator file=files.begin(); file<files.end(); ++file) {
+		ret = file->Load();
 		if (ret != OAML_OK)
 			return ret;
 	}
@@ -157,15 +157,15 @@ oamlRC oamlAudio::Load() {
 	return OAML_OK;
 }
 
-void oamlAudio::GetLayerList(std::vector<std::string>& list) {
-	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
-		list.push_back(layer->GetFilename());
+void oamlAudio::GetAudioFileList(std::vector<std::string>& list) {
+	for (std::vector<oamlAudioFile>::iterator file=files.begin(); file<files.end(); ++file) {
+		list.push_back(file->GetFilename());
 	}
 }
 
-bool oamlAudio::HasLayer(std::string filename) {
-	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
-		if (layer->GetFilename().compare(filename) == 0) {
+bool oamlAudio::HasAudioFile(std::string filename) {
+	for (std::vector<oamlAudioFile>::iterator file=files.begin(); file<files.end(); ++file) {
+		if (file->GetFilename().compare(filename) == 0) {
 			return true;
 		}
 	}
@@ -173,18 +173,28 @@ bool oamlAudio::HasLayer(std::string filename) {
 	return false;
 }
 
-oamlRC oamlAudio::Open() {
-	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, GetFilenameStr());
+oamlAudioFile* oamlAudio::GetAudioFile(std::string filename) {
+	for (std::vector<oamlAudioFile>::iterator file=files.begin(); file<files.end(); ++file) {
+		if (file->GetFilename().compare(filename) == 0) {
+			return &(*file);
+		}
+	}
 
-	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
-		oamlRC ret = layer->Open();
+	return NULL;
+}
+
+oamlRC oamlAudio::Open() {
+	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, GetName().c_str());
+
+	for (std::vector<oamlAudioFile>::iterator file=files.begin(); file<files.end(); ++file) {
+		oamlRC ret = file->Open();
 		if (ret != OAML_OK)
 			return ret;
 
 		if (totalSamples == 0) {
-			channelCount = layer->GetChannels();
-			samplesPerSec = layer->GetSamplesPerSec();
-			totalSamples = layer->GetTotalSamples();
+			channelCount = file->GetChannels();
+			samplesPerSec = file->GetSamplesPerSec();
+			totalSamples = file->GetTotalSamples();
 		}
 	}
 
@@ -234,8 +244,8 @@ bool oamlAudio::HasFinishedTail(unsigned int pos) {
 float oamlAudio::ReadFloat() {
 	float sample = 0.f;
 
-	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
-		sample+= layer->ReadFloat(samplesCount);
+	for (std::vector<oamlAudioFile>::iterator file=files.begin(); file<files.end(); ++file) {
+		sample+= file->ReadFloat(samplesCount);
 	}
 
 	if (fadeInSamples) {
@@ -268,17 +278,20 @@ float oamlAudio::ReadFloat(unsigned int pos) {
 	if (pos > totalSamples)
 		return 0;
 
-	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
-		sample+= layer->ReadFloat(pos, true);
+	for (std::vector<oamlAudioFile>::iterator file=files.begin(); file<files.end(); ++file) {
+		sample+= file->ReadFloat(pos, true);
 	}
 
 	return sample * volume;
 }
 
-void oamlAudio::SetFilename(std::string audioFilename, std::string layer, oamlLayerData *info) {
-	layers.push_back(oamlLayer(audioFilename, layer, info, fcbs, verbose));
+void oamlAudio::AddAudioFile(std::string filename, std::string layer, int randomChance) {
+	oamlAudioFile file = oamlAudioFile(filename, fcbs, verbose);
+	file.SetLayer(layer);
+	file.SetRandomChance(randomChance);
 
-	filename = audioFilename;
+	files.push_back(file);
+
 	if (name == "") {
 		size_t pos = filename.find_last_of(PATH_SEPARATOR);
 		if (pos != std::string::npos) {
@@ -339,7 +352,7 @@ unsigned int oamlAudio::ReadSamples(float *samples, int channels, unsigned int p
 }
 
 void oamlAudio::FreeMemory() {
-	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
+	for (std::vector<oamlAudioFile>::iterator layer=files.begin(); layer<files.end(); ++layer) {
 		layer->FreeMemory();
 	}
 }
@@ -362,15 +375,13 @@ void oamlAudio::ReadInfo(oamlAudioInfo *info) {
 	info->condValue = GetCondValue();
 	info->condValue2 = GetCondValue2();
 
-	for (std::vector<oamlLayer>::iterator layer=layers.begin(); layer<layers.end(); ++layer) {
-		oamlLayerInfo linfo;
+	for (std::vector<oamlAudioFile>::iterator file=files.begin(); file<files.end(); ++file) {
+		oamlAudioFileInfo afinfo;
 
-		linfo.filename = layer->GetFilename();
-		linfo.name = layer->GetName();
-		linfo.randomChance = layer->GetRandomChance();
+		afinfo.filename = file->GetFilename();
+		afinfo.layer = file->GetLayer();
+		afinfo.randomChance = file->GetRandomChance();
 
-		info->layers.push_back(linfo);
+		info->files.push_back(afinfo);
 	}
 }
-
-

@@ -377,17 +377,17 @@ std::string oamlMusicTrack::GetPlayingInfo() {
 	info+= GetName() + ":";
 
 	if (curAudio) {
-		snprintf(str, 1024, " curAudio = %s (pos=%d)", curAudio->GetFilenameStr(), curAudio->GetSamplesCount());
+		snprintf(str, 1024, " curAudio = %s (pos=%d)", curAudio->GetName().c_str(), curAudio->GetSamplesCount());
 		info+= str;
 	}
 
 	if (tailAudio) {
-		snprintf(str, 1024, " tailAudio = %s (pos=%d)", tailAudio->GetFilenameStr(), tailAudio->GetSamplesCount());
+		snprintf(str, 1024, " tailAudio = %s (pos=%d)", tailAudio->GetName().c_str(), tailAudio->GetSamplesCount());
 		info+= str;
 	}
 
 	if (fadeAudio) {
-		snprintf(str, 1024, " fadeAudio = %s (pos=%d)", fadeAudio->GetFilenameStr(), fadeAudio->GetSamplesCount());
+		snprintf(str, 1024, " fadeAudio = %s (pos=%d)", fadeAudio->GetName().c_str(), fadeAudio->GetSamplesCount());
 		info+= str;
 	}
 

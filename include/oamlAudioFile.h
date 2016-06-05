@@ -20,28 +20,62 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef __OAMLLAYER_H__
-#define __OAMLLAYER_H__
+#ifndef __OAMLAUDIOFILE_H__
+#define __OAMLAUDIOFILE_H__
 
-class oamlLayer {
+class ByteBuffer;
+
+class oamlAudioFile {
 private:
-	int id;
-	std::string name;
+	bool verbose;
+	oamlFileCallbacks *fcbs;
+
+	ByteBuffer buffer;
+	audioFile *handle;
+	std::string filename;
+	std::string layer;
 	int randomChance;
 	float gain;
 
-public:
-	oamlLayer(int _id, std::string _name);
-	~oamlLayer();
+	unsigned int bytesPerSample;
+	unsigned int samplesPerSec;
+	unsigned int totalSamples;
+	unsigned int channelCount;
+	unsigned int samplesToEnd;
 
-	void SetName(std::string _name) { name = _name; }
+	bool chance;
+	bool lastChance;
+
+	oamlRC OpenFile();
+
+	int Read();
+	int Read32(unsigned int pos);
+
+public:
+	oamlAudioFile(std::string _filename, oamlFileCallbacks *cbs, bool _verbose);
+	~oamlAudioFile();
+
+	void SetFilename(std::string _filename) { filename = _filename; }
+	void SetLayer(std::string _layer) { layer = _layer; }
 	void SetRandomChance(int _randomChance) { randomChance = _randomChance; }
 	void SetGain(float _gain) { gain = _gain; }
 
-	int GetId() const { return id; }
-	std::string GetName() const { return name; }
-	int GetRandomChance() const { return randomChance; }
-	float GetGain() const { return gain; }
+	std::string GetFilename() const { return filename; }
+	const char *GetFilenameStr() const { return filename.c_str(); }
+	std::string GetLayer() const { return layer; }
+	int GetRandomChance() { return randomChance; }
+	float GetGain() { return gain; }
+
+	oamlRC Open();
+	oamlRC Load();
+	float ReadFloat(unsigned int pos, bool isTail = false);
+
+	unsigned int GetChannels() const { return channelCount; }
+	unsigned int GetTotalSamples() const { return totalSamples; }
+	unsigned int GetSamplesPerSec() const { return samplesPerSec; }
+	void SetSamplesToEnd(unsigned int samples) { samplesToEnd = samples; }
+
+	void FreeMemory();
 };
 
 #endif

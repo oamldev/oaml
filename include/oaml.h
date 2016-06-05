@@ -119,9 +119,9 @@ void oamlShutdown();
 
 typedef struct {
 	std::string filename;
-	std::string name;
+	std::string layer;
 	int randomChance;
-} oamlLayerInfo;
+} oamlAudioFileInfo;
 
 typedef struct {
 	std::string name;
@@ -140,7 +140,7 @@ typedef struct {
 	int condType;
 	int condValue;
 	int condValue2;
-	std::vector<oamlLayerInfo> layers;
+	std::vector<oamlAudioFileInfo> files;
 } oamlAudioInfo;
 
 typedef struct {
@@ -334,6 +334,7 @@ public:
 	void ProjectNew();
 
 	oamlRC TrackNew(std::string name, bool sfxTrack = false);
+	oamlRC TrackRemove(std::string name);
 	void TrackRename(std::string name, std::string newName);
 	void TrackSetVolume(std::string name, float volume);
 	void TrackSetFadeIn(std::string name, int fadeIn);
@@ -370,7 +371,7 @@ public:
 	void AudioSetCondValue2(std::string trackName, std::string audioName, int condValue2);
 
 	bool AudioExists(std::string trackName, std::string audioName);
-	void AudioGetLayerList(std::string trackName, std::string audioName, std::vector<std::string>& list);
+	void AudioGetAudioFileList(std::string trackName, std::string audioName, std::vector<std::string>& list);
 	int AudioGetType(std::string trackName, std::string audioName);
 	float AudioGetVolume(std::string trackName, std::string audioName);
 	float AudioGetBPM(std::string trackName, std::string audioName);
@@ -386,6 +387,16 @@ public:
 	int AudioGetCondType(std::string trackName, std::string audioName);
 	int AudioGetCondValue(std::string trackName, std::string audioName);
 	int AudioGetCondValue2(std::string trackName, std::string audioName);
+
+	void AudioFileSetLayer(std::string trackName, std::string audioName, std::string filename, std::string layer);
+	void AudioFileSetRandomChance(std::string trackName, std::string audioName, std::string filename, int randomChance);
+
+	std::string AudioFileGetLayer(std::string trackName, std::string audioName, std::string filename);
+	int AudioFileGetRandomChance(std::string trackName, std::string audioName, std::string filename);
+
+	void LayerList(std::vector<std::string>& list);
+	int LayerGetRandomChance(std::string layer);
+	float LayerGetGain(std::string layer);
 };
 
 #endif

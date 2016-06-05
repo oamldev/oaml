@@ -45,6 +45,10 @@ oamlRC oamlStudioApi::TrackNew(std::string name, bool sfxTrack) {
 	return oaml->TrackNew(name, sfxTrack);
 }
 
+oamlRC oamlStudioApi::TrackRemove(std::string name) {
+	return oaml->TrackRemove(name);
+}
+
 void oamlStudioApi::TrackRename(std::string name, std::string newName) {
 	oaml->TrackRename(name, newName);
 }
@@ -181,8 +185,8 @@ int oamlStudioApi::AudioGetType(std::string trackName, std::string audioName) {
 	return oaml->AudioGetType(trackName, audioName);
 }
 
-void oamlStudioApi::AudioGetLayerList(std::string trackName, std::string audioName, std::vector<std::string>& list) {
-	oaml->AudioGetLayerList(trackName, audioName, list);
+void oamlStudioApi::AudioGetAudioFileList(std::string trackName, std::string audioName, std::vector<std::string>& list) {
+	oaml->AudioGetAudioFileList(trackName, audioName, list);
 }
 
 float oamlStudioApi::AudioGetVolume(std::string trackName, std::string audioName) {
@@ -239,5 +243,33 @@ int oamlStudioApi::AudioGetCondValue(std::string trackName, std::string audioNam
 
 int oamlStudioApi::AudioGetCondValue2(std::string trackName, std::string audioName) {
 	return oaml->AudioGetCondValue2(trackName, audioName);
+}
+
+void oamlStudioApi::AudioFileSetLayer(std::string trackName, std::string audioName, std::string filename, std::string layer) {
+	oaml->AudioFileSetLayer(trackName, audioName, filename, layer);
+}
+
+void oamlStudioApi::AudioFileSetRandomChance(std::string trackName, std::string audioName, std::string filename, int randomChance) {
+	oaml->AudioFileSetRandomChance(trackName, audioName, filename, randomChance);
+}
+
+std::string oamlStudioApi::AudioFileGetLayer(std::string trackName, std::string audioName, std::string filename) {
+	return oaml->AudioFileGetLayer(trackName, audioName, filename);
+}
+
+int oamlStudioApi::AudioFileGetRandomChance(std::string trackName, std::string audioName, std::string filename) {
+	return oaml->AudioFileGetRandomChance(trackName, audioName, filename);
+}
+
+void oamlStudioApi::LayerList(std::vector<std::string>& list) {
+	oaml->LayerList(list);
+}
+
+int oamlStudioApi::LayerGetRandomChance(std::string layer) {
+	return oaml->LayerGetRandomChance(layer);
+}
+
+float oamlStudioApi::LayerGetGain(std::string layer) {
+	return oaml->LayerGetGain(layer);
 }
 

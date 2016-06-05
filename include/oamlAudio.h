@@ -30,8 +30,7 @@ private:
 	bool verbose;
 	oamlFileCallbacks *fcbs;
 
-	std::vector<oamlLayer> layers;
-	std::string filename;
+	std::vector<oamlAudioFile> files;
 	std::string name;
 	int type;
 	int bars;
@@ -109,12 +108,11 @@ public:
 
 	void ReadInfo(oamlAudioInfo *info);
 
-	void GetLayerList(std::vector<std::string>& list);
-	bool HasLayer(std::string filename);
+	void GetAudioFileList(std::vector<std::string>& list);
+	bool HasAudioFile(std::string filename);
+	oamlAudioFile *GetAudioFile(std::string filename);
 
-	void SetFilename(std::string audioFilename, std::string layer, oamlLayerData *info);
-	std::string GetFilename() const { return filename; }
-	const char *GetFilenameStr() const { return filename.c_str(); }
+	void AddAudioFile(std::string filename, std::string layer = "", int randomChance = -1);
 	std::string GetName() const { return name; }
 	float GetVolume() const { return volume; }
 	float GetBPM() const { return bpm; }
