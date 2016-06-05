@@ -1143,6 +1143,14 @@ oamlRC oamlBase::AudioRemove(std::string trackName, std::string audioName) {
 	return track->RemoveAudio(audioName);
 }
 
+void oamlBase::AudioAddAudioFile(std::string trackName, std::string audioName, std::string filename) {
+	oamlAudio *audio = GetAudio(trackName, audioName);
+	if (audio == NULL)
+		return;
+
+	audio->AddAudioFile(filename);
+}
+
 void oamlBase::AudioSetName(std::string trackName, std::string audioName, std::string name) {
 	oamlAudio *audio = GetAudio(trackName, audioName);
 	if (audio == NULL)
@@ -1404,6 +1412,13 @@ oamlAudioFile* oamlBase::GetAudioFile(std::string trackName, std::string audioNa
 	return audio->GetAudioFile(filename);
 }
 
+void oamlBase::AudioFileRemove(std::string trackName, std::string audioName, std::string filename) {
+	oamlAudio *audio = GetAudio(trackName, audioName);
+	if (audio == NULL)
+		return;
+
+	audio->RemoveAudioFile(filename);
+}
 
 void oamlBase::AudioFileSetLayer(std::string trackName, std::string audioName, std::string filename, std::string layer) {
 	oamlAudioFile *file = GetAudioFile(trackName, audioName, filename);

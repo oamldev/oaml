@@ -185,6 +185,7 @@ public:
 
 	oamlRC AudioNew(std::string trackName, std::string audioName, int type);
 	oamlRC AudioRemove(std::string trackName, std::string audioName);
+	void AudioAddAudioFile(std::string trackName, std::string audioName, std::string filename);
 	void AudioSetName(std::string trackName, std::string audioName, std::string name);
 	void AudioSetVolume(std::string trackName, std::string audioName, float volume);
 	void AudioSetBPM(std::string trackName, std::string audioName, float bpm);
@@ -219,6 +220,7 @@ public:
 	int AudioGetCondValue(std::string trackName, std::string audioName);
 	int AudioGetCondValue2(std::string trackName, std::string audioName);
 
+	void AudioFileRemove(std::string trackName, std::string audioName, std::string filename);
 	void AudioFileSetLayer(std::string trackName, std::string audioName, std::string filename, std::string layer);
 	void AudioFileSetRandomChance(std::string trackName, std::string audioName, std::string filename, int randomChance);
 

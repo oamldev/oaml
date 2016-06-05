@@ -173,6 +173,15 @@ bool oamlAudio::HasAudioFile(std::string filename) {
 	return false;
 }
 
+void oamlAudio::RemoveAudioFile(std::string filename) {
+	for (std::vector<oamlAudioFile>::iterator file=files.begin(); file<files.end(); ++file) {
+		if (file->GetFilename().compare(filename) == 0) {
+			files.erase(file);
+			return;
+		}
+	}
+}
+
 oamlAudioFile* oamlAudio::GetAudioFile(std::string filename) {
 	for (std::vector<oamlAudioFile>::iterator file=files.begin(); file<files.end(); ++file) {
 		if (file->GetFilename().compare(filename) == 0) {

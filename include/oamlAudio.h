@@ -110,6 +110,7 @@ public:
 
 	void GetAudioFileList(std::vector<std::string>& list);
 	bool HasAudioFile(std::string filename);
+	void RemoveAudioFile(std::string filename);
 	oamlAudioFile *GetAudioFile(std::string filename);
 
 	void AddAudioFile(std::string filename, std::string layer = "", int randomChance = -1);

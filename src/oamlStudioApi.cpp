@@ -117,6 +117,10 @@ oamlRC oamlStudioApi::AudioRemove(std::string trackName, std::string audioName) 
 	return oaml->AudioRemove(trackName, audioName);
 }
 
+void oamlStudioApi::AudioAddAudioFile(std::string trackName, std::string audioName, std::string filename) {
+	oaml->AudioAddAudioFile(trackName, audioName, filename);
+}
+
 void oamlStudioApi::AudioSetName(std::string trackName, std::string audioName, std::string name) {
 	oaml->AudioSetName(trackName, audioName, name);
 }
@@ -243,6 +247,10 @@ int oamlStudioApi::AudioGetCondValue(std::string trackName, std::string audioNam
 
 int oamlStudioApi::AudioGetCondValue2(std::string trackName, std::string audioName) {
 	return oaml->AudioGetCondValue2(trackName, audioName);
+}
+
+void oamlStudioApi::AudioFileRemove(std::string trackName, std::string audioName, std::string filename) {
+	oaml->AudioFileRemove(trackName, audioName, filename);
 }
 
 void oamlStudioApi::AudioFileSetLayer(std::string trackName, std::string audioName, std::string filename, std::string layer) {
