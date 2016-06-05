@@ -985,7 +985,7 @@ oamlRC oamlBase::TrackRemove(std::string name) {
 	for (std::vector<oamlTrack*>::iterator it=sfxTracks.begin(); it<sfxTracks.end(); ++it) {
 		oamlTrack *track = *it;
 		if (track->GetName().compare(name) == 0) {
-			musicTracks.erase(it);
+			sfxTracks.erase(it);
 			delete track;
 			return OAML_OK;
 		}
