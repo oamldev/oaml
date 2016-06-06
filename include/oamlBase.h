@@ -45,6 +45,9 @@ private:
 	std::vector<oamlTrack*> sfxTracks;
 	std::vector<oamlLayer*> layers;
 
+	float bpm;
+	int beatsPerBar;
+
 	oamlTrack *curTrack;
 
 	ByteBuffer *fullBuffer;
@@ -163,6 +166,10 @@ public:
 	const char* GetPlayingInfo();
 
 	void ProjectNew();
+	void ProjectSetBPM(float bpm);
+	void ProjectSetBeatsPerBar(int beatsPerBar);
+	float ProjectGetBPM();
+	int ProjectGetBeatsPerBar();
 
 	oamlRC TrackNew(std::string name, bool sfxTrack = false);
 	oamlRC TrackRemove(std::string name);
@@ -228,8 +235,10 @@ public:
 	int AudioFileGetRandomChance(std::string trackName, std::string audioName, std::string filename);
 
 	void LayerList(std::vector<std::string>& list);
-	int LayerGetRandomChance(std::string layer);
-	float LayerGetGain(std::string layer);
+	void LayerRename(std::string layerName, std::string name);
+	int LayerGetId(std::string layerName);
+	int LayerGetRandomChance(std::string layerName);
+	float LayerGetGain(std::string layerName);
 };
 
 #endif /* __OAMLBASE_H__ */

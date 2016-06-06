@@ -71,6 +71,9 @@ oamlBase::oamlBase() {
 	useCompressor = false;
 	updateTension = false;
 
+	bpm = 0.f;
+	beatsPerBar = 0;
+
 #ifdef __HAVE_RTAUDIO
 	rtAudio = NULL;
 #endif
@@ -254,12 +257,33 @@ oamlRC oamlBase::ReadDefs(const char *buf, int size) {
 		return OAML_ERROR;
 	}
 
-	tinyxml2::XMLElement *el = doc.FirstChildElement("track");
-	while (el != NULL) {
-		oamlRC ret = ReadTrackDefs(el);
-		if (ret != OAML_OK) return ret;
+	tinyxml2::XMLElement *prjEl = doc.FirstChildElement("project");
+	if (prjEl) {
+		// New oaml.defs, root node is a <project> tag which contains project settings and a list of tracks
+		tinyxml2::XMLElement *el = prjEl->FirstChildElement();
+		while (el != NULL) {
+			if (strcmp(el->Name(), "track") == 0) {
+				oamlRC ret = ReadTrackDefs(el);
+				if (ret != OAML_OK) return ret;
+			} else if (strcmp(el->Name(), "bpm") == 0) {
+				ProjectSetBPM(float(atof(el->GetText())));
+			} else if (strcmp(el->Name(), "beatsPerBar") == 0) {
+				ProjectSetBeatsPerBar(strtol(el->GetText(), NULL, 0));
+			} else {
+				printf("%s: Unknown project tag: %s\n", __FUNCTION__, el->Name());
+			}
 
-		el = el->NextSiblingElement();
+			el = el->NextSiblingElement();
+		}
+	} else {
+		// Old oaml.defs, search for al the <track> tags
+		tinyxml2::XMLElement *el = doc.FirstChildElement("track");
+		while (el != NULL) {
+			oamlRC ret = ReadTrackDefs(el);
+			if (ret != OAML_OK) return ret;
+
+			el = el->NextSiblingElement();
+		}
 	}
 
 	return OAML_OK;
@@ -868,6 +892,9 @@ oamlTracksInfo* oamlBase::GetTracksInfo() {
 		tracksInfo.tracks.push_back(tinfo);
 	}
 
+	tracksInfo.bpm = bpm;
+	tracksInfo.beatsPerBar = beatsPerBar;
+
 	return &tracksInfo;
 }
 
@@ -931,6 +958,25 @@ void oamlBase::ProjectNew() {
 	StopPlaying();
 
 	Clear();
+
+	bpm = 0.f;
+	beatsPerBar = 0;
+}
+
+void oamlBase::ProjectSetBPM(float _bpm) {
+	bpm = _bpm;
+}
+
+void oamlBase::ProjectSetBeatsPerBar(int _beatsPerBar) {
+	beatsPerBar = _beatsPerBar;
+}
+
+float oamlBase::ProjectGetBPM() {
+	return bpm;
+}
+
+int oamlBase::ProjectGetBeatsPerBar() {
+	return beatsPerBar;
 }
 
 oamlRC oamlBase::TrackNew(std::string name, bool sfxTrack) {
@@ -1459,16 +1505,32 @@ void oamlBase::LayerList(std::vector<std::string>& list) {
 	}
 }
 
-int oamlBase::LayerGetRandomChance(std::string name) {
-	oamlLayer *layer = GetLayer(name);
+void oamlBase::LayerRename(std::string layerName, std::string name) {
+	oamlLayer *layer = GetLayer(layerName);
+	if (layer == NULL)
+		return;
+
+	layer->SetName(name);
+}
+
+int oamlBase::LayerGetId(std::string layerName) {
+	oamlLayer *layer = GetLayer(layerName);
+	if (layer == NULL)
+		return -1;
+
+	return layer->GetId();
+}
+
+int oamlBase::LayerGetRandomChance(std::string layerName) {
+	oamlLayer *layer = GetLayer(layerName);
 	if (layer == NULL)
 		return 100;
 
 	return layer->GetRandomChance();
 }
 
-float oamlBase::LayerGetGain(std::string name) {
-	oamlLayer *layer = GetLayer(name);
+float oamlBase::LayerGetGain(std::string layerName) {
+	oamlLayer *layer = GetLayer(layerName);
 	if (layer == NULL)
 		return 1.f;
 

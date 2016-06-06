@@ -41,6 +41,22 @@ void oamlStudioApi::ProjectNew() {
 	oaml->ProjectNew();
 }
 
+void oamlStudioApi::ProjectSetBPM(float bpm) {
+	oaml->ProjectSetBPM(bpm);
+}
+
+void oamlStudioApi::ProjectSetBeatsPerBar(int beatsPerBar) {
+	oaml->ProjectSetBeatsPerBar(beatsPerBar);
+}
+
+float oamlStudioApi::ProjectGetBPM() {
+	return oaml->ProjectGetBPM();
+}
+
+int oamlStudioApi::ProjectGetBeatsPerBar() {
+	return oaml->ProjectGetBeatsPerBar();
+}
+
 oamlRC oamlStudioApi::TrackNew(std::string name, bool sfxTrack) {
 	return oaml->TrackNew(name, sfxTrack);
 }
@@ -273,11 +289,19 @@ void oamlStudioApi::LayerList(std::vector<std::string>& list) {
 	oaml->LayerList(list);
 }
 
-int oamlStudioApi::LayerGetRandomChance(std::string layer) {
-	return oaml->LayerGetRandomChance(layer);
+void oamlStudioApi::LayerRename(std::string layerName, std::string name) {
+	return oaml->LayerRename(layerName, name);
 }
 
-float oamlStudioApi::LayerGetGain(std::string layer) {
-	return oaml->LayerGetGain(layer);
+int oamlStudioApi::LayerGetId(std::string layerName) {
+	return oaml->LayerGetId(layerName);
+}
+
+int oamlStudioApi::LayerGetRandomChance(std::string layerName) {
+	return oaml->LayerGetRandomChance(layerName);
+}
+
+float oamlStudioApi::LayerGetGain(std::string layerName) {
+	return oaml->LayerGetGain(layerName);
 }
 
