@@ -1168,6 +1168,8 @@ oamlRC oamlBase::AudioNew(std::string trackName, std::string audioName, int type
 
 	audio->SetType(type);
 	audio->SetName(audioName);
+	audio->SetBPM(bpm);
+	audio->SetBeatsPerBar(beatsPerBar);
 	track->AddAudio(audio);
 
 	return OAML_OK;
