@@ -285,6 +285,10 @@ int oamlStudioApi::AudioFileGetRandomChance(std::string trackName, std::string a
 	return oaml->AudioFileGetRandomChance(trackName, audioName, filename);
 }
 
+oamlRC oamlStudioApi::LayerNew(std::string name) {
+	return oaml->LayerNew(name);
+}
+
 void oamlStudioApi::LayerList(std::vector<std::string>& list) {
 	oaml->LayerList(list);
 }

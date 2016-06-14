@@ -234,6 +234,7 @@ public:
 	std::string AudioFileGetLayer(std::string trackName, std::string audioName, std::string filename);
 	int AudioFileGetRandomChance(std::string trackName, std::string audioName, std::string filename);
 
+	oamlRC LayerNew(std::string name);
 	void LayerList(std::vector<std::string>& list);
 	void LayerRename(std::string layerName, std::string name);
 	int LayerGetId(std::string layerName);

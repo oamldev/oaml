@@ -1500,6 +1500,12 @@ int oamlBase::AudioFileGetRandomChance(std::string trackName, std::string audioN
 	return file->GetRandomChance();
 }
 
+oamlRC oamlBase::LayerNew(std::string name) {
+	AddLayer(name);
+
+	return OAML_OK;
+}
+
 void oamlBase::LayerList(std::vector<std::string>& list) {
 	for (std::vector<oamlLayer*>::iterator it=layers.begin(); it<layers.end(); ++it) {
 		oamlLayer *layer = *it;
