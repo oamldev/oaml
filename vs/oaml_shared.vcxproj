@@ -58,7 +58,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>OAML_VERSION_STRING="1.0";WIN32;NDEBUG;_WINDOWS;_USRDLL;OAML_EXPORTS;__HAVE_OGG;__HAVE_RTAUDIO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>OAML_VERSION_STRING="1.0";WIN32;NDEBUG;_WINDOWS;_USRDLL;OAML_EXPORTS;__HAVE_OGG;__HAVE_RTAUDIO;__WINDOWS_DS__;__WINDOWS_WSAPI__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
