@@ -26,7 +26,15 @@ Note that a track is only required to have one main loop at least, all the other
 
 ### Supported audio formats
 
-Supports the following audio formats: **ogg, wav, aif**.
+Supports the following audio formats:
+- ogg
+- wav
+- aif
+
+
+### Supported game engines
+- Unity3d
+- Godot: [oamlGodotModule](https://github.com/oamldev/oamlGodotModule)
 
 
 ### Demos
@@ -101,12 +109,13 @@ For now since resampling is not implemented in OAML you need to export the music
 - Resampling music?
 - Add a function for playing SFX's with a 3d position.
 - Add a loudness effect, and a reverb effect as well.
-- Implement OAML in more game engines, love2d, godot, etc.
+- Implement OAML in more game engines, love2d, etc.
 
 
 ### Games using OAML
 
 - [https://github.com/Andrettin/Wyrmgus](https://github.com/Andrettin/Wyrmgus)
+
 
 ### About
 
