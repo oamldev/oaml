@@ -44,6 +44,8 @@ Demos page: [https://oamldev.github.io/demos/](https://oamldev.github.io/demos/)
 
 ### How to compile
 
+First install libogg and libvorbis, if you don't have them already, [https://www.xiph.org/downloads/](https://www.xiph.org/downloads/).
+
 On Linux and OSX:
 
 ```
