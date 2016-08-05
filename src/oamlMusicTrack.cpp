@@ -40,6 +40,8 @@ oamlMusicTrack::oamlMusicTrack(bool _verbose) {
 	fadeOut = 0;
 	xfadeIn = 0;
 	xfadeOut = 0;
+	playingOrder = 0;
+	maxPlayOrder = 0;
 
 	tailPos = 0;
 
@@ -194,6 +196,27 @@ oamlRC oamlMusicTrack::Play() {
 
 	SetCondition(OAML_CONDID_MAIN_LOOP, 0);
 
+	playingOrder = 0;
+	maxPlayOrder = 0;
+
+	// Check if we need to use the playOrder audio property
+	size_t count = 0;
+	for (std::vector<oamlAudio*>::iterator it=loopAudios.begin(); it<loopAudios.end(); ++it) {
+		oamlAudio *audio = *it;
+		int playOrder = audio->GetPlayOrder();
+		if (playOrder != 0) {
+			if (playOrder > maxPlayOrder) {
+				maxPlayOrder = playOrder;
+			}
+			count++;
+		}
+	}
+
+	if (count == loopAudios.size()) {
+		// All of our loop audios have the playOrder property assigned, enable its use
+		playingOrder = 1;
+	}
+
 	if (introAudios.size() >= 1) {
 		if (introAudios.size() == 1) {
 			curAudio = introAudios[0];
@@ -237,23 +260,33 @@ oamlAudio* oamlMusicTrack::PickNextAudio() {
 	if (loopAudios.size() == 1) {
 		return loopAudios[0];
 	} else if (loopAudios.size() >= 2) {
-		oamlAudio *list[256];
-		int count = 0;
+		std::vector<oamlAudio*> list;
 
 		for (size_t i=0; i<loopAudios.size(); i++) {
 			oamlAudio *audio = loopAudios[i];
-			if (audio->IsPickable())
-				list[count++] = audio;
+			if (audio->IsPickable()) {
+				if (playingOrder != 0 && audio->GetPlayOrder() != playingOrder) {
+					continue;
+				}
+				list.push_back(audio);
+			}
 		}
 
-		if (count == 0) {
+		if (playingOrder != 0) {
+			playingOrder++;
+			if (playingOrder > maxPlayOrder) {
+				playingOrder = 1;
+			}
+		}
+
+		if (list.size() == 0) {
 			return NULL;
-		} else if (count == 1) {
+		} else if (list.size() == 1) {
 			return list[0];
 		} else {
-			int r = Random(0, count-1);
+			int r = Random(0, list.size()-1);
 			while (curAudio == list[r]) {
-				r = Random(0, count-1);
+				r = Random(0, list.size()-1);
 			}
 
 			return list[r];

@@ -50,6 +50,7 @@ oamlAudio::oamlAudio(oamlFileCallbacks *cbs, bool _verbose) {
 	beatsPerBar = 0;
 	minMovementBars = 0;
 	randomChance = 0;
+	playOrder = 0;
 
 	fadeIn = 0;
 	fadeInSamples = 0;

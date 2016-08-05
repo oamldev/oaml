@@ -29,6 +29,8 @@ class oamlAudio;
 class oamlMusicTrack : public oamlTrack {
 private:
 	bool playing;
+	int playingOrder;
+	int maxPlayOrder;
 	int playCondSamples;
 
 	unsigned int filesSamples;

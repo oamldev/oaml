@@ -47,6 +47,7 @@ private:
 	int beatsPerBar;
 	int minMovementBars;
 	int randomChance;
+	int playOrder;
 
 	unsigned int fadeIn;
 	unsigned int fadeInSamples;
@@ -79,6 +80,7 @@ public:
 	void SetBars(int _bars);
 	void SetMinMovementBars(int audioMinMovementBars) { minMovementBars = audioMinMovementBars; }
 	void SetRandomChance(int audioRandomChance) { randomChance = audioRandomChance; }
+	void SetPlayOrder(int _playOrder) { playOrder = _playOrder; }
 	void SetFadeIn(unsigned int audioFadeIn) { fadeIn = audioFadeIn; }
 	void SetFadeOut(unsigned int audioFadeOut) { fadeOut = audioFadeOut; }
 	void SetXFadeIn(unsigned int audioXFadeIn) { xfadeIn = audioXFadeIn; }
@@ -123,6 +125,7 @@ public:
 	int GetBars() const { return bars; }
 	int GetMinMovementBars() const { return minMovementBars; }
 	int GetRandomChance() const { return randomChance; }
+	int GetPlayOrder() const { return playOrder; }
 	int GetCondId() const { return condId; }
 	int GetCondType() const { return condType; }
 	int GetCondValue() const { return condValue; }
