@@ -194,4 +194,9 @@ void oamlAudioFile::FreeMemory() {
 		delete handle;
 		handle = NULL;
 	}
+
+	bytesPerSample = 0;
+	samplesPerSec = 0;
+	totalSamples = 0;
+	channelCount = 0;
 }

@@ -378,6 +378,12 @@ void oamlAudio::FreeMemory() {
 	for (std::vector<oamlAudioFile>::iterator layer=files.begin(); layer<files.end(); ++layer) {
 		layer->FreeMemory();
 	}
+
+	samplesCount = 0;
+	samplesPerSec = 0;
+	samplesToEnd = 0;
+	totalSamples = 0;
+	filesSamples = 0;
 }
 
 unsigned int oamlAudio::GetFilesSamples() {

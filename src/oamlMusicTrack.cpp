@@ -449,6 +449,10 @@ float oamlMusicTrack::LoadProgress() {
 		filesSamples+= samples;
 	}
 
+	if (filesSamples == 0) {
+		return -1.f;
+	}
+
 	int totalSamplesRead = 0;
 
 	samples = LoadProgressFor(&introAudios);
@@ -492,6 +496,8 @@ void oamlMusicTrack::FreeMemory() {
 	FreeAudiosMemory(&loopAudios);
 	FreeAudiosMemory(&randAudios);
 	FreeAudiosMemory(&condAudios);
+
+	filesSamples = 0;
 }
 
 void oamlMusicTrack::GetAudioList(std::vector<std::string>& list) {
