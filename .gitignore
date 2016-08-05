@@ -14,6 +14,7 @@ oamlInternal.defs
 /build*/liboaml*
 install_manifest.txt
 include/GitSHA1.h
+src/*.o
 
 vs/*.userprefs
 vs/*.csproj
