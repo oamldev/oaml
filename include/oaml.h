@@ -132,6 +132,7 @@ typedef struct {
 	int bars;
 	int minMovementBars;
 	int randomChance;
+	int playOrder;
 	int fadeIn;
 	int fadeOut;
 	int xfadeIn;

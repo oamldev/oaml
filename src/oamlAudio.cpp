@@ -409,6 +409,7 @@ void oamlAudio::ReadInfo(oamlAudioInfo *info) {
 	info->beatsPerBar = GetBeatsPerBar();
 	info->minMovementBars = GetMinMovementBars();
 	info->randomChance = GetRandomChance();
+	info->playOrder = GetPlayOrder();
 	info->fadeIn = GetFadeIn();
 	info->fadeOut = GetFadeOut();
 	info->xfadeIn = GetXFadeIn();
