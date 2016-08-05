@@ -129,6 +129,7 @@ public:
 	oamlRC PlaySfx2d(const char *name, int x, int y, int width, int height);
 
 	oamlRC LoadTrack(const char *name);
+	float LoadTrackProgress(const char *name);
 
 	void StopPlaying();
 	void Pause();

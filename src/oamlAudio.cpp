@@ -44,6 +44,7 @@ oamlAudio::oamlAudio(oamlFileCallbacks *cbs, bool _verbose) {
 	samplesPerSec = 0;
 	samplesToEnd = 0;
 	totalSamples = 0;
+	filesSamples = 0;
 
 	bpm = 0;
 	beatsPerBar = 0;
@@ -155,6 +156,19 @@ oamlRC oamlAudio::Load() {
 	}
 
 	return OAML_OK;
+}
+
+int oamlAudio::LoadProgress() {
+	int ret = 0;
+	for (std::vector<oamlAudioFile>::iterator file=files.begin(); file<files.end(); ++file) {
+		int count = file->LoadProgress();
+		if (count == -1)
+			return -1;
+
+		ret+= count;
+	}
+
+	return ret;
 }
 
 void oamlAudio::GetAudioFileList(std::vector<std::string>& list) {
@@ -364,6 +378,19 @@ void oamlAudio::FreeMemory() {
 	for (std::vector<oamlAudioFile>::iterator layer=files.begin(); layer<files.end(); ++layer) {
 		layer->FreeMemory();
 	}
+}
+
+unsigned int oamlAudio::GetFilesSamples() {
+	if (filesSamples == 0) {
+		oamlRC ret = Open();
+		if (ret != OAML_OK) return ret;
+
+		for (std::vector<oamlAudioFile>::iterator file=files.begin(); file<files.end(); ++file) {
+			filesSamples+= file->GetTotalSamples();
+		}
+	}
+
+	return filesSamples;
 }
 
 void oamlAudio::ReadInfo(oamlAudioInfo *info) {

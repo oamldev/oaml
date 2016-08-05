@@ -55,6 +55,9 @@ protected:
 	void FreeAudiosMemory(std::vector<oamlAudio*> *audios);
 	void FillAudiosList(std::vector<oamlAudio*> *audios, std::vector<std::string>& list);
 
+	int GetFilesSamplesFor(std::vector<oamlAudio*> *audios);
+	int LoadProgressFor(std::vector<oamlAudio*> *audios);
+
 public:
 	oamlTrack();
 	virtual ~oamlTrack();
@@ -90,6 +93,7 @@ public:
 	virtual oamlRC Play(const char *) { return OAML_NOT_FOUND; }
 	virtual oamlRC Play(const char *, float, float) { return OAML_NOT_FOUND; }
 	virtual oamlRC Load() { return OAML_NOT_FOUND; }
+	virtual float LoadProgress() { return -1.f; }
 	virtual void Stop() { }
 
 	virtual bool IsPlaying() { return false; }

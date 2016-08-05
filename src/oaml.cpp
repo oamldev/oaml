@@ -96,6 +96,10 @@ oamlRC oamlApi::LoadTrack(const char *name) {
 	return oaml->LoadTrack(name);
 }
 
+float oamlApi::LoadTrackProgress(const char *name) {
+	return oaml->LoadTrackProgress(name);
+}
+
 bool oamlApi::IsTrackPlaying(const char *name) {
 	return oaml->IsTrackPlaying(name);
 }

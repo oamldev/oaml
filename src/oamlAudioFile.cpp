@@ -108,6 +108,19 @@ oamlRC oamlAudioFile::Load() {
 	return OAML_OK;
 }
 
+int oamlAudioFile::LoadProgress() {
+	if (handle == NULL) {
+		return buffer.size()/bytesPerSample;
+	}
+
+	int ret = Read();
+	if (ret == -1) {
+		return -1;
+	}
+
+	return buffer.size()/bytesPerSample;
+}
+
 int oamlAudioFile::Read() {
 	if (handle == NULL)
 		return -1;
@@ -116,6 +129,8 @@ int oamlAudioFile::Read() {
 	int ret = handle->Read(&buffer, readSize);
 	if (ret < readSize) {
 		handle->Close();
+		delete handle;
+		handle = NULL;
 	}
 
 	return ret;

@@ -68,6 +68,7 @@ public:
 
 	oamlRC Open();
 	oamlRC Load();
+	int LoadProgress();
 	float ReadFloat(unsigned int pos, bool isTail = false);
 
 	unsigned int GetChannels() const { return channelCount; }

@@ -182,3 +182,35 @@ void oamlTrack::ReadAudiosInfo(std::vector<oamlAudio*> *audios, oamlTrackInfo *i
 		info->audios.push_back(ainfo);
 	}
 }
+
+int oamlTrack::GetFilesSamplesFor(std::vector<oamlAudio*> *audios) {
+	int total = 0;
+
+	for (std::vector<oamlAudio*>::iterator it=audios->begin(); it<audios->end(); ++it) {
+		oamlAudio *audio = *it;
+
+		int samples = audio->GetFilesSamples();
+		if (samples == -1)
+			return -1;
+
+		total+= samples;
+	}
+
+	return total;
+}
+
+int oamlTrack::LoadProgressFor(std::vector<oamlAudio*> *audios) {
+	int ret = 0;
+
+	for (std::vector<oamlAudio*>::iterator it=audios->begin(); it<audios->end(); ++it) {
+		oamlAudio *audio = *it;
+
+		int samples = audio->LoadProgress();
+		if (samples == -1)
+			return -1;
+
+		ret+= samples;
+	}
+
+	return ret;
+}

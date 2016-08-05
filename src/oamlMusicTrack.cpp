@@ -31,6 +31,7 @@ oamlMusicTrack::oamlMusicTrack(bool _verbose) {
 	verbose = _verbose;
 	name = "Track";
 	playing = false;
+	filesSamples = 0;
 
 	playCondSamples = 0;
 	playCondAudio = NULL;
@@ -419,6 +420,62 @@ oamlRC oamlMusicTrack::Load() {
 	}
 
 	return OAML_OK;
+}
+
+float oamlMusicTrack::LoadProgress() {
+	int samples;
+
+	if (filesSamples == 0) {
+		// Calculate the total size of the audio loops to read
+
+		samples = GetFilesSamplesFor(&introAudios);
+		if (samples == -1)
+			return -1.f;
+		filesSamples+= samples;
+
+		samples = GetFilesSamplesFor(&loopAudios);
+		if (samples == -1)
+			return -1.f;
+		filesSamples+= samples;
+
+		samples = GetFilesSamplesFor(&randAudios);
+		if (samples == -1)
+			return -1.f;
+		filesSamples+= samples;
+
+		samples = GetFilesSamplesFor(&condAudios);
+		if (samples == -1)
+			return -1.f;
+		filesSamples+= samples;
+	}
+
+	int totalSamplesRead = 0;
+
+	samples = LoadProgressFor(&introAudios);
+	if (samples == -1) {
+		return -1.f;
+	}
+	totalSamplesRead+= samples;
+
+	samples = LoadProgressFor(&loopAudios);
+	if (samples == -1) {
+		return -1.f;
+	}
+	totalSamplesRead+= samples;
+
+	samples = LoadProgressFor(&randAudios);
+	if (samples == -1) {
+		return -1.f;
+	}
+	totalSamplesRead+= samples;
+
+	samples = LoadProgressFor(&condAudios);
+	if (samples == -1) {
+		return -1.f;
+	}
+	totalSamplesRead+= samples;
+
+	return float(double(totalSamplesRead) / double(filesSamples));
 }
 
 void oamlMusicTrack::ReadInfo(oamlTrackInfo *info) {

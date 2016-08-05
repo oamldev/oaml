@@ -533,6 +533,21 @@ oamlRC oamlBase::LoadTrack(const char *name) {
 	return OAML_ERROR;
 }
 
+float oamlBase::LoadTrackProgress(const char *name) {
+	ASSERT(name != NULL);
+
+	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, name);
+
+	for (std::vector<oamlTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
+		oamlTrack *track = *it;
+		if (track->GetName().compare(name) == 0) {
+			return track->LoadProgress();
+		}
+	}
+
+	return -1.f;
+}
+
 bool oamlBase::IsTrackPlaying(const char *name) {
 	ASSERT(name != NULL);
 

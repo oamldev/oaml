@@ -31,6 +31,7 @@ private:
 	bool playing;
 	int playCondSamples;
 
+	unsigned int filesSamples;
 	unsigned int tailPos;
 
 	std::vector<oamlAudio*> loopAudios;
@@ -60,6 +61,7 @@ public:
 	oamlRC RemoveAudio(std::string filename);
 	oamlRC Play();
 	oamlRC Load();
+	float LoadProgress();
 	void Stop();
 
 	bool IsPlaying();

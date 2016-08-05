@@ -245,8 +245,14 @@ public:
 	oamlRC PlaySfxEx(const char *name, float vol, float pan);
 	oamlRC PlaySfx2d(const char *name, int x, int y, int width, int height);
 
-	/** Load a track into memory cache */
+	/** Load a track into memory cache (blocking)
+	 */
 	oamlRC LoadTrack(const char *name);
+
+	/** Load a track into memory cache (non-blocking)
+	 *  @return returns 0.f to 1.f or -1.f on error
+	 */
+	float LoadTrackProgress(const char *name);
 
 	/** Stop playing any track currently playing */
 	void StopPlaying();

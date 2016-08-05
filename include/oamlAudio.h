@@ -40,6 +40,7 @@ private:
 	unsigned int samplesPerSec;
 	unsigned int samplesToEnd;
 	unsigned int totalSamples;
+	unsigned int filesSamples;
 	unsigned int channelCount;
 
 	float bpm;
@@ -97,6 +98,7 @@ public:
 
 	oamlRC Open();
 	oamlRC Load();
+	int LoadProgress();
 	float ReadFloat();
 	float ReadFloat(unsigned int pos);
 
@@ -133,6 +135,7 @@ public:
 
 	unsigned int GetBarsSamples(int bars);
 	unsigned int GetSamplesCount() const { return samplesCount; }
+	unsigned int GetFilesSamples();
 
 	void SetPickable(bool value) { pickable = value; }
 	bool IsPickable() const { return pickable; }
