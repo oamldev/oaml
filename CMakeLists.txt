@@ -88,7 +88,7 @@ if (ENABLE_OGG)
 
 	if (OGGVORBIS_FOUND AND VORBISFILE_FOUND)
 		add_definitions(-D__HAVE_OGG)
-		include_directories(${VORBISFILE_INCLUDE_DIR})
+		include_directories(SYSTEM ${VORBIS_INCLUDE_DIR} ${VORBISFILE_INCLUDE_DIRS})
 		set(OAML_LIBS ${OAML_LIBS} ${OGG_LIBRARY} ${VORBIS_LIBRARY} ${VORBISFILE_LIBRARIES})
 	endif()
 endif()
@@ -118,7 +118,7 @@ if (ENABLE_RTAUDIO)
 		find_package(ALSA)
 		if (ALSA_FOUND)
 			find_package(Threads REQUIRED CMAKE_THREAD_PREFER_PTHREAD)
-			include_directories(${ALSA_INCLUDE_DIR})
+			include_directories(SYSTEM ${ALSA_INCLUDE_DIR})
 			list(APPEND OAML_LIBS ${ALSA_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
 			add_definitions(-D__LINUX_ALSA__)
 			message(STATUS "RtAudio: Using Linux ALSA")
@@ -163,10 +163,8 @@ endif()
 ##
 # Build static and shared libraries
 #
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/GitSHA1.h.in" "${CMAKE_CURRENT_BINARY_DIR}/include/GitSHA1.h" @ONLY)
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
+include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/include)
 
 include(CheckIncludeFiles)
 check_include_files("${CMAKE_CURRENT_BINARY_DIR}/include/GitSha1.h" HAVE_GITSHA1_H)
