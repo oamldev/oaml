@@ -164,7 +164,7 @@ endif()
 # Build static and shared libraries
 #
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/GitSHA1.h.in" "${CMAKE_CURRENT_BINARY_DIR}/include/GitSHA1.h" @ONLY)
-include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/include)
+include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_BINARY_DIR}/include)
 
 include(CheckIncludeFiles)
 check_include_files("${CMAKE_CURRENT_BINARY_DIR}/include/GitSha1.h" HAVE_GITSHA1_H)
