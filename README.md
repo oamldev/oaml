@@ -11,7 +11,7 @@ OAML is a library the makes it easy to implement adaptive music in games.
 Adaptive music, also known as interactive music or dynamic music, is music that reacts to what's happening on the video game. For example, if there is a battle going on, music will get more tense to stimulate the player's reaction to the battle. There is a nice paper on the subject written by David Vink that can be found on gamecareerguide ([link](http://www.gamecareerguide.com/features/768/student_thesis_adaptive_music_for_.php?print=1)).
 
 
-### How does it works?
+### How does it work?
 
 OAML uses short music loops to make music less linear and more interactive with the player.
 
