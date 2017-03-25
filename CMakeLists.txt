@@ -213,6 +213,7 @@ if (ENABLE_SHARED)
 	target_link_libraries(oaml_shared ${OAML_LIBS})
 	set_target_properties(oaml_shared
 		PROPERTIES
+			OUTPUT_NAME oaml
 			SOVERSION ${PROJECT_VERSION_MAJOR}
 			VERSION   ${PROJECT_VERSION}
 	)
