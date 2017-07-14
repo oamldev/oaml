@@ -41,6 +41,7 @@ oamlAudioFile::oamlAudioFile(std::string _filename, oamlFileCallbacks *cbs, bool
 	samplesPerSec = 0;
 	totalSamples = 0;
 	channelCount = 0;
+	samplesToEnd = 0;
 
 	chance = false;
 	lastChance = false;

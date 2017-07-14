@@ -38,6 +38,8 @@ oamlCompressor::oamlCompressor() {
 	att = 0.0;
 	rel = 0.0;
 	env = 0.0;
+
+	chnum = 0;
 }
 
 oamlCompressor::~oamlCompressor() {

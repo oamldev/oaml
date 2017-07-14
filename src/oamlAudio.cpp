@@ -40,6 +40,7 @@ oamlAudio::oamlAudio(oamlFileCallbacks *cbs, bool _verbose) {
 	bars = 0;
 	volume = 1.f;
 
+	channelCount = 0;
 	samplesCount = 0;
 	samplesPerSec = 0;
 	samplesToEnd = 0;

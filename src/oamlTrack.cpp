@@ -36,6 +36,8 @@ oamlTrack::oamlTrack() {
 	fadeOut = 0;
 	xfadeIn = 0;
 	xfadeOut = 0;
+
+	verbose = false;
 }
 
 oamlTrack::~oamlTrack() {

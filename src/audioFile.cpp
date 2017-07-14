@@ -32,6 +32,7 @@
 
 audioFile::audioFile(oamlFileCallbacks *cbs) {
 	fcbs = cbs;
+	fd = NULL;
 }
 
 audioFile::~audioFile() {

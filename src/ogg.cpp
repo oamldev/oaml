@@ -53,12 +53,15 @@ long oggFile_tell(void *datasource) {
 oggFile::oggFile(oamlFileCallbacks *cbs) : audioFile(cbs) {
 	fcbs = cbs;
 	fd = NULL;
+	vf = NULL;
 
 	format = 0;
 	channels = 0;
 	samplesPerSec = 0;
 	bitsPerSample = 0;
 	totalSamples = 0;
+
+	currentSection = 0;
 }
 
 oggFile::~oggFile() {

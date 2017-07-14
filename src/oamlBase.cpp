@@ -84,6 +84,7 @@ oamlBase::oamlBase() {
 	sampleRate = 0;
 	channels = 0;
 	bytesPerSample = 0;
+	floatBuffer = false;
 
 	volume = OAML_VOLUME_DEFAULT;
 	pause = false;
@@ -1004,8 +1005,9 @@ oamlRC oamlBase::TrackNew(std::string name, bool sfxTrack) {
 		track = new oamlMusicTrack(verbose);
 	}
 
-	track->SetName(name);
 	if (track == NULL) return OAML_ERROR;
+
+	track->SetName(name);
 
 	if (track->IsMusicTrack()) {
 		musicTracks.push_back(track);
