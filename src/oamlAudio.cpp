@@ -227,14 +227,8 @@ oamlRC oamlAudio::Open() {
 
 	samplesCount = 0;
 	fadeInSamples = 0;
-
-	if (fadeOut) {
-		fadeOutSamples = (unsigned int)((fadeOut / 1000.f) * samplesPerSec);
-		fadeOutCount = fadeOutSamples;
-	} else {
-		fadeOutSamples = 0;
-		fadeOutCount = 0;
-	}
+	fadeOutSamples = 0;
+	fadeOutCount = 0;
 
 	return OAML_OK;
 }
