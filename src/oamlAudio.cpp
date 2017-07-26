@@ -147,6 +147,14 @@ void oamlAudio::UpdateSamplesToEnd() {
 	}
 }
 
+void oamlAudio::SetLayerGain(std::string layer, float gain) {
+	for (std::vector<oamlAudioFile>::iterator file=files.begin(); file<files.end(); ++file) {
+		if (file->GetLayer().compare(layer) == 0) {
+			file->SetGain(gain);
+		}
+	}
+}
+
 oamlRC oamlAudio::Load() {
 	oamlRC ret = Open();
 	if (ret != OAML_OK) return ret;

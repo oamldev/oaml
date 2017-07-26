@@ -540,3 +540,16 @@ void oamlMusicTrack::GetAudioList(std::vector<std::string>& list) {
 	FillAudiosList(&condAudios, list);
 }
 
+void oamlMusicTrack::_SetLayerGain(std::vector<oamlAudio*> *audios, std::string layer, float gain) {
+	for (std::vector<oamlAudio*>::iterator it=audios->begin(); it<audios->end(); ++it) {
+		oamlAudio *audio = *it;
+		audio->SetLayerGain(layer, gain);
+	}
+}
+
+void oamlMusicTrack::SetLayerGain(std::string layer, float gain) {
+	_SetLayerGain(&introAudios, layer, gain);
+	_SetLayerGain(&loopAudios, layer, gain);
+	_SetLayerGain(&randAudios, layer, gain);
+	_SetLayerGain(&condAudios, layer, gain);
+}

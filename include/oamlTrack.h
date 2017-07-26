@@ -107,6 +107,8 @@ public:
 	virtual bool IsMusicTrack() const { return false; }
 	virtual bool IsSfxTrack() const { return false; }
 
+	virtual void SetLayerGain(std::string, float) { }
+
 	virtual void FreeMemory() { }
 };
 

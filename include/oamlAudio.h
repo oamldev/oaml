@@ -140,6 +140,8 @@ public:
 	unsigned int GetSamplesCount() const { return samplesCount; }
 	unsigned int GetFilesSamples();
 
+	void SetLayerGain(std::string layer, float gain);
+
 	void SetPickable(bool value) { pickable = value; }
 	bool IsPickable() const { return pickable; }
 

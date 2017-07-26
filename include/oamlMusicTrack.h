@@ -53,6 +53,8 @@ private:
 	void PlayCondWithMovement(oamlAudio *audio);
 	void XFadePlay();
 
+	void _SetLayerGain(std::vector<oamlAudio*> *audios, std::string layer, float gain);
+
 public:
 	oamlMusicTrack(bool _verbose);
 	~oamlMusicTrack();
@@ -77,6 +79,8 @@ public:
 	bool IsMusicTrack() const { return true; }
 
 	void ReadInfo(oamlTrackInfo *info);
+
+	void SetLayerGain(std::string layer, float gain);
 
 	void FreeMemory();
 };

@@ -828,6 +828,10 @@ void oamlBase::SetLayerGain(const char *layer, float gain) {
 		return;
 
 	info->SetGain(gain);
+
+	for (size_t j=0; j<musicTracks.size(); j++) {
+		musicTracks[j]->SetLayerGain(layer, gain);
+	}
 }
 
 void oamlBase::SetLayerRandomChance(const char *layer, int randomChance) {
