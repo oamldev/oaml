@@ -58,7 +58,7 @@ oamlAudio::oamlAudio(oamlFileCallbacks *cbs, bool _verbose) {
 
 	fadeOut = 0;
 	fadeOutSamples = 0;
-	fadeOutStart = 0;
+	fadeOutCount = 0;
 
 	xfadeIn = 0;
 	xfadeOut = 0;
@@ -230,10 +230,10 @@ oamlRC oamlAudio::Open() {
 
 	if (fadeOut) {
 		fadeOutSamples = (unsigned int)((fadeOut / 1000.f) * samplesPerSec);
-		fadeOutStart = samplesToEnd - fadeOutSamples;
+		fadeOutCount = fadeOutSamples;
 	} else {
 		fadeOutSamples = 0;
-		fadeOutStart = 0;
+		fadeOutCount = 0;
 	}
 
 	return OAML_OK;
@@ -244,15 +244,14 @@ void oamlAudio::DoFadeIn(int msec) {
 }
 
 void oamlAudio::DoFadeOut(int msec) {
-	fadeOutStart = samplesCount;
 	fadeOutSamples = (unsigned int)((msec / 1000.f) * samplesPerSec);
+	fadeOutCount = fadeOutSamples;
 }
 
 bool oamlAudio::HasFinished() {
 	// Check if we're fading out
 	if (fadeOutSamples) {
-		unsigned int fadeOutFinish = fadeOutStart + fadeOutSamples;
-		if (samplesCount >= fadeOutFinish) {
+		if (fadeOutCount <= 0) {
 			// Fade out finished so we're done
 			return true;
 		}
@@ -282,11 +281,10 @@ float oamlAudio::ReadFloat() {
 		}
 	}
 
-	if (fadeOutSamples && samplesCount >= fadeOutStart) {
-		unsigned int fadeOutFinish = fadeOutStart + fadeOutSamples;
-		if (samplesCount < fadeOutFinish) {
-			float gain = float(fadeOutFinish - samplesCount) / float(fadeOutSamples);
-			sample*= gain;
+	if (fadeOutSamples) {
+		if (fadeOutCount > 0) {
+			sample*= float(fadeOutCount) / float(fadeOutSamples);
+			fadeOutCount--;
 		} else {
 			sample = 0.f;
 		}

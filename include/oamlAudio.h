@@ -54,7 +54,7 @@ private:
 
 	unsigned int fadeOut;
 	unsigned int fadeOutSamples;
-	unsigned int fadeOutStart;
+	unsigned int fadeOutCount;
 
 	unsigned int xfadeIn;
 	unsigned int xfadeOut;
