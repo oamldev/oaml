@@ -247,4 +247,10 @@ if (ENABLE_SHARED)
 	install(TARGETS oaml_shared DESTINATION lib${LIB_SUFFIX})
 endif()
 
+configure_file("oaml.cmake.in" "oaml.cmake" @ONLY)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/oaml.cmake" DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/oaml/)
+
+configure_file("oaml.pc.in" "oaml.pc" @ONLY)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/oaml.pc" DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig/)
+
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/oaml.h DESTINATION include)

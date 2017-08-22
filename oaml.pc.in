@@ -1,0 +1,13 @@
+# oaml pkg-config file
+
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: oaml
+Description: OAML is a library the makes it easy to implement adaptive music in games.
+Version: @OAML_VERSION@
+Requires: ogg vorbis
+Conflicts:
+Libs: -L${libdir} @OAML_LIBS@
