@@ -117,6 +117,7 @@ For now since resampling is not implemented in OAML you need to export the music
 ### Games using OAML
 
 - [https://github.com/Andrettin/Wyrmgus](https://github.com/Andrettin/Wyrmgus)
+- [https://shawyadventures.github.io/](https://shawyadventures.github.io/)
 
 
 ### About
