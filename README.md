@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/marcelofg55/oaml.svg)](https://travis-ci.org/marcelofg55/oaml.svg?branch=master)
+[![Build Status](https://travis-ci.org/oamldev/oaml.svg)](https://travis-ci.org/oamldev/oaml.svg?branch=master)
 [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
 
 ### Open Adaptive Music Library 
