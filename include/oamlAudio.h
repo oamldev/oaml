@@ -27,6 +27,7 @@ class ByteBuffer;
 
 class oamlAudio {
 private:
+	oamlBase *base;
 	bool verbose;
 	oamlFileCallbacks *fcbs;
 
@@ -69,7 +70,7 @@ private:
 	void UpdateSamplesToEnd();
 
 public:
-	oamlAudio(oamlFileCallbacks *cbs, bool _verbose);
+	oamlAudio(oamlBase *_base, oamlFileCallbacks *cbs, bool _verbose);
 	~oamlAudio();
 
 	void SetName(std::string _name) { name = _name; }

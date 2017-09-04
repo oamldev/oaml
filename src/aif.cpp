@@ -210,8 +210,10 @@ int aifFile::ReadChunk() {
 				return -1;
 
 			// Check aifId signature for valid file
-			if (aifId != AIFF_ID)
+			if (aifId != AIFF_ID) {
+				fprintf(stderr, "aif: Invalid signature\n");
 				return -1;
+			}
 			break;
 
 		case COMM_ID:
@@ -222,6 +224,12 @@ int aifFile::ReadChunk() {
 			channels = SWAP16(comm.channels);
 			samplesPerSec = (int)ConvertFromIeeeExtended(comm.sampleRate80);
 			bitsPerSample = SWAP16(comm.sampleSize);
+			switch (bitsPerSample) {
+				case 8: format = AF_FORMAT_SINT8; break;
+				case 16: format = AF_FORMAT_SINT16; break;
+				case 24: format = AF_FORMAT_SINT24; break;
+				case 32: format = AF_FORMAT_SINT32; break;
+			}
 			status = 1;
 			break;
 
@@ -247,10 +255,7 @@ int aifFile::ReadChunk() {
 	return 0;
 }
 
-int aifFile::Read(ByteBuffer *buffer, int size) {
-	int bufSize = 4096*GetBytesPerSample();
-	unsigned char buf[4096*4];
-
+int aifFile::Read(char *buffer, int size) {
 	if (fd == NULL)
 		return -1;
 
@@ -259,10 +264,7 @@ int aifFile::Read(ByteBuffer *buffer, int size) {
 		// Are we inside a ssnd chunk?
 		if (status == 2) {
 			// Let's keep reading data!
-			int bytes = size < bufSize ? size : bufSize;
-			if (chunkSize < bytes)
-				bytes = chunkSize;
-			int ret = fcbs->read(buf, 1, bytes, fd);
+			int ret = fcbs->read(buffer, 1, size, fd);
 			if (ret == 0) {
 				status = 3;
 				break;
@@ -270,27 +272,32 @@ int aifFile::Read(ByteBuffer *buffer, int size) {
 				chunkSize-= ret;
 
 				if (bitsPerSample == 8) {
-					char *cbuf = (char*)buf;
+					char *cbuf = (char*)buffer;
 					for (int i=0; i<ret; i++) {
 						cbuf[i] = cbuf[i]+128;
 					}
 				} else
 				if (bitsPerSample == 16) {
-					unsigned short *sbuf = (unsigned short *)buf;
-					for (int i=0; i<ret; i+= 2) {
-						sbuf[i>>1] = SWAP16(sbuf[i>>1]);
+					unsigned short *sbuf = (unsigned short *)buffer;
+					for (int i=0; i<ret/2; i++) {
+						sbuf[i] = SWAP16(sbuf[i]);
 					}
 				} else
 				if (bitsPerSample == 24) {
 					for (int i=0; i<ret; i+= 3) {
 						unsigned char tmp;
-						tmp = buf[i+0];
-						buf[i+0] = buf[i+2];
-						buf[i+2] = tmp;
+						tmp = buffer[i+0];
+						buffer[i+0] = buffer[i+2];
+						buffer[i+2] = tmp;
+					}
+				} else
+				if (bitsPerSample == 32) {
+					uint32_t *ibuf = (uint32_t *)buffer;
+					for (int i=0; i<ret/4; i++) {
+						ibuf[i] = SWAP32(ibuf[i]);
 					}
 				}
 
-				buffer->putBytes(buf, ret);
 				bytesRead+= ret;
 				size-= ret;
 			}

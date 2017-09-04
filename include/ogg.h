@@ -27,7 +27,6 @@ class oggFile : public audioFile {
 private:
 	void *vf;
 
-	int format;
 	int channels;
 	int samplesPerSec;
 	int bitsPerSample;
@@ -38,7 +37,7 @@ public:
 	oggFile(oamlFileCallbacks *cbs);
 	~oggFile();
 
-	int GetFormat() const { return format; }
+	int GetFormat() const { return AF_FORMAT_SINT16; }
 	int GetChannels() const { return channels; }
 	int GetSamplesPerSec() const { return samplesPerSec; }
 	int GetBitsPerSample() const { return bitsPerSample; }
@@ -48,7 +47,7 @@ public:
 	void WriteToFile(const char *filename, ByteBuffer *buffer, int channels, unsigned int sampleRate, int bytesPerSample);
 
 	int Open(const char *filename);
-	int Read(ByteBuffer *buffer, int size);
+	int Read(char *buffer, int size);
 
 	void Close();
 };

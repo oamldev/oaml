@@ -55,7 +55,6 @@ oggFile::oggFile(oamlFileCallbacks *cbs) : audioFile(cbs) {
 	fd = NULL;
 	vf = NULL;
 
-	format = 0;
 	channels = 0;
 	samplesPerSec = 0;
 	bitsPerSample = 0;
@@ -113,29 +112,13 @@ int oggFile::Open(const char *filename) {
 	return 0;
 }
 
-int oggFile::Read(ByteBuffer *buffer, int size) {
-	unsigned char buf[4096];
-
+int oggFile::Read(char *buffer, int size) {
 	if (vf == NULL)
 		return -1;
 
 	OggVorbis_File *ovf = (OggVorbis_File *)vf;
 
-	int bytesRead = 0;
-	while (size > 0) {
-		// Let's keep reading data!
-		int bytes = size < 4096 ? size : 4096;
-		int ret = (int)ov_read(ovf, (char*)buf, bytes, 0, 2, 1, &currentSection);
-		if (ret == 0) {
-			break;
-		} else {
-			buffer->putBytes(buf, ret);
-			bytesRead+= ret;
-			size-= ret;
-		}
-	}
-
-	return bytesRead;
+	return ov_read(ovf, buffer, size, 0, 2, 1, &currentSection);
 }
 
 void oggFile::WriteToFile(const char *, ByteBuffer *, int, unsigned int, int) {

@@ -241,6 +241,8 @@ public:
 	int LayerGetId(std::string layerName);
 	int LayerGetRandomChance(std::string layerName);
 	float LayerGetGain(std::string layerName);
+
+	int GetSampleRate() const { return sampleRate; }
 };
 
 #endif /* __OAMLBASE_H__ */

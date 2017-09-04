@@ -47,7 +47,7 @@ public:
 	int GetTotalSamples() const { return totalSamples; }
 
 	int Open(const char *filename);
-	int Read(ByteBuffer *buffer, int size);
+	int Read(char *buffer, int size);
 
 	void WriteToFile(const char *filename, ByteBuffer *buffer, int channels, unsigned int sampleRate, int bytesPerSample);
 

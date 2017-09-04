@@ -27,7 +27,8 @@
 #include "oamlCommon.h"
 
 
-oamlAudioFile::oamlAudioFile(std::string _filename, oamlFileCallbacks *cbs, bool _verbose) {
+oamlAudioFile::oamlAudioFile(std::string _filename, oamlBase *_base, oamlFileCallbacks *cbs, bool _verbose) {
+	base = _base;
 	filename = _filename;
 	layer = "";
 	randomChance = -1;
@@ -35,13 +36,18 @@ oamlAudioFile::oamlAudioFile(std::string _filename, oamlFileCallbacks *cbs, bool
 	fcbs = cbs;
 	verbose = _verbose;
 
+#ifdef __HAVE_SOXR
+	soxr = NULL;
+#endif
 	handle = NULL;
 
+	format = 0;
 	bytesPerSample = 0;
 	samplesPerSec = 0;
 	totalSamples = 0;
 	channelCount = 0;
 	samplesToEnd = 0;
+	fileBytesPerSample = 0;
 
 	chance = false;
 	lastChance = false;
@@ -52,6 +58,13 @@ oamlAudioFile::~oamlAudioFile() {
 		delete handle;
 		handle = NULL;
 	}
+
+#ifdef __HAVE_SOXR
+	if (soxr) {
+		soxr_delete(soxr);
+		soxr = NULL;
+	}
+#endif
 }
 
 oamlRC oamlAudioFile::OpenFile() {
@@ -74,10 +87,51 @@ oamlRC oamlAudioFile::OpenFile() {
 		return OAML_ERROR;
 	}
 
+	format = handle->GetFormat();
 	bytesPerSample = handle->GetBytesPerSample();
-	samplesPerSec = handle->GetSamplesPerSec() * handle->GetChannels();
+	samplesPerSec = handle->GetSamplesPerSec();
 	totalSamples = handle->GetTotalSamples();
 	channelCount = handle->GetChannels();
+
+	fileFormat = format;
+	fileBytesPerSample = bytesPerSample;
+
+#ifdef __HAVE_SOXR
+	unsigned int sampleRate = base->GetSampleRate();
+	if (sampleRate != samplesPerSec) {
+		if (soxr == NULL) {
+			soxr_io_spec_t spec;
+
+			switch (format) {
+				case AF_FORMAT_SINT8:
+				case AF_FORMAT_SINT16:
+				case AF_FORMAT_SINT24:
+					spec.itype = SOXR_INT16_I;
+					break;
+
+				case AF_FORMAT_SINT32:
+					spec.itype = SOXR_INT32_I;
+					break;
+
+				case AF_FORMAT_FLOAT32:
+					spec.itype = SOXR_FLOAT32_I;
+					break;
+			}
+			spec.otype = SOXR_INT16_I;
+			spec.scale = 1;
+			spec.e = NULL;
+			spec.flags = 0;
+
+			soxr = soxr_create(double(samplesPerSec), double(sampleRate), channelCount, NULL, &spec, NULL, NULL);
+		}
+
+		totalSamples = (double)totalSamples * sampleRate / samplesPerSec;
+		samplesToEnd = (double)samplesToEnd * sampleRate / samplesPerSec;
+		samplesPerSec = sampleRate;
+		format = AF_FORMAT_SINT16;
+		bytesPerSample = 2;
+	}
+#endif
 
 	return OAML_OK;
 }
@@ -126,15 +180,74 @@ int oamlAudioFile::Read() {
 	if (handle == NULL)
 		return -1;
 
-	int readSize = 4096*bytesPerSample;
-	int ret = handle->Read(&buffer, readSize);
-	if (ret < readSize) {
+	char buf[4096];
+	int frames = 4096 / fileBytesPerSample / channelCount;
+	int readSize = frames * fileBytesPerSample * channelCount;
+	int bytes = handle->Read(buf, readSize);
+	if (bytes <= 0) {
 		handle->Close();
 		delete handle;
 		handle = NULL;
 	}
 
-	return ret;
+#ifdef __HAVE_SOXR
+	if (soxr != NULL) {
+		// Re-sample through libsoxr
+		char obuf[4096*4];
+
+		size_t ilen = bytes / fileBytesPerSample / channelCount;
+		size_t idone = 0;
+		size_t olen = 4096*4 / bytesPerSample / channelCount;
+		size_t odone = 0;
+		soxr_error_t err;
+
+		switch (fileFormat) {
+			case AF_FORMAT_SINT8:
+				// 8-bit is not directly supported by libsoxr, convert the buffer to 16-bit and then process
+				{
+					int16_t buf16[4096];
+					for (int i=0; i<bytes; i++) {
+						buf16[i] = (int16_t)buf[i] << 8;
+					}
+
+					err = soxr_process(soxr, (char*)buf16, ilen, &idone, obuf, olen, &odone);
+				}
+				break;
+
+			case AF_FORMAT_SINT24:
+				// 24-bit is not directly supported by libsoxr, convert the buffer to 16-bit and then process
+				{
+					int16_t buf16[4096];
+					for (int i=0; i<bytes/3; i++) {
+						buf16[i] = (((int16_t)buf[i*3+2] & 0xFF) << 8) | ((int16_t)buf[i*3+1] & 0xFF);
+					}
+
+					err = soxr_process(soxr, (char*)buf16, ilen, &idone, obuf, olen, &odone);
+				}
+				break;
+
+			default:
+				// Input format is supported by libsoxr, process out buffers
+				err = soxr_process(soxr, buf, ilen, &idone, obuf, olen, &odone);
+				break;
+		}
+
+		if (err != NULL) {
+			fprintf(stderr, "liboaml: Error on soxr_process\n");
+			return -1;
+		} else if (odone > 0) {
+			buffer.putBytes((uint8_t*)obuf, odone * bytesPerSample * channelCount);
+		}
+
+		return odone;
+	}
+#endif
+
+	if (bytes > 0) {
+		buffer.putBytes((uint8_t*)buf, bytes);
+	}
+
+	return bytes;
 }
 
 int oamlAudioFile::Read32(unsigned int pos) {
@@ -149,15 +262,32 @@ int oamlAudioFile::Read32(unsigned int pos) {
 			return 0;
 	}
 
-	if (bytesPerSample == 3) {
-		ret|= ((unsigned int)buffer.get(pos))<<8;
-		ret|= ((unsigned int)buffer.get(pos+1))<<16;
-		ret|= ((unsigned int)buffer.get(pos+2))<<24;
-	} else if (bytesPerSample == 2) {
-		ret|= ((unsigned int)buffer.get(pos))<<16;
-		ret|= ((unsigned int)buffer.get(pos+1))<<24;
-	} else if (bytesPerSample == 1) {
-		ret|= ((unsigned int)buffer.get(pos))<<23;
+	switch (format) {
+		case AF_FORMAT_FLOAT32:
+			ret|= ((uint32_t)buffer.get(pos));
+			ret|= ((uint32_t)buffer.get(pos+1))<<8;
+			ret|= ((uint32_t)buffer.get(pos+2))<<16;
+			ret|= ((uint32_t)buffer.get(pos+3))<<24;
+			ret = uint32_t(*(float*)&ret * 32768.f) << 16;
+			break;
+
+		case AF_FORMAT_SINT32:
+			break;
+
+		case AF_FORMAT_SINT24:
+			ret|= ((uint32_t)buffer.get(pos))<<8;
+			ret|= ((uint32_t)buffer.get(pos+1))<<16;
+			ret|= ((uint32_t)buffer.get(pos+2))<<24;
+			break;
+
+		case AF_FORMAT_SINT16:
+			ret|= ((uint32_t)buffer.get(pos))<<16;
+			ret|= ((uint32_t)buffer.get(pos+1))<<24;
+			break;
+
+		case AF_FORMAT_SINT8:
+			ret|= ((uint32_t)buffer.get(pos))<<23;
+			break;
 	}
 
 	return ret;
@@ -196,6 +326,7 @@ void oamlAudioFile::FreeMemory() {
 		handle = NULL;
 	}
 
+	format = 0;
 	bytesPerSample = 0;
 	samplesPerSec = 0;
 	totalSamples = 0;

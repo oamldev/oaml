@@ -23,12 +23,21 @@
 #ifndef __OAMLAUDIOFILE_H__
 #define __OAMLAUDIOFILE_H__
 
+#ifdef __HAVE_SOXR
+#include <soxr.h>
+#endif
+
 class ByteBuffer;
 
 class oamlAudioFile {
 private:
+	oamlBase *base;
 	bool verbose;
 	oamlFileCallbacks *fcbs;
+
+#ifdef __HAVE_SOXR
+	soxr_t soxr;
+#endif
 
 	ByteBuffer buffer;
 	audioFile *handle;
@@ -37,11 +46,15 @@ private:
 	int randomChance;
 	float gain;
 
+	int format;
 	unsigned int bytesPerSample;
 	unsigned int samplesPerSec;
 	unsigned int totalSamples;
 	unsigned int channelCount;
 	unsigned int samplesToEnd;
+
+	int fileFormat;
+	unsigned int fileBytesPerSample;
 
 	bool chance;
 	bool lastChance;
@@ -52,7 +65,7 @@ private:
 	int Read32(unsigned int pos);
 
 public:
-	oamlAudioFile(std::string _filename, oamlFileCallbacks *cbs, bool _verbose);
+	oamlAudioFile(std::string _filename, oamlBase *_base, oamlFileCallbacks *cbs, bool _verbose);
 	~oamlAudioFile();
 
 	void SetFilename(std::string _filename) { filename = _filename; }

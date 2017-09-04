@@ -36,7 +36,9 @@ option(ENABLE_STATIC "Build static library" ON)
 option(ENABLE_SHARED "Build shared library" ON)
 option(ENABLE_UNITYPLUGIN "Build AudioPluginOAML plugin for Unity" ON)
 option(ENABLE_OGG "Build with OGG support" ON)
+option(ENABLE_SOXR "Build with SOXR support" ON)
 option(ENABLE_RTAUDIO "Build with RtAudio support" ON)
+option(ENABLE_TEST "Build oamlTest executable" OFF)
 
 if(ENABLE_STATIC)
 	message("Build static: Yes (Disable by param -DENABLE_STATIC=OFF)")
@@ -62,10 +64,22 @@ else()
 	message("Build OGG support: No  (Enable by param -DENABLE_OGG=ON)")
 endif()
 
+if(ENABLE_SOXR)
+	message("Build SOXR support: Yes (Disable by param -DENABLE_SOXR=OFF)")
+else()
+	message("Build SOXR support: No  (Enable by param -DENABLE_SOXR=ON)")
+endif()
+
 if(ENABLE_RTAUDIO)
 	message("Build RtAudio support: Yes (Disable by param -DENABLE_RTAUDIO=OFF)")
 else()
 	message("Build RtAudio support: No  (Enable by param -DENABLE_RTAUDIO=ON)")
+endif()
+
+if(ENABLE_TEST)
+	message("Build oamlTest executable: Yes (Disable by param -DENABLE_TEST=OFF)")
+else()
+	message("Build oamlTest executable: No  (Enable by param -DENABLE_TEST=ON)")
 endif()
 
 
@@ -93,6 +107,20 @@ if (ENABLE_OGG)
 	endif()
 endif()
 
+##
+# Find soxr lib
+#
+if (ENABLE_SOXR)
+	find_package(Soxr)
+
+	if (SOXR_FOUND)
+		add_definitions(-D__HAVE_SOXR)
+		include_directories(SYSTEM ${SOXR_INCLUDE_DIR})
+		set(OAML_LIBS ${OAML_LIBS} ${SOXR_LIBRARIES})
+	else()
+		message(WARNING "libsoxr not found, oaml will not be able to resample")
+	endif()
+endif()
 
 ##
 # RtAudio flags
@@ -219,6 +247,10 @@ if (ENABLE_SHARED)
 	)
 endif()
 
+if (ENABLE_TEST)
+	add_executable(oamlTest ${SOURCES} src/test.cpp)
+	target_link_libraries(oamlTest ${OAML_LIBS})
+endif()
 
 ##
 # Build AudioPluginOAML (for Unity) if we ENABLE_UNITYPLUGIN is TRUE

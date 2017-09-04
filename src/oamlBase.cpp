@@ -158,7 +158,7 @@ oamlRC oamlBase::InitAudioDevice(int sampleRate, int channels) {
 }
 
 oamlRC oamlBase::ReadAudioDefs(tinyxml2::XMLElement *el, oamlTrack *track) {
-	oamlAudio *audio = new oamlAudio(fcbs, verbose);
+	oamlAudio *audio = new oamlAudio(this, fcbs, verbose);
 
 	tinyxml2::XMLElement *audioEl = el->FirstChildElement();
 	while (audioEl != NULL) {
@@ -1184,7 +1184,7 @@ oamlRC oamlBase::AudioNew(std::string trackName, std::string audioName, int type
 	if (track == NULL)
 		return OAML_NOT_FOUND;
 
-	oamlAudio *audio = new oamlAudio(fcbs, verbose);
+	oamlAudio *audio = new oamlAudio(this, fcbs, verbose);
 	if (audio == NULL)
 		return OAML_ERROR;
 

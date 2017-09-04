@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Copyright (c) 2015-2016 Marcelo Fernandez
+// Copyright (c) 2015-2017 Marcelo Fernandez
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to
@@ -20,38 +20,41 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef __AIF_H__
-#define __AIF_H__
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
+#include <math.h>
+#include <time.h>
+#include <unistd.h>
 
-class aifFile : public audioFile {
-private:
-	int format;
-	int channels;
-	int samplesPerSec;
-	int bitsPerSample;
-	int totalSamples;
+#include "oamlCommon.h"
 
-	int chunkSize;
-	int status;
 
-	int ReadChunk();
-public:
-	aifFile(oamlFileCallbacks *cbs);
-	~aifFile();
+int main(int argc, char *argv[]) {
+	oamlApi *oaml = new oamlApi();
+	oaml->InitAudioDevice(44100);
+	oaml->Init("oaml.defs");
+	oaml->PlayTrack("Intro");
 
-	int GetFormat() const { return format; }
-	int GetChannels() const { return channels; }
-	int GetSamplesPerSec() const { return samplesPerSec; }
-	int GetBitsPerSample() const { return bitsPerSample; }
-	int GetBytesPerSample() const { return bitsPerSample / 8; }
-	int GetTotalSamples() const { return totalSamples; }
+	char string[1024];
+	int i = 0;
+	while (true) {
+		int c = fgetc(stdin);
+		if (c == '\n') {
+			string[i] = 0;
+			if (strcmp(string, "q") == 0) {
+				break;
+			}
 
-	int Open(const char *filename);
-	int Read(char *buffer, int size);
+			i = 0;
+		} else {
+			string[i++] = c;
+		}
+	}
 
-	void WriteToFile(const char *filename, ByteBuffer *buffer, int channels, unsigned int sampleRate, int bytesPerSample);
+	oaml->Shutdown();
+	delete oaml;
 
-	void Close();
-};
-
-#endif /* __AIF_H__ */
+	return 0;
+}

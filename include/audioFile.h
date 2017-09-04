@@ -23,6 +23,14 @@
 #ifndef __AUDIOFILE_H__
 #define __AUDIOFILE_H__
 
+enum {
+	AF_FORMAT_SINT8,
+	AF_FORMAT_SINT16,
+	AF_FORMAT_SINT24,
+	AF_FORMAT_SINT32,
+	AF_FORMAT_FLOAT32
+};
+
 class audioFile {
 protected:
 	oamlFileCallbacks *fcbs;
@@ -41,7 +49,7 @@ public:
 	virtual int GetTotalSamples() const = 0;
 
 	virtual int Open(const char *filename) = 0;
-	virtual int Read(ByteBuffer *buffer, int size) = 0;
+	virtual int Read(char *, int size) = 0;
 
 	virtual void WriteToFile(const char *filename, ByteBuffer *buffer, int channels, unsigned int sampleRate, int bytesPerSample) = 0;
 

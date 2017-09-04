@@ -129,11 +129,26 @@ int wavFile::ReadChunk() {
 			if (header.size > sizeof(fmtHeader)) {
 				fcbs->seek(fd, header.size - sizeof(fmtHeader), SEEK_CUR);
 			}
-			format = fmt.formatTag;
+
 			channels = fmt.channels;
 			samplesPerSec = fmt.samplesPerSec;
 			bitsPerSample = fmt.bitsPerSample;
 			status = 1;
+
+			switch (fmt.formatTag) {
+				case 1:
+					switch (bitsPerSample) {
+						case 8: format = AF_FORMAT_SINT8; break;
+						case 16: format = AF_FORMAT_SINT16; break;
+						case 24: format = AF_FORMAT_SINT24; break;
+						case 32: format = AF_FORMAT_SINT32; break;
+					}
+					break;
+
+				case 3:
+					format = AF_FORMAT_FLOAT32;
+					break;
+			}
 			break;
 
 		case DATA_ID:
@@ -150,9 +165,7 @@ int wavFile::ReadChunk() {
 	return 0;
 }
 
-int wavFile::Read(ByteBuffer *buffer, int size) {
-	unsigned char buf[4096];
-
+int wavFile::Read(char *buffer, int size) {
 	if (fd == NULL)
 		return -1;
 
@@ -161,16 +174,13 @@ int wavFile::Read(ByteBuffer *buffer, int size) {
 		// Are we inside a data chunk?
 		if (status == 2) {
 			// Let's keep reading data!
-			int bytes = size < 4096 ? size : 4096;
-			if (chunkSize < bytes)
-				bytes = chunkSize;
-			int ret = fcbs->read(buf, 1, bytes, fd);
+			int ret = fcbs->read(buffer, 1, size, fd);
 			if (ret == 0) {
 				status = 3;
 				break;
 			} else {
 				chunkSize-= ret;
-				buffer->putBytes(buf, ret);
+				buffer+= ret;
 				bytesRead+= ret;
 				size-= ret;
 			}

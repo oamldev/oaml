@@ -31,8 +31,9 @@
 #include "oamlCommon.h"
 
 
-oamlAudio::oamlAudio(oamlFileCallbacks *cbs, bool _verbose) {
+oamlAudio::oamlAudio(oamlBase *_base, oamlFileCallbacks *cbs, bool _verbose) {
 	name = "";
+	base = _base;
 	verbose = _verbose;
 	fcbs = cbs;
 
@@ -226,7 +227,7 @@ oamlRC oamlAudio::Open() {
 
 		if (totalSamples == 0) {
 			channelCount = file->GetChannels();
-			samplesPerSec = file->GetSamplesPerSec();
+			samplesPerSec = file->GetSamplesPerSec() * file->GetChannels();
 			totalSamples = file->GetTotalSamples();
 		}
 	}
@@ -311,7 +312,7 @@ float oamlAudio::ReadFloat(unsigned int pos) {
 }
 
 void oamlAudio::AddAudioFile(std::string filename, std::string layer, int randomChance) {
-	oamlAudioFile file = oamlAudioFile(filename, fcbs, verbose);
+	oamlAudioFile file = oamlAudioFile(filename, base, fcbs, verbose);
 	file.SetLayer(layer);
 	file.SetRandomChance(randomChance);
 
