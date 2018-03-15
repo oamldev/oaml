@@ -15,6 +15,7 @@ oamlInternal.defs
 install_manifest.txt
 include/GitSHA1.h
 src/*.o
+src/*.obj
 
 vs/*.userprefs
 vs/*.csproj
