@@ -34,7 +34,7 @@ oamlMusicTrack::oamlMusicTrack(bool _verbose) {
 	filesSamples = 0;
 
 	playCondSamples = 0;
-	playCondAudio = NULL;
+	playCondAudio = -1;
 
 	fadeIn = 0;
 	fadeOut = 0;
@@ -45,9 +45,9 @@ oamlMusicTrack::oamlMusicTrack(bool _verbose) {
 
 	tailPos = 0;
 
-	curAudio = NULL;
-	tailAudio = NULL;
-	fadeAudio = NULL;
+	curAudio = -1;
+	tailAudio = -1;
+	fadeAudio = -1;
 }
 
 oamlMusicTrack::~oamlMusicTrack() {
@@ -57,11 +57,54 @@ oamlMusicTrack::~oamlMusicTrack() {
 	ClearAudios(&condAudios);
 }
 
+oamlAudio *oamlMusicTrack::GetAudioByTypeId(int type, int id) {
+	switch (type) {
+		case 0:
+			if (id >= 0 && (size_t)id < introAudios.size()) {
+				return introAudios[id];
+			}
+			break;
+		case 1:
+			if (id >= 0 && (size_t)id < loopAudios.size()) {
+				return loopAudios[id];
+			}
+			break;
+		case 2:
+			if (id >= 0 && (size_t)id < randAudios.size()) {
+				return randAudios[id];
+			}
+			break;
+		case 3:
+			if (id >= 0 && (size_t)id < condAudios.size()) {
+				return condAudios[id];
+			}
+			break;
+	}
+
+	return NULL;
+}
+
+oamlAudio *oamlMusicTrack::GetCurAudio() {
+	return GetAudioByTypeId(curAudio >> 24, curAudio & 0xFFFFFF);
+}
+
+oamlAudio *oamlMusicTrack::GetFadeAudio() {
+	return GetAudioByTypeId(fadeAudio >> 24, fadeAudio & 0xFFFFFF);
+}
+
+oamlAudio *oamlMusicTrack::GetTailAudio() {
+	return GetAudioByTypeId(tailAudio >> 24, tailAudio & 0xFFFFFF);
+}
+
+void oamlMusicTrack::SetCurAudio(int type, int id) {
+	curAudio = (type << 24) | (id & 0xFFFFFF);
+}
+
 void oamlMusicTrack::AddAudio(oamlAudio *audio) {
 	ASSERT(audio != NULL);
 
 	if (GetAudio(audio->GetName())) {
-		printf("Duplicated audio name: %s\n", audio->GetName().c_str());
+		fprintf(stderr, "oaml: Warning, duplicated audio name: %s\n", audio->GetName().c_str());
 	}
 
 	if (audio->GetType() == 1) {
@@ -117,26 +160,27 @@ void oamlMusicTrack::SetCondition(int id, int value) {
 			}
 		}
 
-		if (playing == true && curAudio == NULL) {
+		if (playing == true && curAudio == -1) {
 			// If track is currently playing but no audio is actually playing this to play one
 			PlayNext();
 		}
 		return;
 	}
 
+	oamlAudio *pcurAudio = GetCurAudio();
 	for (size_t i=0; i<condAudios.size(); i++) {
 		oamlAudio *audio = condAudios[i];
 		if (audio->GetCondId() != id)
 			continue;
 
-		if (curAudio != audio) {
+		if (pcurAudio != audio) {
 			// Audio isn't being played right now
 			if (audio->TestCondition(id, value) == true) {
 				// Condition is true, so let's play the audio
-				if (curAudio == NULL || curAudio->GetMinMovementBars() == 0) {
-					PlayCond(audio);
+				if (pcurAudio == NULL || pcurAudio->GetMinMovementBars() == 0) {
+					PlayCond(1 << 24 | i);
 				} else {
-					PlayCondWithMovement(audio);
+					PlayCondWithMovement(1 << 24 | i);
 				}
 
 				playCond = true;
@@ -151,31 +195,37 @@ void oamlMusicTrack::SetCondition(int id, int value) {
 
 	if (stopCond == true && playCond == false) {
 		// No condition is being played now, let's go back to the main loop
-		if (curAudio == NULL || curAudio->GetMinMovementBars() == 0) {
-			PlayCond(NULL);
+		if (pcurAudio == NULL || pcurAudio->GetMinMovementBars() == 0) {
+			PlayCond(-1);
 		} else {
-			PlayCondWithMovement(NULL);
+			PlayCondWithMovement(-1);
 		}
 	}
 }
 
-void oamlMusicTrack::PlayCondWithMovement(oamlAudio *audio) {
+void oamlMusicTrack::PlayCondWithMovement(int audio) {
+	oamlAudio *pcurAudio = GetCurAudio();
+	if (pcurAudio == NULL)
+		return;
+
 	playCondAudio = audio;
-	playCondSamples = curAudio->GetBarsSamples(curAudio->GetMinMovementBars());
+	playCondSamples = pcurAudio->GetBarsSamples(pcurAudio->GetMinMovementBars());
 	if (playCondSamples == 0)
 		return;
 
-	playCondSamples = (playCondSamples + curAudio->GetBarsSamples(curAudio->GetSamplesCount() / playCondSamples) * curAudio->GetMinMovementBars()) - curAudio->GetSamplesCount();
+	playCondSamples = (playCondSamples + pcurAudio->GetBarsSamples(pcurAudio->GetSamplesCount() / playCondSamples) * pcurAudio->GetMinMovementBars()) - pcurAudio->GetSamplesCount();
 //	printf("%s %d\n", __FUNCTION__, playCondSamples);
 }
 
-void oamlMusicTrack::PlayCond(oamlAudio *audio) {
+void oamlMusicTrack::PlayCond(int audio) {
 	fadeAudio = curAudio;
 	curAudio = audio;
-	if (curAudio == NULL) {
+
+	oamlAudio *pcurAudio = GetCurAudio();
+	if (pcurAudio == NULL) {
 		PlayNext();
 	} else {
-		curAudio->Open();
+		pcurAudio->Open();
 		XFadePlay();
 	}
 }
@@ -188,9 +238,9 @@ oamlRC oamlMusicTrack::Play() {
 	}
 
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, GetNameStr());
-	fadeAudio = NULL;
+	fadeAudio = -1;
 
-	if (curAudio == NULL) {
+	if (curAudio == -1) {
 		doFade = 1;
 	}
 
@@ -219,22 +269,27 @@ oamlRC oamlMusicTrack::Play() {
 
 	if (introAudios.size() >= 1) {
 		if (introAudios.size() == 1) {
-			curAudio = introAudios[0];
+			SetCurAudio(0, 0);
 		} else {
 			int i = Random(0, introAudios.size()-1);
-			curAudio = introAudios[i];
+			SetCurAudio(0, i);
 		}
-		curAudio->Open();
+
+		oamlAudio *audio = GetCurAudio();
+		if (audio) {
+			audio->Open();
+		}
 	} else {
 		PlayNext();
 	}
 
-	if (doFade && curAudio) {
+	oamlAudio *pcurAudio = GetCurAudio();
+	if (doFade && pcurAudio != NULL) {
 		// First check the fade in property for the audio and then the track fade in property
-		if (curAudio->GetFadeIn()) {
-			curAudio->DoFadeIn(curAudio->GetFadeIn());
+		if (pcurAudio->GetFadeIn()) {
+			pcurAudio->DoFadeIn(pcurAudio->GetFadeIn());
 		} else if (fadeIn) {
-			curAudio->DoFadeIn(fadeIn);
+			pcurAudio->DoFadeIn(fadeIn);
 		}
 	}
 
@@ -243,24 +298,25 @@ oamlRC oamlMusicTrack::Play() {
 	return OAML_OK;
 }
 
-oamlAudio* oamlMusicTrack::PickNextAudio() {
+int oamlMusicTrack::PickNextAudio() {
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, GetNameStr());
 
-	if (randAudios.size() > 0 && (curAudio == NULL || curAudio->GetRandomChance() == 0)) {
+	oamlAudio *pcurAudio = GetCurAudio();
+	if (randAudios.size() > 0 && (pcurAudio == NULL || pcurAudio->GetRandomChance() == 0)) {
 		for (size_t i=0; i<randAudios.size(); i++) {
 			int chance = randAudios[i]->GetRandomChance();
 			if (Random(0, 100) > chance) {
 				continue;
 			} else {
-				return randAudios[i];
+				return (3 << 24) | (i & 0xFFFFFF);
 			}
 		}
 	}
 
 	if (loopAudios.size() == 1) {
-		return loopAudios[0];
+		return (1 << 24) | (0 & 0xFFFFFF);
 	} else if (loopAudios.size() >= 2) {
-		std::vector<oamlAudio*> list;
+		std::vector<int> list;
 
 		for (size_t i=0; i<loopAudios.size(); i++) {
 			oamlAudio *audio = loopAudios[i];
@@ -268,7 +324,7 @@ oamlAudio* oamlMusicTrack::PickNextAudio() {
 				if (playingOrder != 0 && audio->GetPlayOrder() != playingOrder) {
 					continue;
 				}
-				list.push_back(audio);
+				list.push_back((1 << 24) | (i & 0xFFFFFF));
 			}
 		}
 
@@ -280,7 +336,7 @@ oamlAudio* oamlMusicTrack::PickNextAudio() {
 		}
 
 		if (list.size() == 0) {
-			return NULL;
+			return -1;
 		} else if (list.size() == 1) {
 			return list[0];
 		} else {
@@ -293,89 +349,97 @@ oamlAudio* oamlMusicTrack::PickNextAudio() {
 		}
 	}
 
-	return NULL;
+	return -1;
 }
 
 void oamlMusicTrack::PlayNext() {
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, GetNameStr());
-	if (curAudio) {
-		if (curAudio->GetType() == 4) {
-			tailAudio = curAudio;
-			tailPos = curAudio->GetSamplesCount();
 
-			curAudio->Open();
+	oamlAudio *pcurAudio = GetCurAudio();
+	if (pcurAudio) {
+		if (pcurAudio->GetType() == 4) {
+			tailAudio = curAudio;
+			tailPos = pcurAudio->GetSamplesCount();
+
+			pcurAudio->Open();
 			return;
 		}
 	}
 
-	if (fadeAudio == NULL)
+	if (fadeAudio == -1)
 		fadeAudio = curAudio;
 
 	curAudio = PickNextAudio();
-	if (curAudio)
-		curAudio->Open();
+	pcurAudio = GetCurAudio();
+	if (pcurAudio)
+		pcurAudio->Open();
 
 	if (fadeAudio != curAudio) {
 		XFadePlay();
 	} else {
-		fadeAudio = NULL;
+		fadeAudio = -1;
 	}
 }
 
 void oamlMusicTrack::XFadePlay() {
-	if (curAudio) {
+	oamlAudio *pcurAudio = GetCurAudio();
+	oamlAudio *pfadeAudio = GetFadeAudio();
+	if (pcurAudio) {
 		// First check the fade in property for the audio and then the track fade in property
-		if (curAudio->GetXFadeIn()) {
-			curAudio->DoFadeIn(curAudio->GetXFadeIn());
-		} else if (fadeAudio && fadeAudio->GetXFadeIn()) {
-			curAudio->DoFadeIn(fadeAudio->GetXFadeIn());
+		if (pcurAudio->GetXFadeIn()) {
+			pcurAudio->DoFadeIn(pcurAudio->GetXFadeIn());
+		} else if (pfadeAudio && pfadeAudio->GetXFadeIn()) {
+			pcurAudio->DoFadeIn(pfadeAudio->GetXFadeIn());
 		} else if (xfadeIn) {
-			curAudio->DoFadeIn(xfadeIn);
+			pcurAudio->DoFadeIn(xfadeIn);
 		}
 	}
 
-	if (fadeAudio) {
-		if (curAudio && curAudio->GetXFadeOut()) {
-			fadeAudio->DoFadeOut(curAudio->GetXFadeOut());
-		} else if (fadeAudio && fadeAudio->GetXFadeOut()) {
-			fadeAudio->DoFadeOut(fadeAudio->GetXFadeOut());
+	if (pfadeAudio) {
+		if (pcurAudio && pcurAudio->GetXFadeOut()) {
+			pfadeAudio->DoFadeOut(pcurAudio->GetXFadeOut());
+		} else if (pfadeAudio && pfadeAudio->GetXFadeOut()) {
+			pfadeAudio->DoFadeOut(pfadeAudio->GetXFadeOut());
 		} else if (xfadeOut) {
-			fadeAudio->DoFadeOut(xfadeOut);
+			pfadeAudio->DoFadeOut(xfadeOut);
 		} else {
-			fadeAudio = NULL;
+			fadeAudio = -1;
 		}
 	}
 }
 
 void oamlMusicTrack::Mix(float *samples, int channels, bool debugClipping) {
-	if (curAudio == NULL && tailAudio == NULL && fadeAudio == NULL)
+	if (curAudio == -1 && tailAudio == -1 && fadeAudio == -1)
 		return;
 
 	lock++;
 
-	if (curAudio) {
-		MixAudio(curAudio, samples, channels, debugClipping);
+	oamlAudio *pcurAudio = GetCurAudio();
+	if (pcurAudio) {
+		MixAudio(pcurAudio, samples, channels, debugClipping);
 	}
 
-	if (tailAudio) {
-		tailPos = MixAudio(tailAudio, samples, channels, debugClipping, tailPos);
-		if (tailAudio->HasFinishedTail(tailPos))
-			tailAudio = NULL;
+	oamlAudio *ptailAudio = GetTailAudio();
+	if (ptailAudio) {
+		tailPos = MixAudio(ptailAudio, samples, channels, debugClipping, tailPos);
+		if (ptailAudio->HasFinishedTail(tailPos))
+			tailAudio = -1;
 	}
 
-	if (fadeAudio) {
-		MixAudio(fadeAudio, samples, channels, debugClipping);
+	oamlAudio *pfadeAudio = GetFadeAudio();
+	if (pfadeAudio) {
+		MixAudio(pfadeAudio, samples, channels, debugClipping);
 	}
 
-	if (curAudio && curAudio->HasFinished()) {
+	if (pcurAudio && pcurAudio->HasFinished()) {
 		tailAudio = curAudio;
-		tailPos = curAudio->GetSamplesCount();
+		tailPos = pcurAudio->GetSamplesCount();
 
 		PlayNext();
 	}
 
-	if (fadeAudio && fadeAudio->HasFinished()) {
-		fadeAudio = NULL;
+	if (pfadeAudio && pfadeAudio->HasFinished()) {
+		fadeAudio = -1;
 	}
 
 	if (playCondSamples > 0) {
@@ -385,7 +449,7 @@ void oamlMusicTrack::Mix(float *samples, int channels, bool debugClipping) {
 		}
 	}
 
-	if (curAudio == NULL && tailAudio == NULL && fadeAudio == NULL) {
+	if (curAudio == -1 && tailAudio == -1 && fadeAudio == -1) {
 		FreeMemory();
 	}
 
@@ -400,7 +464,7 @@ std::string oamlMusicTrack::GetPlayingInfo() {
 	char str[1024];
 	std::string info = "";
 
-	if (curAudio == NULL && tailAudio == NULL && fadeAudio == NULL) {
+	if (curAudio == -1 && tailAudio == -1 && fadeAudio == -1) {
 		if (playing == true) {
 			return "Playing track but no available audio, missing condition?";
 		}
@@ -410,18 +474,21 @@ std::string oamlMusicTrack::GetPlayingInfo() {
 
 	info+= GetName() + ":";
 
-	if (curAudio) {
-		snprintf(str, 1024, " curAudio = %s (pos=%d)", curAudio->GetName().c_str(), curAudio->GetSamplesCount());
+	oamlAudio *audio = GetCurAudio();
+	if (audio) {
+		snprintf(str, 1024, " curAudio = %s (pos=%d)", audio->GetName().c_str(), audio->GetSamplesCount());
 		info+= str;
 	}
 
-	if (tailAudio) {
-		snprintf(str, 1024, " tailAudio = %s (pos=%d)", tailAudio->GetName().c_str(), tailAudio->GetSamplesCount());
+	audio = GetTailAudio();
+	if (audio) {
+		snprintf(str, 1024, " tailAudio = %s (pos=%d)", audio->GetName().c_str(), audio->GetSamplesCount());
 		info+= str;
 	}
 
-	if (fadeAudio) {
-		snprintf(str, 1024, " fadeAudio = %s (pos=%d)", fadeAudio->GetName().c_str(), fadeAudio->GetSamplesCount());
+	audio = GetFadeAudio();
+	if (audio) {
+		snprintf(str, 1024, " fadeAudio = %s (pos=%d)", audio->GetName().c_str(), audio->GetSamplesCount());
 		info+= str;
 	}
 
@@ -429,18 +496,21 @@ std::string oamlMusicTrack::GetPlayingInfo() {
 }
 
 void oamlMusicTrack::Stop() {
-	if (curAudio) {
+	if (curAudio != -1) {
 		if (fadeOut) {
 			fadeAudio = curAudio;
-			fadeAudio->DoFadeOut(fadeOut);
+			oamlAudio *audio = GetFadeAudio();
+			if (audio) {
+				audio->DoFadeOut(fadeOut);
+			}
 		}
-		curAudio = NULL;
+		curAudio = -1;
 	}
 
-	tailAudio = NULL;
+	tailAudio = -1;
 	playing = false;
 
-	if (curAudio == NULL && tailAudio == NULL && fadeAudio == NULL) {
+	if (curAudio == -1 && tailAudio == -1 && fadeAudio == -1) {
 		FreeMemory();
 	}
 }
@@ -522,6 +592,110 @@ void oamlMusicTrack::ReadInfo(oamlTrackInfo *info) {
 	ReadAudiosInfo(&loopAudios, info);
 	ReadAudiosInfo(&randAudios, info);
 	ReadAudiosInfo(&condAudios, info);
+}
+
+void oamlMusicTrack::SaveAudioState(tinyxml2::XMLDocument &doc, tinyxml2::XMLElement *node, const char *nodeName, std::vector<oamlAudio*> *audios) {
+	for (std::vector<oamlAudio*>::iterator it=audios->begin(); it<audios->end(); ++it) {
+		oamlAudio *audio = *it;
+
+		tinyxml2::XMLElement *elem = doc.NewElement(nodeName);
+		audio->SaveState(elem);
+		node->InsertEndChild(elem);
+	}
+}
+
+void oamlMusicTrack::SaveState(tinyxml2::XMLDocument &doc, tinyxml2::XMLElement *node) {
+	node->SetAttribute("name", GetNameStr());
+	node->SetAttribute("playing", playing);
+	node->SetAttribute("playingOrder", playingOrder);
+	node->SetAttribute("tailPos", tailPos);
+	node->SetAttribute("curAudio", curAudio);
+	node->SetAttribute("fadeAudio", fadeAudio);
+	node->SetAttribute("tailAudio", tailAudio);
+	node->SetAttribute("playCondAudio", playCondAudio);
+	node->SetAttribute("playCondSamples", playCondSamples);
+
+	if (introAudios.size() > 0) {
+		SaveAudioState(doc, node, "introAudio", &introAudios);
+	}
+	if (loopAudios.size() > 0) {
+		SaveAudioState(doc, node, "loopAudio", &loopAudios);
+	}
+	if (randAudios.size() > 0) {
+		SaveAudioState(doc, node, "randAudio", &randAudios);
+	}
+	if (condAudios.size() > 0) {
+		SaveAudioState(doc, node, "condAudio", &condAudios);
+	}
+}
+
+void oamlMusicTrack::LoadAudioState(tinyxml2::XMLElement *node, std::vector<oamlAudio*> *audios) {
+	for (std::vector<oamlAudio*>::iterator it=audios->begin(); it<audios->end(); ++it) {
+		oamlAudio *audio = *it;
+		if (strcmp(node->Attribute("name"), audio->GetName().c_str()) == 0) {
+			audio->LoadState(node);
+			break;
+		}
+	}
+}
+
+void oamlMusicTrack::LoadState(tinyxml2::XMLElement *node) {
+	const char *attr = node->Attribute("playing");
+	if (attr && strcmp(attr, "true") == 0) {
+		playing = true;
+	} else {
+		playing = false;
+	}
+
+	attr = node->Attribute("playingOrder");
+	if (attr) {
+		playingOrder = strtol(attr, NULL, 0);
+	}
+
+	attr = node->Attribute("tailPos");
+	if (attr) {
+		tailPos = strtol(attr, NULL, 0);
+	}
+
+	attr = node->Attribute("curAudio");
+	if (attr) {
+		curAudio = strtol(attr, NULL, 0);
+	}
+
+	attr = node->Attribute("fadeAudio");
+	if (attr) {
+		fadeAudio = strtol(attr, NULL, 0);
+	}
+
+	attr = node->Attribute("tailAudio");
+	if (attr) {
+		tailAudio = strtol(attr, NULL, 0);
+	}
+
+	attr = node->Attribute("playCondAudio");
+	if (attr) {
+		playCondAudio = strtol(attr, NULL, 0);
+	}
+
+	attr = node->Attribute("playCondSamples");
+	if (attr) {
+		playCondSamples = strtol(attr, NULL, 0);
+	}
+
+	tinyxml2::XMLElement *el = node->FirstChildElement();
+	while (el != NULL) {
+		if (strcmp(el->Name(), "introAudio") == 0) {
+			LoadAudioState(el, &introAudios);
+		} else if (strcmp(el->Name(), "loopAudio") == 0) {
+			LoadAudioState(el, &loopAudios);
+		} else if (strcmp(el->Name(), "randAudio") == 0) {
+			LoadAudioState(el, &randAudios);
+		} else if (strcmp(el->Name(), "condAudio") == 0) {
+			LoadAudioState(el, &condAudios);
+		}
+
+		el = el->NextSiblingElement();
+	}
 }
 
 void oamlMusicTrack::FreeMemory() {

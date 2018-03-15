@@ -41,14 +41,14 @@ private:
 	bool useCompressor;
 	bool updateTension;
 
-	std::vector<oamlTrack*> musicTracks;
-	std::vector<oamlTrack*> sfxTracks;
+	std::vector<oamlMusicTrack*> musicTracks;
+	std::vector<oamlSfxTrack*> sfxTracks;
 	std::vector<oamlLayer*> layers;
 
 	float bpm;
 	int beatsPerBar;
 
-	oamlTrack *curTrack;
+	int curTrack;
 
 	ByteBuffer *fullBuffer;
 
@@ -160,6 +160,9 @@ public:
 	void SetFileCallbacks(oamlFileCallbacks *cbs);
 
 	void EnableDynamicCompressor(bool enable, double thresholdDb, double ratio);
+
+	std::string SaveState();
+	void LoadState(std::string state);
 
 	oamlTracksInfo *GetTracksInfo();
 

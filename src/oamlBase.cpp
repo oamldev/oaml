@@ -27,7 +27,6 @@
 #include <math.h>
 #include <time.h>
 
-#include "tinyxml2.h"
 #include "oamlCommon.h"
 #ifdef __HAVE_GITSHA1_H
 #include "GitSHA1.h"
@@ -78,7 +77,7 @@ oamlBase::oamlBase() {
 	rtAudio = NULL;
 #endif
 
-	curTrack = NULL;
+	curTrack = -1;
 	fullBuffer = NULL;
 
 	sampleRate = 0;
@@ -243,9 +242,9 @@ oamlRC oamlBase::ReadTrackDefs(tinyxml2::XMLElement *el) {
 	}
 
 	if (track->IsMusicTrack()) {
-		musicTracks.push_back(track);
+		musicTracks.push_back((oamlMusicTrack*)track);
 	} else {
-		sfxTracks.push_back(track);
+		sfxTracks.push_back((oamlSfxTrack*)track);
 	}
 
 	return OAML_OK;
@@ -390,12 +389,12 @@ oamlRC oamlBase::PlayTrackId(int id) {
 	if (id >= (int)musicTracks.size())
 		return OAML_ERROR;
 
-	if (curTrack) {
-		curTrack->Stop();
+	if (curTrack >= 0 && (size_t)curTrack < musicTracks.size()) {
+		musicTracks[curTrack]->Stop();
 	}
 
-	curTrack = musicTracks[id];
-	return curTrack->Play();
+	curTrack = id;
+	return musicTracks[id]->Play();
 }
 
 oamlRC oamlBase::PlayTrack(const char *name) {
@@ -403,12 +402,11 @@ oamlRC oamlBase::PlayTrack(const char *name) {
 
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, name);
 
-	for (std::vector<oamlTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
+	int i=0;
+	for (std::vector<oamlMusicTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it, i++) {
 		oamlTrack *track = *it;
 		if (track->GetName().compare(name) == 0) {
-			if (curTrack) curTrack->Stop();
-			curTrack = track;
-			return curTrack->Play();
+			return PlayTrackId(i);
 		}
 	}
 
@@ -424,7 +422,7 @@ oamlRC oamlBase::PlaySfxEx(const char *name, float vol, float pan) {
 
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, name);
 
-	for (std::vector<oamlTrack*>::iterator it=sfxTracks.begin(); it<sfxTracks.end(); ++it) {
+	for (std::vector<oamlSfxTrack*>::iterator it=sfxTracks.begin(); it<sfxTracks.end(); ++it) {
 		oamlTrack *track = *it;
 		if (track->Play(name, vol, pan) == 0) {
 			return OAML_OK;
@@ -525,7 +523,7 @@ oamlRC oamlBase::LoadTrack(const char *name) {
 
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, name);
 
-	for (std::vector<oamlTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
+	for (std::vector<oamlMusicTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
 		oamlTrack *track = *it;
 		if (track->GetName().compare(name) == 0) {
 			return track->Load();
@@ -540,7 +538,7 @@ float oamlBase::LoadTrackProgress(const char *name) {
 
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, name);
 
-	for (std::vector<oamlTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
+	for (std::vector<oamlMusicTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
 		oamlTrack *track = *it;
 		if (track->GetName().compare(name) == 0) {
 			return track->LoadProgress();
@@ -599,7 +597,7 @@ void oamlBase::PauseToggle() {
 
 void oamlBase::ShowPlayingTracks() {
 	for (size_t i=0; i<musicTracks.size(); i++) {
-		musicTracks[i]->ShowPlaying();
+		((oamlTrack*)musicTracks[i])->ShowPlaying();
 	}
 }
 
@@ -762,8 +760,8 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 
 void oamlBase::SetCondition(int id, int value) {
 //	printf("%s %d %d\n", __FUNCTION__, id, value);
-	if (curTrack) {
-		curTrack->SetCondition(id, value);
+	if (curTrack >= 0 && (size_t)curTrack < musicTracks.size()) {
+		musicTracks[curTrack]->SetCondition(id, value);
 	}
 }
 
@@ -897,16 +895,16 @@ void oamlBase::EnableDynamicCompressor(bool enable, double threshold, double rat
 oamlTracksInfo* oamlBase::GetTracksInfo() {
 	tracksInfo.tracks.clear();
 
-	for (std::vector<oamlTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
-		oamlTrack *track = *it;
+	for (std::vector<oamlMusicTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
+		oamlMusicTrack *track = *it;
 
 		oamlTrackInfo tinfo;
 		track->ReadInfo(&tinfo);
 		tracksInfo.tracks.push_back(tinfo);
 	}
 
-	for (std::vector<oamlTrack*>::iterator it=sfxTracks.begin(); it<sfxTracks.end(); ++it) {
-		oamlTrack *track = *it;
+	for (std::vector<oamlSfxTrack*>::iterator it=sfxTracks.begin(); it<sfxTracks.end(); ++it) {
+		oamlSfxTrack *track = *it;
 
 		oamlTrackInfo tinfo;
 		track->ReadInfo(&tinfo);
@@ -917,6 +915,87 @@ oamlTracksInfo* oamlBase::GetTracksInfo() {
 	tracksInfo.beatsPerBar = beatsPerBar;
 
 	return &tracksInfo;
+}
+
+std::string oamlBase::SaveState() {
+	tinyxml2::XMLDocument doc;
+	tinyxml2::XMLElement *rootNode = doc.NewElement("oamlState");
+	doc.InsertEndChild(rootNode);
+
+	tinyxml2::XMLElement *versionNode = doc.NewElement("version");
+	tinyxml2::XMLText *versionText = doc.NewText("1.0.1");
+	versionNode->InsertEndChild(versionText);
+	rootNode->InsertEndChild(versionNode);
+
+	tinyxml2::XMLElement *baseNode = doc.NewElement("base");
+	baseNode->SetAttribute("curTrack", curTrack);
+	baseNode->SetAttribute("tension", tension);
+	rootNode->InsertEndChild(baseNode);
+
+	for (size_t i=0; i<musicTracks.size(); i++) {
+		tinyxml2::XMLElement *node = doc.NewElement("musicTrack");
+		musicTracks[i]->SaveState(doc, node);
+		rootNode->InsertEndChild(node);
+	}
+
+	tinyxml2::XMLPrinter printer;
+	doc.Print(&printer);
+	return printer.CStr();
+}
+
+void oamlBase::LoadState(std::string state) {
+	tinyxml2::XMLDocument doc;
+	tinyxml2::XMLError err = doc.Parse(state.c_str(), state.length());
+	if (err != tinyxml2::XML_NO_ERROR) {
+		fprintf(stderr, "liboaml: Error parsing xml: %s (err=%d)\n", doc.ErrorName(), err);
+		return;
+	}
+
+	tinyxml2::XMLElement *rootNode = doc.FirstChildElement("oamlState");
+	if (rootNode) {
+		tinyxml2::XMLElement *el = rootNode->FirstChildElement();
+		while (el != NULL) {
+			if (strcmp(el->Name(), "version") == 0) {
+				int version;
+				int major;
+				int minor;
+				int patch;
+
+				sscanf(el->GetText(), "%d.%d.%d", &major, &minor, &patch);
+				version = (major << 16) | (minor << 8) | (patch);
+				if (version < 0x00010001) {
+					fprintf(stderr, "old version! %X\n", version);
+					return;
+				}
+			} else if (strcmp(el->Name(), "base") == 0) {
+				const char *str;
+
+				str = el->Attribute("curTrack");
+				if (str) {
+					curTrack = strtol(str, NULL, 0);
+				}
+
+				str = el->Attribute("tension");
+				if (str) {
+					tension = strtol(str, NULL, 0);
+				}
+			} else if (strcmp(el->Name(), "musicTrack") == 0) {
+				const char *str = el->Attribute("name");
+				if (str) {
+					for (size_t i=0; i<musicTracks.size(); i++) {
+						if (strcmp(musicTracks[i]->GetNameStr(), str) == 0) {
+							musicTracks[i]->LoadState(el);
+							break;
+						}
+					}
+				}
+			} else {
+				fprintf(stderr, "%s: Unknown state tag: %s\n", __FUNCTION__, el->Name());
+			}
+
+			el = el->NextSiblingElement();
+		}
+	}
 }
 
 const char* oamlBase::GetDefsFile() {
@@ -940,14 +1019,14 @@ const char* oamlBase::GetPlayingInfo() {
 
 void oamlBase::Clear() {
 	while (musicTracks.empty() == false) {
-		oamlTrack *track = musicTracks.back();
+		oamlMusicTrack *track = musicTracks.back();
 		musicTracks.pop_back();
 
 		delete track;
 	}
 
 	while (sfxTracks.empty() == false) {
-		oamlTrack *track = sfxTracks.back();
+		oamlSfxTrack *track = sfxTracks.back();
 		sfxTracks.pop_back();
 
 		delete track;
@@ -958,7 +1037,7 @@ void oamlBase::Clear() {
 	}
 	tracksInfo.tracks.clear();
 
-	curTrack = NULL;
+	curTrack = -1;
 }
 
 void oamlBase::Shutdown() {
@@ -1014,24 +1093,24 @@ oamlRC oamlBase::TrackNew(std::string name, bool sfxTrack) {
 	track->SetName(name);
 
 	if (track->IsMusicTrack()) {
-		musicTracks.push_back(track);
+		musicTracks.push_back((oamlMusicTrack*)track);
 	} else {
-		sfxTracks.push_back(track);
+		sfxTracks.push_back((oamlSfxTrack*)track);
 	}
 
 	return OAML_OK;
 }
 
 oamlTrack* oamlBase::GetTrack(std::string name) {
-	for (std::vector<oamlTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
-		oamlTrack *track = *it;
+	for (std::vector<oamlMusicTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
+		oamlMusicTrack *track = *it;
 		if (track->GetName().compare(name) == 0) {
 			return track;
 		}
 	}
 
-	for (std::vector<oamlTrack*>::iterator it=sfxTracks.begin(); it<sfxTracks.end(); ++it) {
-		oamlTrack *track = *it;
+	for (std::vector<oamlSfxTrack*>::iterator it=sfxTracks.begin(); it<sfxTracks.end(); ++it) {
+		oamlSfxTrack *track = *it;
 		if (track->GetName().compare(name) == 0) {
 			return track;
 		}
@@ -1041,8 +1120,8 @@ oamlTrack* oamlBase::GetTrack(std::string name) {
 }
 
 oamlRC oamlBase::TrackRemove(std::string name) {
-	for (std::vector<oamlTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
-		oamlTrack *track = *it;
+	for (std::vector<oamlMusicTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
+		oamlMusicTrack *track = *it;
 		if (track->GetName().compare(name) == 0) {
 			musicTracks.erase(it);
 			delete track;
@@ -1050,8 +1129,8 @@ oamlRC oamlBase::TrackRemove(std::string name) {
 		}
 	}
 
-	for (std::vector<oamlTrack*>::iterator it=sfxTracks.begin(); it<sfxTracks.end(); ++it) {
-		oamlTrack *track = *it;
+	for (std::vector<oamlSfxTrack*>::iterator it=sfxTracks.begin(); it<sfxTracks.end(); ++it) {
+		oamlSfxTrack *track = *it;
 		if (track->GetName().compare(name) == 0) {
 			sfxTracks.erase(it);
 			delete track;
@@ -1566,4 +1645,3 @@ float oamlBase::LayerGetGain(std::string layerName) {
 
 	return layer->GetGain();
 }
-

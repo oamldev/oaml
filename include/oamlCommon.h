@@ -73,6 +73,7 @@
 #ifdef __HAVE_OGG
 #include "ogg.h"
 #endif
+#include "tinyxml2.h"
 #include "wav.h"
 #include "oamlLayer.h"
 #include "oamlAudioFile.h"

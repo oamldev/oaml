@@ -196,6 +196,14 @@ const char* oamlApi::GetPlayingInfo() {
 	return oaml->GetPlayingInfo();
 }
 
+std::string oamlApi::SaveState() {
+	return oaml->SaveState();
+}
+
+void oamlApi::LoadState(std::string state) {
+	oaml->LoadState(state);
+}
+
 void oamlApi::Shutdown() {
 	oaml->Shutdown();
 }

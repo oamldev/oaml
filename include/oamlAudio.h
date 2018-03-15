@@ -146,6 +146,9 @@ public:
 	void SetPickable(bool value) { pickable = value; }
 	bool IsPickable() const { return pickable; }
 
+	void SaveState(tinyxml2::XMLElement *node);
+	void LoadState(tinyxml2::XMLElement *node);
+
 	void FreeMemory();
 };
 

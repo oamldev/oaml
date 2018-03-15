@@ -402,6 +402,47 @@ unsigned int oamlAudio::GetFilesSamples() {
 	return filesSamples;
 }
 
+void oamlAudio::SaveState(tinyxml2::XMLElement *node) {
+	node->SetAttribute("name", GetName().c_str());
+	node->SetAttribute("samplesCount", samplesCount);
+	node->SetAttribute("fadeInSamples", fadeInSamples);
+	node->SetAttribute("fadeOutSamples", fadeOutSamples);
+	node->SetAttribute("fadeOutCount", fadeOutCount);
+	node->SetAttribute("isOpen", samplesToEnd != 0);
+}
+
+void oamlAudio::LoadState(tinyxml2::XMLElement *node) {
+	const char *str;
+
+	str = node->Attribute("isOpen");
+	if (str) {
+		int isOpen = strtol(str, NULL, 0);
+		if (isOpen) {
+			Open();
+		}
+	}
+
+	str = node->Attribute("samplesCount");
+	if (str) {
+		samplesCount = strtol(str, NULL, 0);
+	}
+
+	str = node->Attribute("fadeInSamples");
+	if (str) {
+		fadeInSamples = strtol(str, NULL, 0);
+	}
+
+	str = node->Attribute("fadeOutSamples");
+	if (str) {
+		fadeOutSamples = strtol(str, NULL, 0);
+	}
+
+	str = node->Attribute("fadeOutCount");
+	if (str) {
+		fadeOutCount = strtol(str, NULL, 0);
+	}
+}
+
 void oamlAudio::ReadInfo(oamlAudioInfo *info) {
 	info->name = GetName();
 	info->type = GetType();

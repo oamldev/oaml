@@ -31,7 +31,6 @@ private:
 	bool playing;
 	int playingOrder;
 	int maxPlayOrder;
-	int playCondSamples;
 
 	unsigned int filesSamples;
 	unsigned int tailPos;
@@ -40,19 +39,29 @@ private:
 	std::vector<oamlAudio*> randAudios;
 	std::vector<oamlAudio*> condAudios;
 	std::vector<oamlAudio*> introAudios;
-	oamlAudio *playCondAudio;
 
-	oamlAudio *curAudio;
-	oamlAudio *tailAudio;
-	oamlAudio *fadeAudio;
+	int curAudio;
+	int tailAudio;
+	int fadeAudio;
+	int playCondAudio;
+	int playCondSamples;
 
-	oamlAudio* PickNextAudio();
+	oamlAudio* GetAudioByTypeId(int type, int id);
+	oamlAudio* GetCurAudio();
+	oamlAudio* GetTailAudio();
+	oamlAudio* GetFadeAudio();
+
+	int PickNextAudio();
+
+	void SetCurAudio(int type, int id);
 
 	void PlayNext();
-	void PlayCond(oamlAudio *audio);
-	void PlayCondWithMovement(oamlAudio *audio);
+	void PlayCond(int audio);
+	void PlayCondWithMovement(int audio);
 	void XFadePlay();
 
+	void SaveAudioState(tinyxml2::XMLDocument &doc, tinyxml2::XMLElement *node, const char *nodeName, std::vector<oamlAudio*> *audios);
+	void LoadAudioState(tinyxml2::XMLElement *node, std::vector<oamlAudio*> *audios);
 	void _SetLayerGain(std::vector<oamlAudio*> *audios, std::string layer, float gain);
 
 public:
@@ -81,6 +90,9 @@ public:
 	void ReadInfo(oamlTrackInfo *info);
 
 	void SetLayerGain(std::string layer, float gain);
+
+	void SaveState(tinyxml2::XMLDocument &doc, tinyxml2::XMLElement *node);
+	void LoadState(tinyxml2::XMLElement *node);
 
 	void FreeMemory();
 };

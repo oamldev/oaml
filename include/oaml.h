@@ -319,6 +319,12 @@ public:
 	/** Returns a pointer to the tracks information */
 	oamlTracksInfo *GetTracksInfo();
 
+	/** Returns the current playing state as a string, this can be used to resume the exact music state with LoadState */
+	std::string SaveState();
+
+	/** Resume the exact music state that was saved using SaveState */
+	void LoadState(std::string state);
+
 	/** Returns a pointer to the oamlStudioApi class */
 	oamlStudioApi *GetStudioApi();
 };
