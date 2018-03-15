@@ -108,7 +108,6 @@ For now since resampling is not implemented in OAML you need to export the music
 ### TODO
 
 - Make the possibility that tension will not simply change to a condition loop but instead that both loops (main loop and conditional loop) will play together based on the tension percent, need to test it first.
-- Resampling music?
 - Add a function for playing SFX's with a 3d position.
 - Add a loudness effect, and a reverb effect as well.
 - Implement OAML in more game engines, love2d, etc.
@@ -122,4 +121,4 @@ For now since resampling is not implemented in OAML you need to export the music
 
 ### About
 
-Copyright (c) 2015-2016 Marcelo Fernandez <marcelo@marcelofernandezmusic.com>
+Copyright (c) 2015-2018 Marcelo Fernandez <marcelo@marcelofernandezmusic.com>
