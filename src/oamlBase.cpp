@@ -61,6 +61,8 @@ static oamlFileCallbacks defCbs = {
 	&oamlClose
 };
 
+static void *pbase = NULL;
+
 oamlBase::oamlBase() {
 	defsFile = "";
 
@@ -84,6 +86,7 @@ oamlBase::oamlBase() {
 	channels = 0;
 	bytesPerSample = 0;
 	floatBuffer = false;
+	dataBuffer = new ByteBuffer();
 
 	volume = OAML_VOLUME_DEFAULT;
 	pause = false;
@@ -93,9 +96,21 @@ oamlBase::oamlBase() {
 	tensionMs = 0;
 
 	fcbs = &defCbs;
+
+	bufferFrames = 2048;
+	stopThread = false;
+	pbase = this;
+	bufferThread = new std::thread(&oamlBase::BufferThreadFunc);
 }
 
 oamlBase::~oamlBase() {
+	if (bufferThread) {
+		stopThread = true;
+		bufferThread->join();
+		delete bufferThread;
+		bufferThread = NULL;
+	}
+
 #ifdef __HAVE_RTAUDIO
 	if (rtAudio) {
 		if (rtAudio->isStreamRunning()) {
@@ -110,6 +125,11 @@ oamlBase::~oamlBase() {
 	if (fullBuffer) {
 		delete fullBuffer;
 		fullBuffer = NULL;
+	}
+
+	if (dataBuffer) {
+		delete dataBuffer;
+		dataBuffer = NULL;
 	}
 }
 
@@ -241,11 +261,13 @@ oamlRC oamlBase::ReadTrackDefs(tinyxml2::XMLElement *el) {
 		trackEl = trackEl->NextSiblingElement();
 	}
 
+	mutex.lock();
 	if (track->IsMusicTrack()) {
 		musicTracks.push_back((oamlMusicTrack*)track);
 	} else {
 		sfxTracks.push_back((oamlSfxTrack*)track);
 	}
+	mutex.unlock();
 
 	return OAML_OK;
 }
@@ -386,15 +408,16 @@ void oamlBase::SetAudioFormat(int audioSampleRate, int audioChannels, int audioB
 }
 
 oamlRC oamlBase::PlayTrackId(int id) {
-	if (id >= (int)musicTracks.size())
-		return OAML_ERROR;
+	if (id < (int)musicTracks.size()) {
+		if (curTrack >= 0 && (size_t)curTrack < musicTracks.size()) {
+			musicTracks[curTrack]->Stop();
+		}
 
-	if (curTrack >= 0 && (size_t)curTrack < musicTracks.size()) {
-		musicTracks[curTrack]->Stop();
+		curTrack = id;
+		return musicTracks[id]->Play();
 	}
 
-	curTrack = id;
-	return musicTracks[id]->Play();
+	return OAML_ERROR;
 }
 
 oamlRC oamlBase::PlayTrack(const char *name) {
@@ -402,15 +425,20 @@ oamlRC oamlBase::PlayTrack(const char *name) {
 
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, name);
 
+	oamlRC err = OAML_ERROR;
 	int i=0;
+
+	mutex.lock();
 	for (std::vector<oamlMusicTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it, i++) {
 		oamlTrack *track = *it;
 		if (track->GetName().compare(name) == 0) {
-			return PlayTrackId(i);
+			err = PlayTrackId(i);
+			break;
 		}
 	}
+	mutex.unlock();
 
-	return OAML_ERROR;
+	return err;
 }
 
 oamlRC oamlBase::PlaySfx(const char *name) {
@@ -422,14 +450,19 @@ oamlRC oamlBase::PlaySfxEx(const char *name, float vol, float pan) {
 
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, name);
 
+	oamlRC err = OAML_ERROR;
+
+	mutex.lock();
 	for (std::vector<oamlSfxTrack*>::iterator it=sfxTracks.begin(); it<sfxTracks.end(); ++it) {
 		oamlTrack *track = *it;
 		if (track->Play(name, vol, pan) == 0) {
-			return OAML_OK;
+			err = OAML_OK;
+			break;
 		}
 	}
+	mutex.unlock();
 
-	return OAML_ERROR;
+	return err;
 }
 
 static double getDistance2d(int x1, int y1, int x2, int y2) {
@@ -456,11 +489,13 @@ oamlRC oamlBase::PlaySfx2d(const char *name, int x, int y, int width, int height
 
 oamlRC oamlBase::PlayTrackWithStringRandom(const char *str) {
 	std::vector<int> list;
+	oamlRC err = OAML_ERROR;
 
 	ASSERT(str != NULL);
 
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, str);
 
+	mutex.lock();
 	for (size_t i=0; i<musicTracks.size(); i++) {
 		if (musicTracks[i]->GetName().find(str) == std::string::npos) {
 			list.push_back(i);
@@ -469,19 +504,22 @@ oamlRC oamlBase::PlayTrackWithStringRandom(const char *str) {
 
 	if (list.empty() == false) {
 		int i = rand() % list.size();
-		return PlayTrackId(list[i]);
+		err = PlayTrackId(list[i]);
 	}
+	mutex.unlock();
 
-	return OAML_ERROR;
+	return err;
 }
 
 oamlRC oamlBase::PlayTrackByGroupRandom(const char *group) {
 	std::vector<int> list;
+	oamlRC err = OAML_ERROR;
 
 	ASSERT(group != NULL);
 
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, group);
 
+	mutex.lock();
 	for (size_t i=0; i<musicTracks.size(); i++) {
 		if (musicTracks[i]->HasGroup(std::string(group))) {
 			list.push_back(i);
@@ -490,20 +528,23 @@ oamlRC oamlBase::PlayTrackByGroupRandom(const char *group) {
 
 	if (list.empty() == false) {
 		int i = rand() % list.size();
-		return PlayTrackId(list[i]);
+		err = PlayTrackId(list[i]);
 	}
+	mutex.unlock();
 
-	return OAML_ERROR;
+	return err;
 }
 
 oamlRC oamlBase::PlayTrackByGroupAndSubgroupRandom(const char *group, const char *subgroup) {
 	std::vector<int> list;
+	oamlRC err = OAML_ERROR;
 
 	ASSERT(group != NULL);
 	ASSERT(subgroup != NULL);
 
 	if (verbose) __oamlLog("%s %s %s\n", __FUNCTION__, group, subgroup);
 
+	mutex.lock();
 	for (size_t i=0; i<musicTracks.size(); i++) {
 		if (musicTracks[i]->HasGroup(std::string(group)) && musicTracks[i]->HasSubgroup(std::string(subgroup))) {
 			list.push_back(i);
@@ -512,52 +553,68 @@ oamlRC oamlBase::PlayTrackByGroupAndSubgroupRandom(const char *group, const char
 
 	if (list.empty() == false) {
 		int i = rand() % list.size();
-		return PlayTrackId(list[i]);
+		err = PlayTrackId(list[i]);
 	}
+	mutex.unlock();
 
-	return OAML_ERROR;
+	return err;
 }
 
 oamlRC oamlBase::LoadTrack(const char *name) {
+	oamlRC err = OAML_ERROR;
+
 	ASSERT(name != NULL);
 
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, name);
 
+	mutex.lock();
 	for (std::vector<oamlMusicTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
 		oamlTrack *track = *it;
 		if (track->GetName().compare(name) == 0) {
-			return track->Load();
+			err = track->Load();
+			break;
 		}
 	}
+	mutex.unlock();
 
-	return OAML_ERROR;
+	return err;
 }
 
 float oamlBase::LoadTrackProgress(const char *name) {
+	float ret = -1.f;
+
 	ASSERT(name != NULL);
 
 	if (verbose) __oamlLog("%s %s\n", __FUNCTION__, name);
 
+	mutex.lock();
 	for (std::vector<oamlMusicTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
 		oamlTrack *track = *it;
 		if (track->GetName().compare(name) == 0) {
-			return track->LoadProgress();
+			ret = track->LoadProgress();
+			break;
 		}
 	}
+	mutex.unlock();
 
-	return -1.f;
+	return ret;
 }
 
 bool oamlBase::IsTrackPlaying(const char *name) {
+	bool ret = false;
+
 	ASSERT(name != NULL);
 
+	mutex.lock();
 	for (size_t i=0; i<musicTracks.size(); i++) {
 		if (musicTracks[i]->GetName().compare(name) == 0) {
-			return IsTrackPlayingId(i);
+			ret = IsTrackPlayingId(i);
+			break;
 		}
 	}
+	mutex.unlock();
 
-	return false;
+	return ret;
 }
 
 bool oamlBase::IsTrackPlayingId(int id) {
@@ -568,19 +625,28 @@ bool oamlBase::IsTrackPlayingId(int id) {
 }
 
 bool oamlBase::IsPlaying() {
-	for (size_t i=0; i<musicTracks.size(); i++) {
-		if (musicTracks[i]->IsPlaying())
-			return true;
-	}
+	bool ret = false;
 
-	return false;
+	mutex.lock();
+	for (size_t i=0; i<musicTracks.size(); i++) {
+		if (musicTracks[i]->IsPlaying()) {
+			ret = true;
+			break;
+		}
+	}
+	mutex.unlock();
+
+	return ret;
 }
 
 void oamlBase::StopPlaying() {
 	if (verbose) __oamlLog("%s\n", __FUNCTION__);
+
+	mutex.lock();
 	for (size_t i=0; i<musicTracks.size(); i++) {
 		musicTracks[i]->Stop();
 	}
+	mutex.unlock();
 }
 
 void oamlBase::Pause() {
@@ -596,9 +662,11 @@ void oamlBase::PauseToggle() {
 }
 
 void oamlBase::ShowPlayingTracks() {
+	mutex.lock();
 	for (size_t i=0; i<musicTracks.size(); i++) {
 		((oamlTrack*)musicTracks[i])->ShowPlaying();
 	}
+	mutex.unlock();
 }
 
 int oamlBase::SafeAdd(int sample1, int sample2) {
@@ -704,14 +772,27 @@ bool oamlBase::IsAudioFormatSupported() {
 	return true;
 }
 
-void oamlBase::MixToBuffer(void *buffer, int size) {
-	ASSERT(buffer != NULL);
-	ASSERT(size != 0);
+void oamlBase::BufferThreadFunc() {
+	oamlBase *base = (oamlBase*)pbase;
+	while (base->stopThread == false) {
+		base->mutex.lock();
+		if (base->dataBuffer->bytesRemaining() < (uint32_t)base->bufferFrames) {
+			base->BufferData();
+		}
+		base->mutex.unlock();
 
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+	}
+}
+
+void oamlBase::BufferData() {
 	if (IsAudioFormatSupported() == false || pause)
 		return;
 
-	for (int i=0; i<size; i+= channels) {
+	dataBuffer->setReadPos(0);
+	dataBuffer->setWritePos(0);
+
+	for (int i=0; i<bufferFrames; i+= channels) {
 		float fsample[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
 		for (size_t j=0; j<sfxTracks.size(); j++) {
@@ -729,17 +810,33 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 
 		for (int c=0; c<channels; c++) {
 			// Apply the volume
-			fsample[c] = fsample[c] * volume;
+			dataBuffer->putFloat(fsample[c] * volume);
+		}
+	}
+}
 
-			if (floatBuffer) {
-				((float*)buffer)[i+c]+= fsample[c];
-			} else {
-				int sample = __oamlFloatToInteger24(fsample[c]) << 8;
+void oamlBase::MixToBuffer(void *buffer, int size) {
+	ASSERT(buffer != NULL);
+	ASSERT(size != 0);
 
-				// Mix our sample into the buffer
-				int tmp = ReadSample(buffer, i+c);
-				tmp = SafeAdd(sample, tmp);
-				WriteSample(buffer, i+c, tmp);
+	mutex.lock();
+	int i = 0;
+	while (size > 0) {
+		if (dataBuffer->bytesRemaining() < (uint32_t)channels * 4) {
+			BufferData();
+		} else {
+			for (int c=0; c<channels; c++, i++, size--) {
+				float fsample = dataBuffer->getFloat();
+				if (floatBuffer) {
+					((float*)buffer)[i]+= fsample;
+				} else {
+					int sample = __oamlFloatToInteger24(fsample) << 8;
+
+					// Mix our sample into the buffer
+					int tmp = ReadSample(buffer, i);
+					tmp = SafeAdd(sample, tmp);
+					WriteSample(buffer, i, tmp);
+				}
 			}
 		}
 	}
@@ -754,29 +851,34 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 			fullBuffer->putShort(sample >> 16);
 		}
 	}
-
-//	ShowPlayingTracks();
+	mutex.unlock();
 }
 
 void oamlBase::SetCondition(int id, int value) {
 //	printf("%s %d %d\n", __FUNCTION__, id, value);
+	mutex.lock();
 	if (curTrack >= 0 && (size_t)curTrack < musicTracks.size()) {
 		musicTracks[curTrack]->SetCondition(id, value);
 	}
+	mutex.unlock();
 }
 
 void oamlBase::SetVolume(float vol) {
+	mutex.lock();
 	volume = vol;
 
 	if (volume < OAML_VOLUME_MIN) volume = OAML_VOLUME_MIN;
 	if (volume > OAML_VOLUME_MAX) volume = OAML_VOLUME_MAX;
+	mutex.unlock();
 }
 
 void oamlBase::AddTension(int value) {
+	mutex.lock();
 	tension+= value;
 	if (tension >= 100) {
 		tension = 100;
 	}
+	mutex.unlock();
 
 	updateTension = true;
 }
@@ -827,9 +929,11 @@ void oamlBase::SetLayerGain(const char *layer, float gain) {
 
 	info->SetGain(gain);
 
+	mutex.lock();
 	for (size_t j=0; j<musicTracks.size(); j++) {
 		musicTracks[j]->SetLayerGain(layer, gain);
 	}
+	mutex.unlock();
 }
 
 void oamlBase::SetLayerRandomChance(const char *layer, int randomChance) {
@@ -885,14 +989,17 @@ void oamlBase::SetFileCallbacks(oamlFileCallbacks *cbs) {
 }
 
 void oamlBase::EnableDynamicCompressor(bool enable, double threshold, double ratio) {
+	mutex.lock();
 	useCompressor = enable;
 	if (useCompressor) {
 		compressor.SetThreshold(threshold);
 		compressor.SetRatio(ratio);
 	}
+	mutex.unlock();
 }
 
 oamlTracksInfo* oamlBase::GetTracksInfo() {
+	mutex.lock();
 	tracksInfo.tracks.clear();
 
 	for (std::vector<oamlMusicTrack*>::iterator it=musicTracks.begin(); it<musicTracks.end(); ++it) {
@@ -913,6 +1020,7 @@ oamlTracksInfo* oamlBase::GetTracksInfo() {
 
 	tracksInfo.bpm = bpm;
 	tracksInfo.beatsPerBar = beatsPerBar;
+	mutex.unlock();
 
 	return &tracksInfo;
 }
@@ -932,11 +1040,13 @@ std::string oamlBase::SaveState() {
 	baseNode->SetAttribute("tension", tension);
 	rootNode->InsertEndChild(baseNode);
 
+	mutex.lock();
 	for (size_t i=0; i<musicTracks.size(); i++) {
 		tinyxml2::XMLElement *node = doc.NewElement("musicTrack");
 		musicTracks[i]->SaveState(doc, node);
 		rootNode->InsertEndChild(node);
 	}
+	mutex.unlock();
 
 	tinyxml2::XMLPrinter printer;
 	doc.Print(&printer);
@@ -982,12 +1092,14 @@ void oamlBase::LoadState(std::string state) {
 			} else if (strcmp(el->Name(), "musicTrack") == 0) {
 				const char *str = el->Attribute("name");
 				if (str) {
+					mutex.lock();
 					for (size_t i=0; i<musicTracks.size(); i++) {
 						if (strcmp(musicTracks[i]->GetNameStr(), str) == 0) {
 							musicTracks[i]->LoadState(el);
 							break;
 						}
 					}
+					mutex.unlock();
 				}
 			} else {
 				fprintf(stderr, "%s: Unknown state tag: %s\n", __FUNCTION__, el->Name());
@@ -1004,6 +1116,8 @@ const char* oamlBase::GetDefsFile() {
 
 const char* oamlBase::GetPlayingInfo() {
 	playingInfo = "";
+
+	mutex.lock();
 	for (size_t i=0; i<musicTracks.size(); i++) {
 		playingInfo+= musicTracks[i]->GetPlayingInfo();
 	}
@@ -1013,11 +1127,13 @@ const char* oamlBase::GetPlayingInfo() {
 		snprintf(str, 1024, " tension=%d", tension);
 		playingInfo+= str;
 	}
+	mutex.unlock();
 
 	return playingInfo.c_str();
 }
 
 void oamlBase::Clear() {
+	mutex.lock();
 	while (musicTracks.empty() == false) {
 		oamlMusicTrack *track = musicTracks.back();
 		musicTracks.pop_back();
@@ -1038,6 +1154,7 @@ void oamlBase::Clear() {
 	tracksInfo.tracks.clear();
 
 	curTrack = -1;
+	mutex.unlock();
 }
 
 void oamlBase::Shutdown() {

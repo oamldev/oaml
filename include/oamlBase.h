@@ -23,6 +23,7 @@
 #ifndef __OAMLBASE_H__
 #define __OAMLBASE_H__
 
+#include <thread>
 
 #include "tinyxml2.h"
 #ifdef __HAVE_RTAUDIO
@@ -32,6 +33,9 @@
 
 class oamlBase {
 private:
+	std::thread *bufferThread;
+	std::mutex mutex;
+
 	std::string defsFile;
 	std::string playingInfo;
 
@@ -40,6 +44,7 @@ private:
 	bool writeAudioAtShutdown;
 	bool useCompressor;
 	bool updateTension;
+	bool stopThread;
 
 	std::vector<oamlMusicTrack*> musicTracks;
 	std::vector<oamlSfxTrack*> sfxTracks;
@@ -49,7 +54,9 @@ private:
 	int beatsPerBar;
 
 	int curTrack;
+	int bufferFrames;
 
+	ByteBuffer *dataBuffer;
 	ByteBuffer *fullBuffer;
 
 #ifdef __HAVE_RTAUDIO
@@ -84,6 +91,9 @@ private:
 	oamlRC ReadTrackDefs(tinyxml2::XMLElement *el);
 	oamlRC ReadDefs(const char *buf, int size);
 	void ReadInternalDefs(const char *filaname);
+
+	void BufferData();
+	static void BufferThreadFunc();
 
 	int ReadSample(void *buffer, int index);
 	void WriteSample(void *buffer, int index, int sample);
