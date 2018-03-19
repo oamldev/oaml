@@ -24,6 +24,7 @@
 #define __OAMLBASE_H__
 
 #include <thread>
+#include <mutex>
 
 #include "tinyxml2.h"
 #ifdef __HAVE_RTAUDIO
