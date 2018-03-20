@@ -786,7 +786,7 @@ void oamlBase::BufferThreadFunc() {
 }
 
 void oamlBase::BufferData() {
-	if (IsAudioFormatSupported() == false || pause)
+	if (IsAudioFormatSupported() == false)
 		return;
 
 	dataBuffer->setReadPos(0);
@@ -818,6 +818,9 @@ void oamlBase::BufferData() {
 void oamlBase::MixToBuffer(void *buffer, int size) {
 	ASSERT(buffer != NULL);
 	ASSERT(size != 0);
+
+	if (IsAudioFormatSupported() == false || pause)
+		return;
 
 	mutex.lock();
 	int i = 0;
