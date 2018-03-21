@@ -133,6 +133,10 @@ oamlBase::~oamlBase() {
 	}
 }
 
+const char *oamlBase::GetVersion() {
+	return "1.3.1";
+}
+
 #ifdef __HAVE_RTAUDIO
 int rtCallback(void *outputBuffer, void * /*inputBuffer*/, unsigned int nBufferFrames, double /*streamTime*/, RtAudioStreamStatus /*status*/, void *data) {
 	oamlBase *base = (oamlBase*)data;

@@ -115,7 +115,7 @@ public:
 	oamlBase();
 	~oamlBase();
 
-	const char* GetVersion() { return OAML_VERSION_STRING; }
+	const char* GetVersion();
 
 	oamlRC InitAudioDevice(int sampleRate, int channels);
 	oamlRC Init(const char *defsFilename);
