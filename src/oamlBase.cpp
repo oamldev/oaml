@@ -896,6 +896,10 @@ void oamlBase::SetTension(int value) {
 	updateTension = false;
 }
 
+int oamlBase::GetTension() {
+	return tension;
+}
+
 void oamlBase::SetMainLoopCondition(int value) {
 	SetCondition(OAML_CONDID_MAIN_LOOP, value);
 }
@@ -943,12 +947,28 @@ void oamlBase::SetLayerGain(const char *layer, float gain) {
 	mutex.unlock();
 }
 
+float oamlBase::GetLayerGain(const char *layer) {
+	oamlLayer *info = GetLayer(layer);
+	if (info == NULL)
+		return 0.f;
+
+	return info->GetGain();
+}
+
 void oamlBase::SetLayerRandomChance(const char *layer, int randomChance) {
 	oamlLayer *info = GetLayer(layer);
 	if (info == NULL)
 		return;
 
 	info->SetRandomChance(randomChance);
+}
+
+int oamlBase::GetLayerRandomChance(const char *layer) {
+	oamlLayer *info = GetLayer(layer);
+	if (info == NULL)
+		return 0;
+
+	return info->GetRandomChance();
 }
 
 void oamlBase::UpdateTension(uint64_t ms) {

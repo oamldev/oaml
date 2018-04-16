@@ -154,13 +154,16 @@ public:
 
 	void AddTension(int value);
 	void SetTension(int value);
+	int GetTension();
 
 	void SetMainLoopCondition(int value);
 
 	void SetCondition(int id, int value);
 
 	void SetLayerGain(const char *layer, float gain);
+	float GetLayerGain(const char *layer);
 	void SetLayerRandomChance(const char *layer, int randomChance);
+	int GetLayerRandomChance(const char *layer);
 
 	void MixToBuffer(void *buffer, int size);
 

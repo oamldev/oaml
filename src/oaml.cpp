@@ -152,6 +152,10 @@ void oamlApi::SetTension(int value) {
 	oaml->SetTension(value);
 }
 
+int oamlApi::GetTension() {
+	return oaml->GetTension();
+}
+
 void oamlApi::SetMainLoopCondition(int value) {
 	oaml->SetMainLoopCondition(value);
 }
@@ -160,8 +164,16 @@ void oamlApi::SetLayerGain(const char *layer, float gain) {
 	oaml->SetLayerGain(layer, gain);
 }
 
+float oamlApi::GetLayerGain(const char *layer) {
+	return oaml->GetLayerGain(layer);
+}
+
 void oamlApi::SetLayerRandomChance(const char *layer, int randomChance) {
 	oaml->SetLayerRandomChance(layer, randomChance);
+}
+
+int oamlApi::GetLayerRandomChance(const char *layer) {
+	return oaml->GetLayerRandomChance(layer);
 }
 
 void oamlApi::Update() {

@@ -282,6 +282,9 @@ public:
 	/** Set tension that triggers different aspects of the music */
 	void SetTension(int value);
 
+	/** Get the current tension value */
+	int GetTension();
+
 	/** Sets a condition that affects the main loop */
 	void SetMainLoopCondition(int value);
 
@@ -291,8 +294,14 @@ public:
 	/** Set gain (0.f - 1.f) of a layer */
 	void SetLayerGain(const char *layer, float gain);
 
+	/** Get gain (0.f - 1.f) of a layer */
+	float GetLayerGain(const char *layer);
+
 	/** Set random chance (0 - 100) of a layer */
 	void SetLayerRandomChance(const char *layer, int rhandomChance);
+
+	/** Get random chance (0 - 100) of a layer */
+	int GetLayerRandomChance(const char *layer);
 
 	/** Main function to call form the internal game audio manager */
 	void MixToBuffer(void *buffer, int size);
