@@ -136,6 +136,10 @@ void oamlApi::SetCondition(int id, int value) {
 	oaml->SetCondition(id, value);
 }
 
+void oamlApi::ClearConditions() {
+	oaml->ClearConditions();
+}
+
 void oamlApi::SetVolume(float vol) {
 	oaml->SetVolume(vol);
 }

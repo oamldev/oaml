@@ -51,6 +51,8 @@ private:
 	std::vector<oamlSfxTrack*> sfxTracks;
 	std::vector<oamlLayer*> layers;
 
+	std::vector<std::pair<int, int>> conditions;
+
 	float bpm;
 	int beatsPerBar;
 
@@ -106,6 +108,7 @@ private:
 	oamlLayer *GetLayer(std::string layer);
 
 	void UpdateTension(uint64_t ms);
+	void UpdateCondition();
 
 	oamlTrack* GetTrack(std::string name);
 	oamlAudio* GetAudio(std::string trackName, std::string audioName);
@@ -158,6 +161,7 @@ public:
 
 	void SetMainLoopCondition(int value);
 
+	void ClearConditions();
 	void SetCondition(int id, int value);
 
 	void SetLayerGain(const char *layer, float gain);

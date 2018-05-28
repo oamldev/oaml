@@ -230,7 +230,7 @@ void oamlMusicTrack::PlayCond(int audio) {
 	}
 }
 
-oamlRC oamlMusicTrack::Play() {
+oamlRC oamlMusicTrack::Play(int mainCondValue) {
 	int doFade = 0;
 
 	if (lock > 0) {
@@ -244,7 +244,8 @@ oamlRC oamlMusicTrack::Play() {
 		doFade = 1;
 	}
 
-	SetCondition(OAML_CONDID_MAIN_LOOP, 0);
+	printf("mainCondValue=%d\n", mainCondValue);
+	SetCondition(OAML_CONDID_MAIN_LOOP, mainCondValue);
 
 	playingOrder = 0;
 	maxPlayOrder = 0;
@@ -647,40 +648,13 @@ void oamlMusicTrack::LoadState(tinyxml2::XMLElement *node) {
 		playing = false;
 	}
 
-	attr = node->Attribute("playingOrder");
-	if (attr) {
-		playingOrder = strtol(attr, NULL, 0);
-	}
-
-	attr = node->Attribute("tailPos");
-	if (attr) {
-		tailPos = strtol(attr, NULL, 0);
-	}
-
-	attr = node->Attribute("curAudio");
-	if (attr) {
-		curAudio = strtol(attr, NULL, 0);
-	}
-
-	attr = node->Attribute("fadeAudio");
-	if (attr) {
-		fadeAudio = strtol(attr, NULL, 0);
-	}
-
-	attr = node->Attribute("tailAudio");
-	if (attr) {
-		tailAudio = strtol(attr, NULL, 0);
-	}
-
-	attr = node->Attribute("playCondAudio");
-	if (attr) {
-		playCondAudio = strtol(attr, NULL, 0);
-	}
-
-	attr = node->Attribute("playCondSamples");
-	if (attr) {
-		playCondSamples = strtol(attr, NULL, 0);
-	}
+	playingOrder = node->IntAttribute("playingOrder");
+	tailPos = node->IntAttribute("tailPos");
+	curAudio = node->IntAttribute("curAudio");
+	fadeAudio = node->IntAttribute("fadeAudio");
+	tailAudio = node->IntAttribute("tailAudio");
+	playCondAudio = node->IntAttribute("playCondAudio");
+	playCondSamples = node->IntAttribute("playCondSamples");
 
 	tinyxml2::XMLElement *el = node->FirstChildElement();
 	while (el != NULL) {

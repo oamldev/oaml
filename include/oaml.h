@@ -291,6 +291,9 @@ public:
 	/** Set a condition */
 	void SetCondition(int id, int value);
 
+	/** Clears current conditions */
+	void ClearConditions();
+
 	/** Set gain (0.f - 1.f) of a layer */
 	void SetLayerGain(const char *layer, float gain);
 

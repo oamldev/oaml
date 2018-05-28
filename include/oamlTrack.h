@@ -89,9 +89,6 @@ public:
 	virtual void AddAudio(oamlAudio *) { }
 	virtual oamlAudio* GetAudio(std::string) { return NULL; }
 	virtual oamlRC RemoveAudio(std::string) { return OAML_NOT_FOUND; }
-	virtual oamlRC Play() { return OAML_NOT_FOUND; }
-	virtual oamlRC Play(const char *) { return OAML_NOT_FOUND; }
-	virtual oamlRC Play(const char *, float, float) { return OAML_NOT_FOUND; }
 	virtual oamlRC Load() { return OAML_NOT_FOUND; }
 	virtual float LoadProgress() { return -1.f; }
 	virtual void Stop() { }

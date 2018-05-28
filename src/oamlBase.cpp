@@ -412,16 +412,27 @@ void oamlBase::SetAudioFormat(int audioSampleRate, int audioChannels, int audioB
 }
 
 oamlRC oamlBase::PlayTrackId(int id) {
+	oamlRC err = OAML_ERROR;
+
 	if (id < (int)musicTracks.size()) {
 		if (curTrack >= 0 && (size_t)curTrack < musicTracks.size()) {
 			musicTracks[curTrack]->Stop();
 		}
 
 		curTrack = id;
-		return musicTracks[id]->Play();
+		int mainCondValue = 0;
+		for (size_t i=0; i<conditions.size(); i++) {
+			if (conditions[i].first == OAML_CONDID_MAIN_LOOP) {
+				mainCondValue = conditions[i].second;
+				break;
+			}
+		}
+
+		err = musicTracks[id]->Play(mainCondValue);
+		UpdateCondition();
 	}
 
-	return OAML_ERROR;
+	return err;
 }
 
 oamlRC oamlBase::PlayTrack(const char *name) {
@@ -458,7 +469,7 @@ oamlRC oamlBase::PlaySfxEx(const char *name, float vol, float pan) {
 
 	mutex.lock();
 	for (std::vector<oamlSfxTrack*>::iterator it=sfxTracks.begin(); it<sfxTracks.end(); ++it) {
-		oamlTrack *track = *it;
+		oamlSfxTrack *track = *it;
 		if (track->Play(name, vol, pan) == 0) {
 			err = OAML_OK;
 			break;
@@ -861,12 +872,36 @@ void oamlBase::MixToBuffer(void *buffer, int size) {
 	mutex.unlock();
 }
 
+void oamlBase::UpdateCondition() {
+	if (curTrack >= 0 && (size_t)curTrack < musicTracks.size()) {
+		for (size_t i=0; i<conditions.size(); i++) {
+			musicTracks[curTrack]->SetCondition(conditions[i].first, conditions[i].second);
+		}
+	}
+}
+
 void oamlBase::SetCondition(int id, int value) {
 //	printf("%s %d %d\n", __FUNCTION__, id, value);
 	mutex.lock();
-	if (curTrack >= 0 && (size_t)curTrack < musicTracks.size()) {
-		musicTracks[curTrack]->SetCondition(id, value);
+	bool found = false;
+	for (size_t i=0; i<conditions.size() && !found; i++) {
+		if (conditions[i].first == id) {
+			conditions[i].second = value;
+			found = true;
+		}
 	}
+
+	if (!found) {
+		conditions.push_back(std::pair<int, int>(id, value));
+	}
+
+	UpdateCondition();
+	mutex.unlock();
+}
+
+void oamlBase::ClearConditions() {
+	mutex.lock();
+	conditions.clear();
 	mutex.unlock();
 }
 
@@ -1068,6 +1103,13 @@ std::string oamlBase::SaveState() {
 	rootNode->InsertEndChild(baseNode);
 
 	mutex.lock();
+	for (size_t i=0; i<conditions.size(); i++) {
+		tinyxml2::XMLElement *node = doc.NewElement("condition");
+		node->SetAttribute("id", conditions[i].first);
+		node->SetAttribute("value", conditions[i].second);
+		rootNode->InsertEndChild(node);
+	}
+
 	for (size_t i=0; i<musicTracks.size(); i++) {
 		tinyxml2::XMLElement *node = doc.NewElement("musicTrack");
 		musicTracks[i]->SaveState(doc, node);
@@ -1088,45 +1130,41 @@ void oamlBase::LoadState(std::string state) {
 		return;
 	}
 
+	mutex.lock();
+
+	conditions.clear();
+
 	tinyxml2::XMLElement *rootNode = doc.FirstChildElement("oamlState");
 	if (rootNode) {
 		tinyxml2::XMLElement *el = rootNode->FirstChildElement();
 		while (el != NULL) {
 			if (strcmp(el->Name(), "version") == 0) {
-				int version;
 				int major;
 				int minor;
 				int patch;
 
 				sscanf(el->GetText(), "%d.%d.%d", &major, &minor, &patch);
-				version = (major << 16) | (minor << 8) | (patch);
+				int version = (major << 16) | (minor << 8) | (patch);
 				if (version < 0x00010001) {
 					fprintf(stderr, "old version! %X\n", version);
-					return;
+					break;
 				}
 			} else if (strcmp(el->Name(), "base") == 0) {
-				const char *str;
-
-				str = el->Attribute("curTrack");
-				if (str) {
-					curTrack = strtol(str, NULL, 0);
-				}
-
-				str = el->Attribute("tension");
-				if (str) {
-					tension = strtol(str, NULL, 0);
-				}
+				curTrack = el->IntAttribute("curTrack");
+				tension = el->IntAttribute("tension");
+			} else if (strcmp(el->Name(), "condition") == 0) {
+				int id = el->IntAttribute("id");
+				int value = el->IntAttribute("value");
+				conditions.push_back(std::pair<int, int>(id, value));
 			} else if (strcmp(el->Name(), "musicTrack") == 0) {
 				const char *str = el->Attribute("name");
 				if (str) {
-					mutex.lock();
 					for (size_t i=0; i<musicTracks.size(); i++) {
 						if (strcmp(musicTracks[i]->GetNameStr(), str) == 0) {
 							musicTracks[i]->LoadState(el);
 							break;
 						}
 					}
-					mutex.unlock();
 				}
 			} else {
 				fprintf(stderr, "%s: Unknown state tag: %s\n", __FUNCTION__, el->Name());
@@ -1135,6 +1173,10 @@ void oamlBase::LoadState(std::string state) {
 			el = el->NextSiblingElement();
 		}
 	}
+
+	UpdateCondition();
+
+	mutex.unlock();
 }
 
 const char* oamlBase::GetDefsFile() {

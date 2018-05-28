@@ -72,7 +72,7 @@ public:
 	void AddAudio(oamlAudio *audio);
 	oamlAudio* GetAudio(std::string filename);
 	oamlRC RemoveAudio(std::string filename);
-	oamlRC Play();
+	oamlRC Play(int mainCondValue);
 	oamlRC Load();
 	float LoadProgress();
 	void Stop();
