@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 set(OAML_VERSION_MAJOR 1)
 set(OAML_VERSION_MINOR 3)
-set(OAML_VERSION_PATCH 2)
+set(OAML_VERSION_PATCH 3)
 
 if (${CMAKE_MAJOR_VERSION} LESS 3)
 	project (oaml)
