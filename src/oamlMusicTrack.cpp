@@ -178,9 +178,9 @@ void oamlMusicTrack::SetCondition(int id, int value) {
 			if (audio->TestCondition(id, value) == true) {
 				// Condition is true, so let's play the audio
 				if (pcurAudio == NULL || pcurAudio->GetMinMovementBars() == 0) {
-					PlayCond(1 << 24 | i);
+					PlayCond((3 << 24) | i);
 				} else {
-					PlayCondWithMovement(1 << 24 | i);
+					PlayCondWithMovement((3 << 24) | i);
 				}
 
 				playCond = true;
