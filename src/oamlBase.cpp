@@ -134,7 +134,7 @@ oamlBase::~oamlBase() {
 }
 
 const char *oamlBase::GetVersion() {
-	return "1.3.3";
+	return "1.3.4";
 }
 
 #ifdef __HAVE_RTAUDIO
