@@ -244,7 +244,6 @@ oamlRC oamlMusicTrack::Play(int mainCondValue) {
 		doFade = 1;
 	}
 
-	printf("mainCondValue=%d\n", mainCondValue);
 	SetCondition(OAML_CONDID_MAIN_LOOP, mainCondValue);
 
 	playingOrder = 0;
