@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/oamldev/oaml.svg)](https://travis-ci.org/oamldev/oaml.svg?branch=master)
 [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
+[![Code Quality: Cpp](https://img.shields.io/lgtm/grade/cpp/g/oamldev/oaml.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/oamldev/oaml/context:cpp)
+[![Total Alerts](https://img.shields.io/lgtm/alerts/g/oamldev/oaml.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/oamldev/oaml/alerts)
 
 ### Open Adaptive Music Library 
 
